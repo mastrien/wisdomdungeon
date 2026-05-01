@@ -96,7 +96,10 @@ export default function HomePage() {
             <h3 className="text-2xl font-bold text-white mb-2">Seu Progresso</h3>
             <p className="text-slate-400">Você ainda não completou nenhuma dungeon hoje.</p>
           </div>
-          <button className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg">
+          <button 
+            onClick={() => router.push("/history")}
+            className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg"
+          >
             <History className="w-5 h-5" />
             Ver Histórico Completo
           </button>

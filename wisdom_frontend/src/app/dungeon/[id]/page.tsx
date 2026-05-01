@@ -151,8 +151,8 @@ export default function DungeonPage() {
               >
                 {submitting ? <Loader2 className="w-6 h-6 animate-spin" /> : (
                   <>
-                    <Sword className="w-5 h-5" />
-                    Atacar
+                    <CheckCircle2 className="w-5 h-5" />
+                    Enviar Resposta
                   </>
                 )}
               </button>
@@ -163,11 +163,11 @@ export default function DungeonPage() {
                 }`}>
                   {result.is_correct ? <CheckCircle2 className="w-8 h-8" /> : <XCircle className="w-8 h-8" />}
                   <div>
-                    <h3 className="font-bold text-xl">{result.is_correct ? "Vitória!" : "Derrota..."}</h3>
+                    <h3 className="font-bold text-xl">{result.is_correct ? "Excelente!" : "Quase lá!"}</h3>
                     <p className="text-sm opacity-80">
                       {result.is_correct 
-                        ? "Você superou este desafio com maestria!" 
-                        : "O monstro foi mais forte desta vez. Tente novamente!"}
+                        ? "Você resolveu o desafio com precisão!" 
+                        : "Não desanime. Analise a questão e tente novamente!"}
                     </p>
                   </div>
                 </div>

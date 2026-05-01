@@ -30,12 +30,14 @@ INSTALLED_APPS = [
     
     # Third party
     'rest_framework',
+    'corsheaders',
     
     # Local
     'core',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -107,3 +109,8 @@ REST_FRAMEWORK = {
 
 # Firebase
 FIREBASE_CREDENTIALS_PATH = env('FIREBASE_CREDENTIALS_PATH', default=None)
+
+# CORS
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
