@@ -31,5 +31,24 @@ A plataforma prioriza o acompanhamento detalhado do desempenho:
 ## 5. Stack Tecnológica
 
 *   **Frontend:** [Next.js](https://nextjs.org/) (React)
-*   **Backend:** [Django](https://www.djangoproject.com/) (Python)
-*   **Autenticação e Banco de Dados:** [Google Firebase](https://firebase.google.com/)
+*   **Backend:** [Django](https://www.djangoproject.com/) (Python) + Django REST Framework / Ninja
+*   **Banco de Dados Principal:** PostgreSQL (Hospedado no [Supabase](https://supabase.com/))
+*   **Serviços Auxiliares:** [Google Firebase](https://firebase.google.com/)
+
+## 6. Arquitetura e Infraestrutura
+O sistema adota uma arquitetura orientada a serviços (API-driven), separando o Frontend do Backend e utilizando serviços em nuvem específicos para seus pontos fortes.
+
+### 6.1 Papel das Tecnologias
+*   **PostgreSQL (Supabase):** Armazenamento relacional robusto para dados estruturados (questões, inventário, transações). Gerenciado via Supabase CLI.
+*   **Django:** Atua como o "Mestre de Jogo", detentor da lógica de negócios, validação de respostas e cálculo de XP. O Django é o responsável pelas migrações e integridade do banco de dados.
+*   **Firebase:** Utilizado para microserviços essenciais:
+    *   **Authentication:** Gestão de login (Google, E-mail/Senha) e geração de Tokens JWT.
+    *   **Realtime Database:** Estados efêmeros de alta frequência (Lobby de Raids, status online, leaderboards).
+    *   **Cloud Messaging (FCM):** Notificações push multiplataforma.
+
+### 6.2 Fluxo de Autenticação
+A segurança da comunicação entre serviços segue o fluxo:
+1.  **Frontend (Next.js):** Realiza o login via Firebase Auth.
+2.  **Token JWT:** O Firebase retorna um token que é enviado no cabeçalho das requisições para a API.
+3.  **Backend (Django):** Valida o token usando o SDK `firebase-admin`.
+4.  **Dados:** Após validação, o Django consulta o **PostgreSQL** e retorna as informações ao usuário.
