@@ -72,6 +72,7 @@ export default function HomePage() {
           ].map((dungeon) => (
             <div 
               key={dungeon.id}
+              onClick={() => router.push(`/dungeon/${dungeon.id}`)}
               className="group bg-slate-900 border border-slate-800 p-6 rounded-2xl hover:border-amber-500/50 transition-all cursor-pointer relative overflow-hidden"
             >
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 group-hover:text-amber-500 transition-opacity">
