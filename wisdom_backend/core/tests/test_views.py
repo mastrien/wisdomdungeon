@@ -46,4 +46,26 @@ class CoreApiTest(APITestCase):
         url = reverse('history')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 0)
+        # Agora o histórico retorna um objeto com 'results' e 'has_more'
+        self.assertIn('results', response.data)
+        self.assertIn('has_more', response.data)
+        self.assertEqual(len(response.data['results']), 0)
+
+    def test_get_mastery(self):
+        url = reverse('mastery')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 5) # 5 tópicos definidos no view
+        self.assertEqual(response.data[0]['total_solved'], 0)
+
+    def test_get_public_profile(self):
+        # Deslogar para testar acesso público
+        self.client.force_authenticate(user=None)
+        url = reverse('public_profile', kwargs={'username': 'api_user'})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['user']['username'], 'api_user')
+        self.assertEqual(response.data['xp'], 0)
+        self.assertEqual(response.data['followers_count'], 0)
+        self.assertEqual(response.data['following_count'], 0)
+        self.assertEqual(response.data['is_following'], False)

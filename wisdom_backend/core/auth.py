@@ -25,14 +25,20 @@ class FirebaseAuthentication(authentication.BaseAuthentication):
 
         id_token = auth_header.split(' ').pop()
         try:
-            # check_revoked=True is safer but slightly slower
-            # The error "Token used too early" is often due to clock skew between local machine and Firebase servers.
-            # We can't easily fix the skew here, but we can catch it.
             decoded_token = auth.verify_id_token(id_token)
         except Exception as e:
-            print(f"Firebase Token Verification Failed: {e}")
-            # If the error is clock skew, we might want to inform the user or log it specifically
-            raise exceptions.AuthenticationFailed(f'Invalid Firebase token: {e}')
+            # Handle clock skew: retry once after 1 second if token used too early
+            if "Token used too early" in str(e):
+                import time
+                time.sleep(1)
+                try:
+                    decoded_token = auth.verify_id_token(id_token)
+                except Exception as retry_e:
+                    print(f"Firebase Token Verification Retry Failed: {retry_e}")
+                    raise exceptions.AuthenticationFailed(f'Invalid Firebase token (Retry): {retry_e}')
+            else:
+                print(f"Firebase Token Verification Failed: {e}")
+                raise exceptions.AuthenticationFailed(f'Invalid Firebase token: {e}')
 
         uid = decoded_token.get('uid')
         if not uid:

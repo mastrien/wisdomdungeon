@@ -13,6 +13,8 @@ import {
   Trophy,
   Coins
 } from "lucide-react";
+import Header from "@/components/Header";
+import MathRenderer from "@/components/MathRenderer";
 
 interface Question {
   enunciado: string;
@@ -24,7 +26,7 @@ interface Question {
 export default function DungeonPage() {
   const { id } = useParams();
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, refreshProfile } = useAuth();
   
   const [question, setQuestion] = useState<Question | null>(null);
   const [loading, setLoading] = useState(true);
@@ -71,6 +73,10 @@ export default function DungeonPage() {
         xp: response.data.xp_gained,
         gold: response.data.gold_gained
       });
+      // Atualiza o perfil instantaneamente no Header
+      if (response.data.is_correct) {
+        refreshProfile();
+      }
     } catch (err) {
       console.error("Erro ao enviar resposta:", err);
     } finally {
@@ -88,8 +94,10 @@ export default function DungeonPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-slate-950 text-slate-200">
+      <Header />
+      <div className="p-4 md:p-8">
+        <div className="max-w-3xl mx-auto">
         {/* Header */}
         <button 
           onClick={() => router.push("/")}
@@ -112,9 +120,9 @@ export default function DungeonPage() {
               </span>
             </div>
 
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-8 leading-relaxed">
-              {question?.enunciado}
-            </h2>
+            <div className="mb-8 flex justify-center">
+              <MathRenderer tex={question?.enunciado || ""} className="text-xl md:text-3xl font-bold text-white leading-relaxed text-center" />
+            </div>
 
             <div className="grid grid-cols-1 gap-4 mb-10">
               {question?.opcoes.map((option, index) => (
@@ -131,7 +139,7 @@ export default function DungeonPage() {
                     ${result && selectedOption === option && !result.is_correct ? "border-red-500 bg-red-500/10 !text-red-500" : ""}
                   `}
                 >
-                  <span className="font-medium text-lg">{option}</span>
+                  <MathRenderer tex={option} displayMode={false} className="font-medium text-lg" />
                   <div className={`
                     w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors
                     ${selectedOption === option ? "border-amber-500 bg-amber-500" : "border-slate-700"}
@@ -199,6 +207,7 @@ export default function DungeonPage() {
             )}
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

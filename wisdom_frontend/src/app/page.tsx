@@ -3,8 +3,8 @@
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { auth } from "@/lib/firebase";
-import { LogOut, Sword, Trophy, History, Play } from "lucide-react";
+import { History, Play } from "lucide-react";
+import Header from "@/components/Header";
 
 export default function HomePage() {
   const { user, loading } = useAuth();
@@ -26,34 +26,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200">
-      {/* Header */}
-      <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Sword className="text-amber-500" />
-            <span className="font-bold text-xl text-white">Wisdom Dungeon</span>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-4 px-4 py-1.5 bg-slate-800 rounded-full border border-slate-700">
-              <div className="flex items-center gap-1.5 text-sm font-medium">
-                <Trophy className="w-4 h-4 text-amber-500" />
-                <span>Nível 1</span>
-              </div>
-              <div className="w-px h-4 bg-slate-700"></div>
-              <div className="text-sm font-medium">0 XP</div>
-            </div>
-
-            <button 
-              onClick={() => auth.signOut()}
-              className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors"
-              title="Sair"
-            >
-              <LogOut className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <main className="max-w-4xl mx-auto px-4 py-12">
         <div className="mb-12">

@@ -8,6 +8,11 @@ import { useRouter, useParams } from 'next/navigation';
 jest.mock('@/services/api');
 jest.mock('@/context/AuthContext');
 jest.mock('next/navigation');
+jest.mock('@/components/MathRenderer', () => {
+  return function MockMathRenderer({ tex }: { tex: string }) {
+    return <div>{tex}</div>;
+  };
+});
 
 const mockApi = api as jest.Mocked<typeof api>;
 const mockUseAuth = useAuth as jest.Mock;

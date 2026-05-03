@@ -78,3 +78,100 @@
 - **Causa:** Firebase Admin disparando "Token used too early" no backend devido a Clock Skew.
 - **Teste Frontend:** Jest + RTL configurados. `DungeonPage.test.tsx` criado e passando.
 - **Ação:** Adicionado log de depuração em `core/auth.py`.
+
+**Ciclo [01/05/2026 10:00]:**
+- **Ação:** Corrigir mostrador de XP e adicionar mostrador de Ouro no Header.
+- **Teste:** Criado `Header.test.tsx` e atualizado `DungeonPage.test.tsx`. Todos os testes passando.
+- **Implementação:** `AuthContext` atualizado para carregar perfil via API. Criado componente `Header.tsx`.
+- **Refatoração:** Header extraído e aplicado em todas as rotas principais (`page.tsx`, `history/page.tsx`, `dungeon/[id]/page.tsx`).
+
+**Ciclo [01/05/2026 11:00]:**
+- **Ação:** Criar página de perfil público acessível por `/profile/[username]`.
+- **Backend:** Adicionado `PublicProfileView` e rota `/api/profile/<username>/`.
+- **Frontend:** Criado `src/app/profile/[username]/page.tsx` com lógica de dono vs visitante.
+- **Interface:** Header atualizado com username e avatar (placeholder) vinculados ao perfil.
+- **Teste:** Adicionados testes de integração no backend (`test_views.py`) e unitários no frontend (`ProfilePage.test.tsx`).
+
+**Ciclo [03/05/2026 10:00]:**
+- **Ação:** Implementar mecânica de seguir usuários.
+- **Backend:** 
+    - [x] Adicionar campo `following` ao modelo `Profile`.
+    - [x] Criar `FollowView` para ações de seguir/deseguir.
+    - [x] Atualizar `ProfileSerializer` e `PublicProfileView`.
+- **Frontend:**
+    - [x] Adicionar botão de Seguir/Deseguir no perfil público.
+    - [x] Exibir contadores de seguidores/seguindo.
+    - [x] Implementar interface básica de edição de perfil.
+- **Testes:**
+    - [x] Criar `test_following.py` no backend.
+    - [x] Atualizar `ProfilePage.test.tsx` no frontend.
+
+**Ciclo [03/05/2026 12:00]:**
+- **Ação:** Alinhamento de geradores matemáticos e renderização KaTeX.
+- **Backend:**
+    - [x] Portar lógica de geradores do protótipo `math.html` para `MathGenerator.py`.
+    - [x] Adicionar novos temas: Integrais, Regras de Derivada (Produto/Cadeia), Produto Escalar, Combinação Linear, Multiplicação de Matrizes.
+    - [x] Formatar todas as saídas (enunciado e opções) em LaTeX.
+- **Frontend:**
+    - [x] Instalar dependências de KaTeX.
+    - [x] Criar componente `MathRenderer`.
+    - [x] Integrar `MathRenderer` na `DungeonPage` para exibição de alta qualidade.
+- **Testes:**
+    - [x] Atualizar testes do backend para validar formato LaTeX.
+    - [x] Mockar `MathRenderer` nos testes frontend para garantir estabilidade.
+
+**Ciclo [03/05/2026 14:00]:**
+- **Ação:** Melhoria na responsividade e clareza dos enunciados.
+- **Backend:**
+    - [x] Refinar enunciados para serem mais descritivos (ex: "Encontre o valor de x", "Calcule a derivada").
+- **Frontend:**
+    - [x] Adicionar regras CSS para scroll horizontal em equações longas.
+    - [x] Ajustar container de questões para permitir scroll em telas pequenas.
+
+**Ciclo [03/05/2026 15:00]:**
+- **Ação:** Refinamento da interface do Header.
+- **Frontend:**
+    - [x] Implementar renderização condicional no Header baseada no estado de autenticação.
+    - [x] Esconder indicadores de XP/Ouro/Nível quando o usuário estiver deslogado.
+    - [x] Substituir botão de Logout por botão "Entrar" (Login) para usuários visitantes.
+
+**Ciclo [03/05/2026 16:00]:**
+- **Ação:** Tratamento de erro para username duplicado.
+- **Backend:**
+    - [x] Adicionar verificação explícita de unicidade de username na `ProfileView.patch`.
+    - [x] Retornar erro 400 amigável quando o username já estiver em uso.
+- **Frontend:**
+    - [x] Capturar erros de validação no formulário de edição de perfil.
+    - [x] Exibir alerta amigável quando o nome de aventureiro já estiver ocupado.
+
+**Ciclo [03/05/2026 17:00]:**
+- **Ação:** Correção da falha no Login com Google (Erro 403).
+- **Backend:**
+    - [x] Implementar mecanismo de retry com delay de 1s na `FirebaseAuthentication` para mitigar o erro "Token used too early" (Clock Skew).
+    - [x] Criar `core/tests/test_auth.py` para validar fluxos de autenticação Firebase (sucesso, retry e conflito de username).
+- **Teste:** Novos testes de autenticação passando com sucesso.
+
+**Ciclo [03/05/2026 18:00]:**
+- **Ação:** Refatoração do Histórico e implementação de Maestria.
+- **Backend:**
+    - [x] Implementar paginação (20 por página) na `HistoryView` usando `offset`.
+    - [x] Criar `MasteryView` para calcular estatísticas por masmorra (resolvidos, taxa de acerto, maestria/XP).
+    - [x] Registrar rota `/api/mastery/`.
+- **Frontend:**
+    - [x] Atualizar `HistoryPage` para suportar carregamento incremental ("Ver Mais").
+    - [x] Adicionar seção de estatísticas de masmorra acima do histórico geral.
+    - [x] Garantir renderização LaTeX no histórico usando `MathRenderer`.
+- **Testes:**
+    - [x] Atualizar `test_get_history` e adicionar `test_get_mastery` no backend.
+
+**Ciclo [03/05/2026 19:00]:**
+- **Ação:** Refatoração da renderização matemática (Mixed Text/Math).
+- **Backend:**
+    - [x] Atualizar `MathGenerator.py` para usar delimitadores `$` para partes matemáticas e texto puro para o restante.
+    - [x] Garantir que opções (respostas) também utilizem delimitadores `$`.
+- **Frontend:**
+    - [x] Refatorar `MathRenderer.tsx` para atuar como um parser de conteúdo misto.
+    - [x] Remover barras de scroll horizontal e permitir que o navegador faça quebra de linha natural do texto.
+    - [x] Ajustar CSS para esconder scrollbars em blocos `katex-display` e favorecer fluidez.
+- **Testes:**
+    - [x] Atualizar `test_math_generator.py` para validar o novo formato de string com `$`.

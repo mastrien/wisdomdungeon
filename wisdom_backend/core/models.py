@@ -7,6 +7,13 @@ class Profile(models.Model):
     xp = models.IntegerField(default=0)
     gold = models.IntegerField(default=0)
     level = models.IntegerField(default=1)
+    bio = models.TextField(blank=True, max_length=500)
+    following = models.ManyToManyField(
+        'self', 
+        symmetrical=False, 
+        related_name='followers', 
+        blank=True
+    )
 
     def __str__(self):
         return self.user.username
