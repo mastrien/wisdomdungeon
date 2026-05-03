@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from core.models import Profile, QuestionHistory
+from core.models import Profile, QuestionHistory, FixedQuestion, WeeklyDungeon, DungeonRoom, Item, InventoryItem
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,18 +15,39 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ['user', 'xp', 'gold', 'level', 'firebase_uid', 'bio', 'followers_count', 'following_count', 'is_following']
+        fields = [
+            'user', 'xp', 'gold', 'level', 'firebase_uid', 'bio', 
+            'followers_count', 'following_count', 'is_following',
+            'streak_count', 'total_dungeons_completed'
+        ]
 
-    def get_is_following(self, obj):
-        request = self.context.get('request')
-        if request and request.user.is_authenticated:
-            try:
-                return request.user.profile.following.filter(id=obj.id).exists()
-            except Profile.DoesNotExist:
-                return False
-        return False
+class FixedQuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FixedQuestion
+        fields = ['enunciado', 'opcoes', 'hash']
+
+class WeeklyDungeonSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WeeklyDungeon
+        fields = ['id', 'title', 'type', 'topic', 'start_date', 'end_date']
+
+class DungeonRoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DungeonRoom
+        fields = ['order']
+
+class ItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = ['id', 'name', 'description', 'type', 'rarity', 'effect_type', 'effect_value']
+
+class InventoryItemSerializer(serializers.ModelSerializer):
+    item = ItemSerializer(read_only=True)
+    class Meta:
+        model = InventoryItem
+        fields = ['id', 'item', 'quantity', 'is_equipped', 'acquired_at']
 
 class QuestionHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = QuestionHistory
-        fields = ['topic', 'enunciado', 'is_correct', 'created_at']
+        fields = ['topic', 'enunciado', 'is_correct', 'time_spent_ms', 'created_at']

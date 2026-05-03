@@ -175,3 +175,42 @@
     - [x] Ajustar CSS para esconder scrollbars em blocos `katex-display` e favorecer fluidez.
 - **Testes:**
     - [x] Atualizar `test_math_generator.py` para validar o novo formato de string com `$`.
+
+**Ciclo [03/05/2026 20:00]:**
+- **Ação:** Implementação de estatísticas diárias na Página Inicial.
+- **Backend:**
+    - [x] Atualizar `MasteryView` para aceitar parâmetro `today=true`, filtrando histórico pelo dia atual.
+- **Frontend:**
+    - [x] Refatorar os cards de masmorra na `HomePage` para exibir quantidade de desafios resolvidos e taxa de acerto do dia.
+    - [x] Remover informações estáticas irrelevantes (como dificuldade fixa).
+    - [x] Adicionar feedback visual de progresso diário total no rodapé da lista.
+- **Git:**
+    **Ciclo [03/05/2026 21:00]:**
+- **Ação:** Início da Fase 1 do Plano de Engajamento - Modelagem de Dados (Parte 1).
+- **Teste:** Criar `core/tests/test_engagement_models.py` para validar `FixedQuestion` e a expansão de `Profile`.
+- **Implementação:** Atualizar `core/models.py` com novos campos e o modelo `FixedQuestion`.
+- **Refatoração:** Aplicar migrações e verificar integridade. [CONCLUÍDO]
+
+**Ciclo [03/05/2026 21:30]:**
+- **Ação:** Fase 2 - Refatoração do Fluxo de Masmorras (Parte 1: Seed Semanal).
+- **Teste:** Criar `core/tests/test_seeding.py` para validar o comando de geração de masmorras semanais.
+- **Implementação:** Criar `core/management/commands/seed_weekly_dungeons.py`.
+- **Refatoração:** Garantir que questões sejam reutilizadas ou geradas corretamente. [CONCLUÍDO]
+
+**Ciclo [03/05/2026 22:00]:**
+- **Ação:** Fase 2 - Refatoração do Fluxo de Masmorras (Parte 2: API de Progressão).
+- **Teste:** Criar `core/tests/test_progression_api.py` para validar `GET /api/dungeon/current/` e `POST /api/answer/`.
+- **Implementação:** Criar `DungeonCurrentView` e refatorar `QuestionView` (ou criar `AnswerView`).
+- **Refatoração:** Integrar lógica de streak e telemetria no `AnswerService`. [CONCLUÍDO]
+
+**Ciclo [03/05/2026 22:30]:**
+- **Ação:** Fase 3 - Sistema de Itemização e Inventário.
+- **Teste:** Criar `core/tests/test_item_system.py` para validar modificadores de itens no `AnswerService` e endpoints de inventário.
+- **Implementação:** Criar `InventoryView` e atualizar `AnswerService`.
+- **Refatoração:** Adicionar suporte a bônus dinâmicos baseados no item equipado. [CONCLUÍDO]
+
+**Ciclo [03/05/2026 23:00]:**
+- **Ação:** Fase 4 - Experiência do Usuário (Frontend - HUD v2).
+- **Teste:** Atualizar `DungeonPage.test.tsx` para validar a exibição do Timer, Combo e Barra de Progresso.
+- **Implementação:** Refatorar `src/app/dungeon/[id]/page.tsx` para integrar com `dungeon/current/` e exibir novos elementos de interface.
+- **Refatoração:** Adicionar lógica de cronômetro e contador de sequência no estado do componente.

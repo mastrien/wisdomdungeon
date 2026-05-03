@@ -1,8 +1,41 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
-from core.models import Profile, QuestionHistory
-from core.serializers import ProfileSerializer, QuestionHistorySerializer
+from core.models import (
+    Profile, QuestionHistory, WeeklyDungeon, UserDungeonProgress, 
+    DungeonRoom, FixedQuestion, Item, InventoryItem
+)
+from core.serializers import (
+    ProfileSerializer, QuestionHistorySerializer, WeeklyDungeonSerializer, 
+    DungeonRoomSerializer, FixedQuestionSerializer, ItemSerializer, InventoryItemSerializer
+)
+
+class InventoryView(APIView):
+    def get(self, request):
+        inventory = request.user.profile.inventory.all().order_by('-acquired_at')
+        serializer = InventoryItemSerializer(inventory, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, pk=None):
+        """Action-based POST for equip/use."""
+        action = request.path.split('/')[-2] # e.g., .../equip/
+        try:
+            inv_item = request.user.profile.inventory.get(id=pk)
+            if action == 'equip':
+                # Unequip others of same type if necessary (assuming one active item for now)
+                request.user.profile.inventory.filter(is_equipped=True).update(is_equipped=False)
+                inv_item.is_equipped = True
+                inv_item.save()
+                
+                profile = request.user.profile
+                profile.equipped_item_id = inv_item.item.id
+                profile.save()
+                
+                return Response(InventoryItemSerializer(inv_item).data)
+            # Add 'use' for consumables here
+        except InventoryItem.DoesNotExist:
+            return Response({"error": "Item not found in inventory"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": "Invalid action"}, status=status.HTTP_400_BAD_REQUEST)
 from core.services.math_generator import MathGenerator
 from core.services.answer_service import AnswerService
 
@@ -68,7 +101,58 @@ class FollowView(APIView):
         except Profile.DoesNotExist:
             return Response({"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
 
+class DungeonCurrentView(APIView):
+    def get(self, request):
+        topic = request.query_params.get('topic')
+        profile = request.user.profile
+        
+        # Find active dungeon for this topic
+        dungeon = WeeklyDungeon.objects.filter(topic=topic, is_active=True, type='normal').first()
+        if not dungeon:
+            return Response({"current_dungeon": None})
+            
+        # Get or start progress
+        progress, created = UserDungeonProgress.objects.get_or_create(
+            profile=profile,
+            dungeon=dungeon,
+            defaults={
+                'current_room': dungeon.rooms.first(),
+                'current_question_index': 0
+            }
+        )
+        
+        if progress.is_completed:
+             return Response({"current_dungeon": None, "completed": True})
+
+        room = progress.current_room
+        question = room.questions.all()[progress.current_question_index]
+        
+        return Response({
+            "current_dungeon": WeeklyDungeonSerializer(dungeon).data,
+            "room": DungeonRoomSerializer(room).data,
+            "question_index": progress.current_question_index,
+            "question": FixedQuestionSerializer(question).data
+        })
+
+class AnswerView(APIView):
+    def post(self, request):
+        data = request.data
+        profile = request.user.profile
+        
+        service = AnswerService()
+        result = service.submit_answer(
+            profile=profile,
+            topic=data.get('topic'),
+            question_hash=data.get('hash'),
+            selected_answer=data.get('selected_answer'),
+            correct_answer=data.get('correct_answer'),
+            time_spent_ms=data.get('time_spent_ms', 0)
+        )
+        
+        return Response(result)
+
 class QuestionView(APIView):
+    """Old view, kept for backward compatibility or procedural mode."""
     def get(self, request):
         topic = request.query_params.get('topic', 'algebra_basica')
         generator = MathGenerator()
@@ -80,20 +164,8 @@ class QuestionView(APIView):
         return Response(question)
 
     def post(self, request):
-        data = request.data
-        profile = request.user.profile
-        
-        service = AnswerService()
-        result = service.submit_answer(
-            profile=profile,
-            topic=data.get('topic'),
-            question_hash=data.get('hash'),
-            enunciado=data.get('enunciado'),
-            selected_answer=data.get('selected_answer'),
-            correct_answer=data.get('correct_answer') # In a real app, we shouldn't trust the client for the correct answer
-        )
-        
-        return Response(result)
+        # Delegate to AnswerView logic
+        return AnswerView().post(request)
 
 class HistoryView(APIView):
     def get(self, request):
@@ -115,6 +187,14 @@ class MasteryView(APIView):
         profile = request.user.profile
         histories = profile.history.all()
         
+        # Check if we only want today's stats
+        only_today = request.query_params.get('today') == 'true'
+        if only_today:
+            from django.utils import timezone
+            import datetime
+            today_start = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+            histories = histories.filter(created_at__gte=today_start)
+
         topics = [
             {"id": "algebra_basica", "name": "Álgebra Básica"},
             {"id": "calculo_basico", "name": "Cálculo Básico"},
@@ -131,10 +211,6 @@ class MasteryView(APIView):
             if total > 0:
                 correct = topic_history.filter(is_correct=True).count()
                 success_rate = round((correct / total) * 100, 1)
-                # Mastery is XP earned in this dungeon. 
-                # For MVP, assume 10 XP per correct answer (as defined in answer_service if applicable)
-                # But to be precise, we should sum the history if we added a field, 
-                # or just use correct * 10 as a simple placeholder for now.
                 mastery = correct * 10 
             else:
                 success_rate = 0
