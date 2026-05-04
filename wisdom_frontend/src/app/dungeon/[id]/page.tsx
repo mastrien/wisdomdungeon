@@ -15,7 +15,8 @@ import {
   Timer,
   Flame,
   ShieldAlert,
-  ArrowRight
+  ArrowRight,
+  Heart
 } from "lucide-react";
 import Header from "@/components/Header";
 import MathRenderer from "@/components/MathRenderer";
@@ -40,7 +41,7 @@ export default function DungeonPage() {
   const searchParams = useSearchParams();
   const dungeonType = searchParams.get("type") || "normal";
   const router = useRouter();
-  const { user, loading: authLoading, refreshProfile } = useAuth();
+  const { user, loading: authLoading, refreshProfile, profile } = useAuth();
   
   const [state, setState] = useState<DungeonState | null>(null);
   const [loading, setLoading] = useState(true);
@@ -51,6 +52,7 @@ export default function DungeonPage() {
     gold: number;
     room_completed: boolean;
     dungeon_completed: boolean;
+    correct_answer?: string;
   } | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -116,12 +118,13 @@ export default function DungeonPage() {
         xp: response.data.xp_gained,
         gold: response.data.gold_gained,
         room_completed: response.data.room_completed,
-        dungeon_completed: response.data.dungeon_completed
+        dungeon_completed: response.data.dungeon_completed,
+        correct_answer: response.data.correct_answer
       });
 
+      await refreshProfile();
       if (isCorrect) {
         setCombo(prev => prev + 1);
-        refreshProfile();
       } else {
         setCombo(0);
       }
@@ -174,7 +177,7 @@ export default function DungeonPage() {
         <div className="max-w-3xl mx-auto">
         
         {/* Top HUD */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
           <button 
             onClick={handleBack}
             className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors group"
@@ -183,7 +186,17 @@ export default function DungeonPage() {
             Mapa
           </button>
 
-          <div className="flex gap-4">
+          <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 px-4 py-2 rounded-full shadow-lg">
+              <div className="flex gap-1">
+                {[...Array(profile?.max_hp || 3)].map((_, i) => (
+                  <Heart 
+                    key={i} 
+                    className={`w-4 h-4 ${i < (profile?.hp || 0) ? "text-red-500 fill-red-500" : "text-slate-700"}`} 
+                  />
+                ))}
+              </div>
+            </div>
             <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 px-4 py-2 rounded-full shadow-lg">
               <Flame className={`w-5 h-5 ${combo > 0 ? "text-orange-500 animate-pulse" : "text-slate-600"}`} />
               <span className="font-bold text-sm">Combo: {combo}</span>
@@ -219,27 +232,35 @@ export default function DungeonPage() {
             </div>
 
             <div className="grid grid-cols-1 gap-4 mb-10">
-              {state?.question.opcoes.map((option, index) => (
-                <button
-                  key={index}
-                  onClick={() => !result && setSelectedOption(option)}
-                  disabled={!!result}
-                  className={`
-                    w-full text-left p-5 rounded-xl border-2 transition-all flex items-center justify-between group
-                    ${selectedOption === option 
-                      ? "border-brand-primary bg-brand-primary/5 text-white" 
-                      : "border-slate-800 bg-slate-950 hover:border-slate-600 text-slate-400"}
-                  `}
-                >
-                  <MathRenderer tex={option} displayMode={false} className="font-medium text-lg" />
-                  <div className={`
-                    w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors
-                    ${selectedOption === option ? "border-brand-primary bg-brand-primary" : "border-slate-700"}
-                  `}>
-                    {selectedOption === option && <div className="w-2 h-2 bg-slate-950 rounded-full" />}
-                  </div>
-                </button>
-              ))}
+              {state?.question.opcoes.map((option, index) => {
+                const isSelected = selectedOption === option;
+                const isCorrect = result?.correct_answer === option;
+                const isWrong = isSelected && !result?.is_correct;
+                
+                return (
+                  <button
+                    key={index}
+                    onClick={() => !result && setSelectedOption(option)}
+                    disabled={!!result}
+                    className={`
+                      w-full text-left p-5 rounded-xl border-2 transition-all flex items-center justify-between group
+                      ${isSelected ? "border-brand-primary bg-brand-primary/5 text-white" : "border-slate-800 bg-slate-950 hover:border-slate-600 text-slate-400"}
+                      ${result && isCorrect ? "border-green-500 bg-green-500/10 text-white" : ""}
+                      ${result && isWrong ? "border-red-500 bg-red-500/10 text-white" : ""}
+                    `}
+                  >
+                    <MathRenderer tex={option} displayMode={false} className="font-medium text-lg" />
+                    <div className={`
+                      w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors
+                      ${isSelected ? "border-brand-primary bg-brand-primary" : "border-slate-700"}
+                      ${result && isCorrect ? "border-green-500 bg-green-500" : ""}
+                      ${result && isWrong ? "border-red-500 bg-red-500" : ""}
+                    `}>
+                      {(isSelected || (result && isCorrect)) && <div className="w-2 h-2 bg-slate-950 rounded-full" />}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
 
             {!result ? (
@@ -266,7 +287,8 @@ export default function DungeonPage() {
                     <p className="text-sm opacity-80">
                       {result.is_correct 
                         ? "Precisão cirúrgica no pensamento!" 
-                        : "Um erro é apenas um passo para o aprendizado. Tente novamente!"}
+                        : `A resposta correta era: `}
+                      {!result.is_correct && <MathRenderer tex={result.correct_answer || ""} displayMode={false} className="font-bold" />}
                     </p>
                   </div>
                 </div>
