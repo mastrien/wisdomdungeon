@@ -140,7 +140,7 @@ export default function SettingsPage() {
                     className={`
                       px-8 py-4 rounded-2xl border-2 font-bold transition-all
                       ${isSelected 
-                        ? "border-brand-primary bg-brand-primary/5 text-brand-primary" 
+                        ? "border-brand-primary bg-brand-primary/5 text-slate-900 dark:text-brand-primary" 
                         : "border-border-main bg-card hover:border-slate-300 dark:hover:border-slate-700 text-muted"}
                     `}
                   >

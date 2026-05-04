@@ -198,7 +198,7 @@ export default function DungeonPage() {
               </div>
             </div>
             <div className="flex items-center gap-2 bg-card border border-border-main px-4 py-2 rounded-full shadow-lg">
-              <Flame className={`w-5 h-5 ${combo > 0 ? "text-orange-500 animate-pulse" : "text-dim dark:text-slate-600"}`} />
+              <Flame className={`w-5 h-5 ${combo > 0 ? "text-orange-500 animate-pulse" : "text-dim dark:text-muted/50"}`} />
               <span className="font-bold text-sm">Combo: {combo}</span>
             </div>
             <div className="flex items-center gap-2 bg-card border border-border-main px-4 py-2 rounded-full shadow-lg">
@@ -244,9 +244,9 @@ export default function DungeonPage() {
                     disabled={!!result}
                     className={`
                       w-full text-left p-5 rounded-xl border-2 transition-all flex items-center justify-between group
-                      ${isSelected ? "border-brand-primary bg-brand-primary/5 text-foreground" : "border-border-main bg-background hover:border-slate-400 dark:hover:border-slate-600 text-muted dark:text-dim"}
-                      ${result && isCorrect ? "border-green-500 bg-green-500/10 text-foreground" : ""}
-                      ${result && isWrong ? "border-red-500 bg-red-500/10 text-foreground" : ""}
+                      ${isSelected ? "border-brand-primary bg-brand-primary/5 text-slate-900 dark:text-brand-primary" : "border-border-main bg-background hover:border-slate-400 dark:hover:border-slate-600 text-muted dark:text-dim"}
+                      ${result && isCorrect ? "border-green-500 bg-green-500/10 text-green-700 dark:text-green-400" : ""}
+                      ${result && isWrong ? "border-red-500 bg-red-500/10 text-red-700 dark:text-red-400" : ""}
                     `}
                   >
                     <MathRenderer tex={option} displayMode={false} className="font-medium text-lg" />
@@ -294,14 +294,14 @@ export default function DungeonPage() {
                 </div>
 
                 <div className="flex gap-4">
-                  <div className="flex-1 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-border-main flex items-center gap-3">
+                  <div className="flex-1 bg-card dark:bg-slate-800/50 p-4 rounded-xl border border-border-main flex items-center gap-3">
                     <Trophy className="text-brand-primary" />
                     <div>
                       <div className="text-xs text-muted font-bold uppercase">XP</div>
                       <div className="text-xl font-bold text-foreground">+{result.xp}</div>
                     </div>
                   </div>
-                  <div className="flex-1 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-border-main flex items-center gap-3">
+                  <div className="flex-1 bg-card dark:bg-slate-800/50 p-4 rounded-xl border border-border-main flex items-center gap-3">
                     <Coins className="text-yellow-500" />
                     <div>
                       <div className="text-xs text-muted font-bold uppercase">Ouro</div>

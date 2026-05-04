@@ -303,7 +303,7 @@ export default function ProfilePage() {
               "Matador de Derivadas",
               "Mestre das Matrizes"
             ].map((achievement) => (
-              <div key={achievement} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-sm text-muted dark:text-slate-400 font-medium border border-border-main">
+              <div key={achievement} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-sm text-muted dark:text-dim font-medium border border-border-main">
                 {achievement}
               </div>
             ))}
