@@ -137,11 +137,17 @@ export default function HomePage() {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider">
-                    <div className="flex items-center gap-2 text-slate-500">
-                      <Target className="w-3.5 h-3.5" />
+                  <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
+                    <div className="flex items-center gap-1.5 text-slate-500">
+                      <Target className="w-3 h-3" />
                       <span>Progresso: {progress}/100</span>
                     </div>
+                    {dailyStats[dungeon.topic] && dailyStats[dungeon.topic].total_solved > 0 && (
+                      <div className="flex items-center gap-1.5 text-brand-primary">
+                        <CheckCircle2 className="w-3 h-3" />
+                        <span>Hoje: {dailyStats[dungeon.topic].total_solved} ({dailyStats[dungeon.topic].success_rate}%)</span>
+                      </div>
+                    )}
                   </div>
                   
                   <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
