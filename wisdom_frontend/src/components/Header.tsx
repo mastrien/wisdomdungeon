@@ -50,7 +50,7 @@ export default function Header() {
               <div className="relative">
                 <button 
                   onClick={() => setShowMenu(!showMenu)}
-                  className="p-2 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-lg text-dim hover:text-foreground transition-colors"
+                  className="p-2 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-lg text-dim hover:text-slate-950 dark:hover:text-foreground transition-colors"
                   aria-label="Mais opções"
                 >
                   <MoreVertical className="w-5 h-5" />
@@ -65,14 +65,14 @@ export default function Header() {
                     <div className="absolute right-0 mt-2 w-48 bg-background border border-border-main rounded-xl shadow-2xl py-2 z-20 overflow-hidden">
                       <Link 
                         href="/settings"
-                        className="flex items-center gap-3 px-4 py-2 hover:bg-slate-200/60 dark:hover:bg-slate-800 text-sm text-muted dark:text-slate-300 hover:text-foreground transition-colors"
+                        className="flex items-center gap-3 px-4 py-2 hover:bg-slate-200/60 dark:hover:bg-slate-800 text-sm text-muted dark:text-slate-300 hover:text-slate-950 dark:hover:text-foreground transition-colors"
                         onClick={() => setShowMenu(false)}
                       >
                         <Settings className="w-4 h-4" />
                         Configurações
                       </Link>
                       <button 
-                        className="w-full flex items-center gap-3 px-4 py-2 hover:bg-slate-200/60 dark:hover:bg-slate-800 text-sm text-muted dark:text-slate-300 hover:text-foreground transition-colors"
+                        className="w-full flex items-center gap-3 px-4 py-2 hover:bg-slate-200/60 dark:hover:bg-slate-800 text-sm text-muted dark:text-slate-300 hover:text-slate-950 dark:hover:text-foreground transition-colors"
                         onClick={() => {
                           toggleDarkMode();
                           setShowMenu(false);
@@ -84,7 +84,7 @@ export default function Header() {
                       <div className="h-px bg-border-main my-1 mx-2"></div>
                       <button 
                         onClick={() => auth.signOut()}
-                        className="w-full flex items-center gap-3 px-4 py-2 hover:bg-slate-200/60 dark:hover:bg-slate-800 text-sm text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors"
+                        className="w-full flex items-center gap-3 px-4 py-2 hover:bg-slate-200/60 dark:hover:bg-slate-800 text-sm text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
                       >
                         <LogOut className="w-4 h-4" />
                         Logout
