@@ -61,7 +61,7 @@ export default function HomePage() {
   if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white gap-4">
-        <Loader2 className="w-10 h-10 animate-spin text-amber-500" />
+        <Loader2 className="w-10 h-10 animate-spin text-brand-primary" />
         <p className="text-slate-400 font-medium">Preparando o mapa...</p>
       </div>
     );
@@ -90,7 +90,7 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="bg-slate-900/50 border border-slate-800 px-6 py-3 rounded-2xl flex items-center gap-3">
-                <Trophy className="text-amber-500 w-6 h-6" />
+                <Trophy className="text-brand-primary w-6 h-6" />
                 <div>
                   <div className="text-[10px] text-slate-500 font-bold uppercase">Normais</div>
                   <div className="text-xl font-black text-white">{profile.total_normal_dungeons_completed}</div>
@@ -120,16 +120,16 @@ export default function HomePage() {
                 onClick={() => !isLocked && router.push(`/dungeon/${dungeon.topic}?type=${dungeon.type}`)}
                 className={`
                   group bg-slate-900 border border-slate-800 p-6 rounded-3xl transition-all relative overflow-hidden flex flex-col justify-between min-h-[240px]
-                  ${isLocked ? 'opacity-50 cursor-not-allowed grayscale' : 'hover:border-amber-500/50 cursor-pointer'}
+                  ${isLocked ? 'opacity-50 cursor-not-allowed grayscale' : 'hover:border-brand-primary/50 cursor-pointer'}
                 `}
               >
-                <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-20 group-hover:text-amber-500 transition-opacity">
+                <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-20 group-hover:text-brand-primary transition-opacity">
                   {isLocked ? <Lock className="w-12 h-12" /> : <Play className="w-12 h-12 fill-current" />}
                 </div>
                 
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-tighter ${isElite ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' : 'bg-amber-500/20 text-amber-500 border border-amber-500/30'}`}>
+                    <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-tighter ${isElite ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' : 'bg-brand-primary/20 text-brand-primary border border-brand-primary/30'}`}>
                       {dungeon.type}
                     </span>
                   </div>
@@ -146,7 +146,7 @@ export default function HomePage() {
                   
                   <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
                     <div 
-                      className={`h-full transition-all ${isElite ? 'bg-purple-500' : 'bg-amber-500'}`}
+                      className={`h-full transition-all ${isElite ? 'bg-purple-500' : 'bg-brand-primary'}`}
                       style={{ width: `${Math.min(progress, 100)}%` }}
                     />
                   </div>
@@ -154,7 +154,7 @@ export default function HomePage() {
                   <button 
                     disabled={isLocked}
                     className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg flex items-center justify-center gap-2
-                      ${isLocked ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-slate-800 group-hover:bg-amber-500 group-hover:text-slate-950 text-white cursor-pointer'}
+                      ${isLocked ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-slate-800 group-hover:bg-brand-primary group-hover:text-slate-950 text-white cursor-pointer'}
                     `}
                   >
                     {isLocked ? (
@@ -167,6 +167,20 @@ export default function HomePage() {
               </div>
             );
           })}
+        </div>
+
+        {/* Store Placeholder */}
+        <div className="mt-12 p-12 bg-slate-900/30 border-2 border-dashed border-slate-800 rounded-3xl text-center group hover:border-brand-primary/30 transition-colors">
+          <div className="bg-slate-900 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-800 group-hover:scale-110 transition-transform">
+            <Coins className="text-brand-primary w-8 h-8" />
+          </div>
+          <h3 className="text-2xl font-bold text-white mb-2">Loja de Itens</h3>
+          <p className="text-slate-500 max-w-md mx-auto">
+            Em breve você poderá trocar seu ouro acumulado por cosméticos e itens de suporte para suas jornadas.
+          </p>
+          <div className="mt-6 inline-flex items-center gap-2 px-4 py-1.5 bg-slate-800/50 rounded-full text-xs font-bold text-slate-400 uppercase tracking-widest border border-slate-700">
+            Disponível em breve!
+          </div>
         </div>
 
         {/* Stats & History Shortcut */}

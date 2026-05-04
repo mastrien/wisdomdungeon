@@ -121,7 +121,7 @@ export default function ProfilePage() {
   if (loading || authLoading) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white gap-4">
-        <Loader2 className="w-10 h-10 animate-spin text-amber-500" />
+        <Loader2 className="w-10 h-10 animate-spin text-brand-primary" />
         <p className="text-slate-400 font-medium">Consultando oráculos...</p>
       </div>
     );
@@ -152,7 +152,7 @@ export default function ProfilePage() {
       
       <main className="max-w-4xl mx-auto px-4 py-12">
         {/* Cover / Backdrop (Placeholder) */}
-        <div className="h-48 bg-gradient-to-r from-amber-500/20 to-slate-900 rounded-3xl border border-slate-800 mb-[-4rem] relative z-0 overflow-hidden">
+        <div className="h-48 bg-gradient-to-r from-brand-primary/20 to-slate-900 rounded-3xl border border-slate-800 mb-[-4rem] relative z-0 overflow-hidden">
           <div className="absolute inset-0 opacity-20 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
         </div>
 
@@ -161,7 +161,7 @@ export default function ProfilePage() {
             <div className="flex flex-col md:flex-row items-center md:items-end gap-6">
               {/* Avatar Placeholder */}
               <div className="w-32 h-32 rounded-3xl bg-slate-900 border-4 border-slate-950 flex items-center justify-center shadow-2xl overflow-hidden ring-1 ring-slate-800">
-                <div className="w-full h-full flex items-center justify-center bg-slate-800 text-4xl font-black text-amber-500">
+                <div className="w-full h-full flex items-center justify-center bg-slate-800 text-4xl font-black text-brand-primary">
                   {profileData.user.username[0].toUpperCase()}
                 </div>
               </div>
@@ -170,7 +170,7 @@ export default function ProfilePage() {
                 <div className="flex flex-col md:flex-row items-center gap-4 mb-2">
                   <h1 className="text-4xl font-extrabold text-white flex items-center gap-3">
                     {profileData.user.username}
-                    <span className="text-xs uppercase tracking-[0.2em] px-2 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-md">
+                    <span className="text-xs uppercase tracking-[0.2em] px-2 py-1 bg-brand-primary/10 border border-brand-primary/20 text-brand-primary rounded-md">
                       LVL {profileData.level}
                     </span>
                   </h1>
@@ -182,7 +182,7 @@ export default function ProfilePage() {
                       className={`px-6 py-1.5 rounded-full font-bold text-sm transition-all border ${
                         profileData.is_following 
                         ? "bg-slate-800 text-slate-300 border-slate-700 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/50" 
-                        : "bg-amber-500 text-slate-950 border-amber-600 hover:bg-amber-400"
+                        : "bg-brand-primary text-slate-950 border-brand-primary/30 hover:bg-brand-hover"
                       } disabled:opacity-50`}
                     >
                       {followLoading ? (
@@ -238,7 +238,7 @@ export default function ProfilePage() {
                     type="text"
                     value={editUsername}
                     onChange={(e) => setEditUsername(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 transition-colors"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand-primary transition-colors"
                   />
                 </div>
                 <div>
@@ -247,7 +247,7 @@ export default function ProfilePage() {
                     value={editBio}
                     onChange={(e) => setEditBio(e.target.value)}
                     rows={4}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 transition-colors resize-none"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand-primary transition-colors resize-none"
                     placeholder="Conte sua história..."
                   />
                 </div>
@@ -262,7 +262,7 @@ export default function ProfilePage() {
                   <button 
                     type="submit"
                     disabled={editLoading}
-                    className="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="flex-1 bg-brand-primary hover:bg-brand-hover text-slate-950 font-bold py-3 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {editLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                     Salvar Mudanças
@@ -275,19 +275,19 @@ export default function ProfilePage() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-          <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-3xl backdrop-blur-sm group hover:border-amber-500/30 transition-colors">
-            <Trophy className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 transition-transform" />
+          <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-3xl backdrop-blur-sm group hover:border-brand-primary/30 transition-colors">
+            <Trophy className="w-8 h-8 text-brand-primary mb-4 group-hover:scale-110 transition-transform" />
             <div className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Experiência Total</div>
             <div className="text-3xl font-black text-white">{profileData.xp} XP</div>
           </div>
           
-          <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-3xl backdrop-blur-sm group hover:border-amber-500/30 transition-colors">
+          <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-3xl backdrop-blur-sm group hover:border-brand-primary/30 transition-colors">
             <Coins className="w-8 h-8 text-yellow-500 mb-4 group-hover:scale-110 transition-transform" />
             <div className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Ouro Acumulado</div>
             <div className="text-3xl font-black text-white">{profileData.gold}</div>
           </div>
 
-          <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-3xl backdrop-blur-sm group hover:border-amber-500/30 transition-colors">
+          <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-3xl backdrop-blur-sm group hover:border-brand-primary/30 transition-colors">
             <Calendar className="w-8 h-8 text-blue-500 mb-4 group-hover:scale-110 transition-transform" />
             <div className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Membro Desde</div>
             <div className="text-3xl font-black text-white">MAI 2026</div>

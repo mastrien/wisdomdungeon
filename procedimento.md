@@ -6,4 +6,6 @@ Para cada nova funcionalidade do sistema, implementar ANTES um teste unitário q
 
 Ao longo do processo, documente cada etapa desse ciclo no arquivo `log.md` na raíz do projeto.
 
+**Regra de Commits:** Cada pequena alteração concluída e validada (ex: um modelo atualizado, um componente refatorado, um teste passando) deve ser seguida de um **commit** no repositório local. Não realize o push automático, apenas o commit para manter um histórico granular.
+
 **Regra Importante do Log:** Jamais apague ciclos anteriores para escrever um novo. Os ciclos devem ser APENAS adicionados (append) ao documento, mantendo o histórico completo de desenvolvimento. A única edição aceitável em ciclos passados é a atualização de checklists para marcar tarefas concluídas.

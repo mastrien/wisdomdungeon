@@ -89,7 +89,7 @@ export default function HistoryPage() {
   if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white gap-4">
-        <Loader2 className="w-10 h-10 animate-spin text-amber-500" />
+        <Loader2 className="w-10 h-10 animate-spin text-brand-primary" />
         <p className="text-slate-400 font-medium">Recuperando memórias...</p>
       </div>
     );
@@ -101,7 +101,7 @@ export default function HistoryPage() {
       <div className="max-w-5xl mx-auto p-4 md:p-8">
         <div className="flex items-center gap-4 mb-12">
           <div className="bg-slate-900 p-3 rounded-2xl border border-slate-800">
-            <Clock className="w-8 h-8 text-amber-500" />
+            <Clock className="w-8 h-8 text-brand-primary" />
           </div>
           <div>
             <h1 className="text-3xl font-bold text-white">Salas de Treinamento</h1>
@@ -112,9 +112,9 @@ export default function HistoryPage() {
         {/* Mastery Stats Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
           {masteryStats.map((stat) => (
-            <div key={stat.topic_id} className="bg-slate-900 border border-slate-800 p-6 rounded-3xl relative overflow-hidden group hover:border-amber-500/30 transition-colors">
+            <div key={stat.topic_id} className="bg-slate-900 border border-slate-800 p-6 rounded-3xl relative overflow-hidden group hover:border-brand-primary/30 transition-colors">
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <Sword className="w-16 h-16 text-amber-500 rotate-12" />
+                <Sword className="w-16 h-16 text-brand-primary rotate-12" />
               </div>
               <h3 className="text-lg font-bold text-white mb-4">{stat.topic}</h3>
               <div className="space-y-4">
@@ -130,7 +130,7 @@ export default function HistoryPage() {
                     <CheckCircle2 className="w-4 h-4" />
                     <span>Taxa de Acerto</span>
                   </div>
-                  <span className={`font-bold ${stat.success_rate >= 70 ? 'text-green-500' : 'text-amber-500'}`}>
+                  <span className={`font-bold ${stat.success_rate >= 70 ? 'text-green-500' : 'text-brand-primary'}`}>
                     {stat.success_rate}%
                   </span>
                 </div>
@@ -139,12 +139,12 @@ export default function HistoryPage() {
                     <Trophy className="w-4 h-4" />
                     <span>Maestria</span>
                   </div>
-                  <span className="text-amber-500 font-black">{stat.mastery} XP</span>
+                  <span className="text-brand-primary font-black">{stat.mastery} XP</span>
                 </div>
                 {/* Progress Bar */}
                 <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-amber-500 transition-all duration-1000" 
+                    className="h-full bg-brand-primary transition-all duration-1000" 
                     style={{ width: `${stat.success_rate}%` }}
                   />
                 </div>

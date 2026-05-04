@@ -210,3 +210,20 @@
 - **Ação:** Fase 4 - HUD v2.
 - **Teste:** Atualizar `DungeonPage.test.tsx`. [CONCLUÍDO]
 - **Implementação:** Refatorar `DungeonPage` com Timer, Combo e Progresso. [CONCLUÍDO]
+
+**Ciclo [04/05/2026 10:00]:**
+- **Ação:** Planejamento das novas mecânicas de engajamento e customização.
+- **Documentação:** Criado plano de implementação detalhado em `plano_engajamento2.md`.
+- **Escopo:** 
+    - Mecânica de Vidas (HP) e Pulo de Questão.
+    - Tematização modular (CSS Variables).
+    - Refatoração do Header (Menu de Opções).
+    - Placeholder da Loja e Página de Configurações.
+
+**Ciclo [04/05/2026 10:30]:**
+- **Fase 1 (Backend):** Implementação da Mecânica de Risco e Vidas.
+- **Teste:** Criado `core/tests/test_dungeon_risk.py` validando perda de HP, avanço forçado de questão e penalidade de recompensa. [CONCLUÍDO]
+- **Implementação:**
+    - [x] Atualizado modelo `Profile` com `hp`, `max_hp`, `theme_color` e `font_size`.
+    - [x] Refatorado `AnswerService.submit_answer` para aplicar as novas regras.
+- **Resultado:** Testes passando e migrações aplicadas.

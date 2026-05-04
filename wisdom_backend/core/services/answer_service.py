@@ -7,9 +7,11 @@ class AnswerService:
 
     def submit_answer(self, profile, topic, question_hash, selected_answer, correct_answer=None, time_spent_ms=0, dungeon_type='normal'):
         # 1. Get FixedQuestion and validate
+        actual_correct_answer = correct_answer
         try:
             fixed_q = FixedQuestion.objects.get(hash=question_hash)
-            is_correct = selected_answer == fixed_q.resposta_correta
+            actual_correct_answer = fixed_q.resposta_correta
+            is_correct = selected_answer == actual_correct_answer
             
             fixed_q.total_attempts += 1
             if is_correct:
@@ -22,8 +24,8 @@ class AnswerService:
             fixed_q.save()
         except FixedQuestion.DoesNotExist:
             fixed_q = None
-            # Fallback to procedural validation if correct_answer was provided
-            is_correct = selected_answer == correct_answer
+            # Fallback to procedural validation
+            is_correct = selected_answer == actual_correct_answer
 
         # 2. Save history
         QuestionHistory.objects.create(
@@ -35,7 +37,12 @@ class AnswerService:
             time_spent_ms=time_spent_ms
         )
         
-        # 3. Update UserDungeonProgress
+        # 3. Handle HP Loss
+        if not is_correct:
+            profile.hp = max(0, profile.hp - 1)
+            profile.save()
+        
+        # 4. Update UserDungeonProgress (always advance even on error)
         progress = UserDungeonProgress.objects.filter(
             profile=profile, 
             dungeon__topic=topic, 
@@ -46,7 +53,7 @@ class AnswerService:
         room_completed = False
         dungeon_completed = False
 
-        if progress and is_correct:
+        if progress:
             progress.current_question_index += 1
             
             # Check if room completed
@@ -66,17 +73,23 @@ class AnswerService:
                     else:
                         profile.total_normal_dungeons_completed += 1
                 
-                # Update Streak on room completion
-                self._update_streak(profile)
+                # Update Streak on room completion (only if they are actually progressing)
+                if is_correct or room_completed or dungeon_completed:
+                    self._update_streak(profile)
                 
             progress.save()
 
-        # 4. Rewards with Item Modifiers
+        # 5. Rewards with Item Modifiers and HP Penalty
         xp_gained = 0
         gold_gained = 0
         if is_correct:
             xp_gained = self.XP_REWARD
             gold_gained = self.GOLD_REWARD
+            
+            # Apply HP Penalty (25% if at 0 HP)
+            if profile.hp <= 0:
+                xp_gained = int(xp_gained * 0.25)
+                gold_gained = int(gold_gained * 0.25)
             
             # Apply Item Modifiers
             if profile.equipped_item_id:
@@ -95,6 +108,7 @@ class AnswerService:
             
         return {
             "is_correct": is_correct,
+            "correct_answer": actual_correct_answer,
             "xp_gained": xp_gained,
             "gold_gained": gold_gained,
             "room_completed": room_completed,

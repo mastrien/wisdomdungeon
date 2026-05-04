@@ -18,7 +18,8 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = [
             'user', 'xp', 'gold', 'level', 'firebase_uid', 'bio', 
             'followers_count', 'following_count', 'is_following',
-            'streak_count', 'total_normal_dungeons_completed', 'total_elite_dungeons_completed'
+            'streak_count', 'total_normal_dungeons_completed', 'total_elite_dungeons_completed',
+            'hp', 'max_hp', 'theme_color', 'font_size'
         ]
 
     def get_is_following(self, obj):

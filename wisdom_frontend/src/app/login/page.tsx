@@ -52,7 +52,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl">
         <div className="flex flex-col items-center mb-8">
-          <div className="bg-amber-500 p-3 rounded-xl mb-4 shadow-lg shadow-amber-500/20">
+          <div className="bg-brand-primary p-3 rounded-xl mb-4 shadow-lg shadow-brand-primary/20">
             <Sword className="w-8 h-8 text-slate-950" />
           </div>
           <h1 className="text-3xl font-bold text-white tracking-tight">Wisdom Dungeon</h1>
@@ -70,7 +70,7 @@ export default function LoginPage() {
                 type="email" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 text-white pl-11 pr-4 py-2.5 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none transition-all"
+                className="w-full bg-slate-950 border border-slate-800 text-white pl-11 pr-4 py-2.5 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent outline-none transition-all"
                 placeholder="seu@email.com"
                 required
               />
@@ -85,7 +85,7 @@ export default function LoginPage() {
                 type="password" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 text-white pl-11 pr-4 py-2.5 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none transition-all"
+                className="w-full bg-slate-950 border border-slate-800 text-white pl-11 pr-4 py-2.5 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent outline-none transition-all"
                 placeholder="••••••••"
                 required
               />
@@ -101,7 +101,7 @@ export default function LoginPage() {
           <button 
             type="submit"
             disabled={loading}
-            className="w-full bg-amber-500 hover:bg-amber-400 disabled:bg-amber-800 text-slate-950 font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-brand-primary hover:bg-brand-hover disabled:bg-slate-800 text-slate-950 font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
           >
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (isLogin ? "Entrar" : "Criar Conta")}
           </button>
@@ -131,7 +131,7 @@ export default function LoginPage() {
           {isLogin ? "Ainda não tem conta?" : "Já possui uma conta?"}
           <button 
             onClick={() => setIsLogin(!isLogin)}
-            className="text-amber-500 hover:text-amber-400 font-bold ml-1 outline-none"
+            className="text-brand-primary hover:text-brand-hover font-bold ml-1 outline-none"
           >
             {isLogin ? "Cadastre-se" : "Faça Login"}
           </button>

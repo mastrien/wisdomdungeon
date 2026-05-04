@@ -16,7 +16,25 @@ interface Profile {
   streak_count: number;
   total_normal_dungeons_completed: number;
   total_elite_dungeons_completed: number;
+  hp: number;
+  max_hp: number;
+  theme_color: string;
+  font_size: string;
 }
+
+const colorMap = {
+  amber: { primary: "#f59e0b", hover: "#d97706", glow: "rgba(245, 158, 11, 0.5)" },
+  emerald: { primary: "#10b981", hover: "#059669", glow: "rgba(16, 185, 129, 0.5)" },
+  rose: { primary: "#f43f5e", hover: "#e11d48", glow: "rgba(244, 63, 94, 0.5)" },
+  blue: { primary: "#3b82f6", hover: "#2563eb", glow: "rgba(59, 130, 246, 0.5)" },
+  purple: { primary: "#a855f7", hover: "#9333ea", glow: "rgba(168, 85, 247, 0.5)" },
+};
+
+const fontSizeMap = {
+  small: "14px",
+  medium: "16px",
+  large: "18px",
+};
 
 interface AuthContextType {
   user: User | null;
@@ -64,6 +82,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (profile) {
+      const colors = colorMap[profile.theme_color as keyof typeof colorMap] || colorMap.amber;
+      const fontSize = fontSizeMap[profile.font_size as keyof typeof fontSizeMap] || fontSizeMap.medium;
+
+      document.documentElement.style.setProperty("--brand-primary", colors.primary);
+      document.documentElement.style.setProperty("--brand-primary-hover", colors.hover);
+      document.documentElement.style.setProperty("--brand-primary-glow", colors.glow);
+      document.documentElement.style.setProperty("--font-size-base", fontSize);
+    }
+  }, [profile]);
 
   return (
     <AuthContext.Provider value={{ user, profile, loading, refreshProfile }}>
