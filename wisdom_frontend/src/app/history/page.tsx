@@ -90,7 +90,7 @@ export default function HistoryPage() {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center text-foreground gap-4">
         <Loader2 className="w-10 h-10 animate-spin text-brand-primary" />
-        <p className="text-slate-500 font-medium">Recuperando memórias...</p>
+        <p className="text-muted font-medium">Recuperando memórias...</p>
       </div>
     );
   }
@@ -105,7 +105,7 @@ export default function HistoryPage() {
           </div>
           <div>
             <h1 className="text-3xl font-bold text-foreground">Salas de Treinamento</h1>
-            <p className="text-slate-500">Analise seu progresso e revise sua jornada nas masmorras.</p>
+            <p className="text-muted">Analise seu progresso e revise sua jornada nas masmorras.</p>
           </div>
         </div>
 
@@ -119,14 +119,14 @@ export default function HistoryPage() {
               <h3 className="text-lg font-bold text-foreground mb-4">{stat.topic}</h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2 text-slate-500">
+                  <div className="flex items-center gap-2 text-muted">
                     <Target className="w-4 h-4" />
                     <span>Resolvidos</span>
                   </div>
                   <span className="text-foreground font-bold">{stat.total_solved}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2 text-slate-500">
+                  <div className="flex items-center gap-2 text-muted">
                     <CheckCircle2 className="w-4 h-4" />
                     <span>Taxa de Acerto</span>
                   </div>
@@ -135,7 +135,7 @@ export default function HistoryPage() {
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2 text-slate-500">
+                  <div className="flex items-center gap-2 text-muted">
                     <Trophy className="w-4 h-4" />
                     <span>Maestria</span>
                   </div>
@@ -155,14 +155,14 @@ export default function HistoryPage() {
 
         {/* General History Section */}
         <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
-          <Clock className="w-6 h-6 text-slate-400 dark:text-slate-500" />
+          <Clock className="w-6 h-6 text-dim dark:text-muted" />
           Histórico Geral
         </h2>
         
         <div className="space-y-4">
           {history.length === 0 ? (
             <div className="text-center py-20 bg-card/50 border border-dashed border-border-main rounded-3xl">
-              <p className="text-slate-500 italic">Nenhum registro encontrado. Comece a explorar as dungeons!</p>
+              <p className="text-muted italic">Nenhum registro encontrado. Comece a explorar as dungeons!</p>
             </div>
           ) : (
             <>
@@ -173,10 +173,10 @@ export default function HistoryPage() {
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wider rounded border border-border-main">
+                      <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-muted dark:text-dim text-[10px] font-bold uppercase tracking-wider rounded border border-border-main">
                         {entry.topic.replace("_", " ")}
                       </span>
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-muted">
                         {new Date(entry.created_at).toLocaleDateString('pt-BR', {
                           day: '2-digit',
                           month: '2-digit',

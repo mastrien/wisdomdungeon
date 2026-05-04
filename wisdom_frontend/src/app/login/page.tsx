@@ -56,16 +56,16 @@ export default function LoginPage() {
             <Sword className="w-8 h-8 text-slate-950" />
           </div>
           <h1 className="text-3xl font-bold text-foreground tracking-tight">Wisdom Dungeon</h1>
-          <p className="text-slate-500 mt-2">
+          <p className="text-muted mt-2">
             {isLogin ? "Bem-vindo de volta, Herói!" : "Comece sua jornada acadêmica"}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="text-sm font-medium text-slate-500 block mb-1.5">E-mail</label>
+            <label className="text-sm font-medium text-muted block mb-1.5">E-mail</label>
             <div className="relative">
-              <Mail className="w-5 h-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Mail className="w-5 h-5 text-dim absolute left-3 top-1/2 -translate-y-1/2" />
               <input 
                 type="email" 
                 value={email}
@@ -78,9 +78,9 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-slate-500 block mb-1.5">Senha</label>
+            <label className="text-sm font-medium text-muted block mb-1.5">Senha</label>
             <div className="relative">
-              <Lock className="w-5 h-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Lock className="w-5 h-5 text-dim absolute left-3 top-1/2 -translate-y-1/2" />
               <input 
                 type="password" 
                 value={password}
@@ -101,7 +101,7 @@ export default function LoginPage() {
           <button 
             type="submit"
             disabled={loading}
-            className="w-full bg-brand-primary hover:bg-brand-hover disabled:bg-slate-100 dark:disabled:bg-slate-800 disabled:text-slate-400 text-slate-950 font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-brand-primary hover:bg-brand-hover disabled:bg-slate-100 dark:disabled:bg-slate-800 disabled:text-dim text-slate-950 font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
           >
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (isLogin ? "Entrar" : "Criar Conta")}
           </button>
@@ -110,7 +110,7 @@ export default function LoginPage() {
         <div className="mt-6">
           <div className="relative flex items-center justify-center mb-6">
             <div className="border-t border-border-main w-full"></div>
-            <span className="bg-card px-3 text-xs text-slate-500 absolute uppercase tracking-widest">Ou continue com</span>
+            <span className="bg-card px-3 text-xs text-muted absolute uppercase tracking-widest">Ou continue com</span>
           </div>
 
           <button 
@@ -127,7 +127,7 @@ export default function LoginPage() {
           </button>
         </div>
 
-        <p className="text-center text-slate-500 mt-8 text-sm">
+        <p className="text-center text-muted mt-8 text-sm">
           {isLogin ? "Ainda não tem conta?" : "Já possui uma conta?"}
           <button 
             onClick={() => setIsLogin(!isLogin)}

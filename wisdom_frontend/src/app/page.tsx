@@ -62,7 +62,7 @@ export default function HomePage() {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center text-foreground gap-4">
         <Loader2 className="w-10 h-10 animate-spin text-brand-primary" />
-        <p className="text-slate-500 font-medium">Preparando o mapa...</p>
+        <p className="text-muted font-medium">Preparando o mapa...</p>
       </div>
     );
   }
@@ -77,7 +77,7 @@ export default function HomePage() {
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
           <div>
             <h2 className="text-4xl font-extrabold text-foreground mb-2">Mundo da Matemática</h2>
-            <p className="text-slate-500 text-lg">Selecione uma masmorra e supere os desafios semanais.</p>
+            <p className="text-muted text-lg">Selecione uma masmorra e supere os desafios semanais.</p>
           </div>
           
           {profile && (
@@ -85,21 +85,21 @@ export default function HomePage() {
               <div className="bg-card border border-border-main px-6 py-3 rounded-2xl flex items-center gap-3">
                 <Flame className="text-orange-500 w-6 h-6" />
                 <div>
-                  <div className="text-[10px] text-slate-500 font-bold uppercase">Ofensiva</div>
+                  <div className="text-[10px] text-muted font-bold uppercase">Ofensiva</div>
                   <div className="text-xl font-black text-foreground">{profile.streak_count} Dias</div>
                 </div>
               </div>
               <div className="bg-card border border-border-main px-6 py-3 rounded-2xl flex items-center gap-3">
                 <Trophy className="text-brand-primary w-6 h-6" />
                 <div>
-                  <div className="text-[10px] text-slate-500 font-bold uppercase">Normais</div>
+                  <div className="text-[10px] text-muted font-bold uppercase">Normais</div>
                   <div className="text-xl font-black text-foreground">{profile.total_normal_dungeons_completed}</div>
                 </div>
               </div>
               <div className="bg-card border border-border-main px-6 py-3 rounded-2xl flex items-center gap-3">
                 <ShieldAlert className="text-purple-500 w-6 h-6" />
                 <div>
-                  <div className="text-[10px] text-slate-500 font-bold uppercase">Elite</div>
+                  <div className="text-[10px] text-muted font-bold uppercase">Elite</div>
                   <div className="text-xl font-black text-foreground">{profile.total_elite_dungeons_completed}</div>
                 </div>
               </div>
@@ -138,7 +138,7 @@ export default function HomePage() {
 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
-                    <div className="flex items-center gap-1.5 text-slate-500">
+                    <div className="flex items-center gap-1.5 text-muted">
                       <Target className="w-3 h-3" />
                       <span>Progresso: {progress}/100</span>
                     </div>
@@ -160,7 +160,7 @@ export default function HomePage() {
                   <button 
                     disabled={isLocked}
                     className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg flex items-center justify-center gap-2
-                      ${isLocked ? 'bg-slate-200 dark:bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-slate-200 dark:bg-slate-800 group-hover:bg-brand-primary group-hover:text-slate-950 text-foreground dark:text-white cursor-pointer'}
+                      ${isLocked ? 'bg-slate-200 dark:bg-slate-800 text-muted cursor-not-allowed' : 'bg-slate-200 dark:bg-slate-800 group-hover:bg-brand-primary group-hover:text-slate-950 text-foreground dark:text-white cursor-pointer'}
                     `}
                   >
                     {isLocked ? (
@@ -181,10 +181,10 @@ export default function HomePage() {
             <Coins className="text-brand-primary w-8 h-8" />
           </div>
           <h3 className="text-2xl font-bold text-foreground mb-2">Loja de Itens</h3>
-          <p className="text-slate-500 max-w-md mx-auto">
+          <p className="text-muted max-w-md mx-auto">
             Em breve você poderá trocar seu ouro acumulado por cosméticos e itens de suporte para suas jornadas.
           </p>
-          <div className="mt-6 inline-flex items-center gap-2 px-4 py-1.5 bg-slate-100 dark:bg-slate-800/50 rounded-full text-xs font-bold text-slate-400 uppercase tracking-widest border border-border-main">
+          <div className="mt-6 inline-flex items-center gap-2 px-4 py-1.5 bg-slate-100 dark:bg-slate-800/50 rounded-full text-xs font-bold text-dim uppercase tracking-widest border border-border-main">
             Disponível em breve!
           </div>
         </div>
@@ -193,7 +193,7 @@ export default function HomePage() {
         <div className="mt-12 p-8 bg-card border border-border-main rounded-3xl flex flex-col md:flex-row items-center justify-between gap-8">
           <div>
             <h3 className="text-2xl font-bold text-foreground mb-2">Seu Histórico</h3>
-            <p className="text-slate-400">
+            <p className="text-dim">
               {totalSolvedToday > 0 
                 ? `Você já resolveu ${totalSolvedToday} desafios hoje. Continue assim!` 
                 : "Aventure-se em uma masmorra para começar sua jornada hoje."}

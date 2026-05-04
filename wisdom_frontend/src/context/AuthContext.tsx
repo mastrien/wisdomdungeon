@@ -119,12 +119,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const colors = colorMap[profile.theme_color as keyof typeof colorMap] || colorMap.amber;
       const fontSize = fontSizeMap[profile.font_size as keyof typeof fontSizeMap] || fontSizeMap.medium;
 
-      document.documentElement.style.setProperty("--brand-primary", colors.primary);
-      document.documentElement.style.setProperty("--brand-primary-hover", colors.hover);
+      // In light mode, we use the 'hover' color (darker) as the primary for better contrast
+      const primary = isDarkMode ? colors.primary : colors.hover;
+      const hover = isDarkMode ? colors.hover : colors.primary; // Or something else
+
+      document.documentElement.style.setProperty("--brand-primary", primary);
+      document.documentElement.style.setProperty("--brand-primary-hover", hover);
       document.documentElement.style.setProperty("--brand-primary-glow", colors.glow);
       document.documentElement.style.setProperty("--font-size-base", fontSize);
     }
-  }, [profile]);
+  }, [profile, isDarkMode]);
 
   return (
     <AuthContext.Provider value={{ user, profile, loading, refreshProfile, isDarkMode, toggleDarkMode }}>

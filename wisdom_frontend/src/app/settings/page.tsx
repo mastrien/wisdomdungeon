@@ -60,14 +60,14 @@ export default function SettingsPage() {
       <main className="max-w-3xl mx-auto px-4 py-12">
         <button 
           onClick={() => router.push("/")}
-          className="flex items-center gap-2 text-slate-500 hover:text-foreground transition-colors mb-8 group"
+          className="flex items-center gap-2 text-muted hover:text-foreground transition-colors mb-8 group"
         >
           <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
           Voltar ao Mapa
         </button>
 
         <h1 className="text-3xl font-bold text-foreground mb-2">Configurações</h1>
-        <p className="text-slate-500 mb-12">Personalize sua experiência no Wisdom Dungeon.</p>
+        <p className="text-muted mb-12">Personalize sua experiência no Wisdom Dungeon.</p>
 
         <section className="space-y-12">
           {/* Theme Color */}
@@ -106,7 +106,7 @@ export default function SettingsPage() {
                     </div>
                     
                     {isLocked ? (
-                      <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500 uppercase">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-muted uppercase">
                         <Lock className="w-3.5 h-3.5" />
                         Nível {theme.level}
                       </div>
@@ -141,7 +141,7 @@ export default function SettingsPage() {
                       px-8 py-4 rounded-2xl border-2 font-bold transition-all
                       ${isSelected 
                         ? "border-brand-primary bg-brand-primary/5 text-brand-primary" 
-                        : "border-border-main bg-card hover:border-slate-300 dark:hover:border-slate-700 text-slate-500"}
+                        : "border-border-main bg-card hover:border-slate-300 dark:hover:border-slate-700 text-muted"}
                     `}
                   >
                     {size.name}
@@ -153,7 +153,7 @@ export default function SettingsPage() {
         </section>
 
         {updating && (
-          <div className="mt-8 flex items-center gap-2 text-slate-500 text-sm animate-pulse">
+          <div className="mt-8 flex items-center gap-2 text-muted text-sm animate-pulse">
             <Loader2 className="w-4 h-4 animate-spin" />
             Salvando alterações...
           </div>

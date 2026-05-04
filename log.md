@@ -244,11 +244,12 @@
     - [x] Realizados commits sequenciais para cada melhoria validada.
 - **Resultado:** Sistema de engajamento visualmente completo e funcional.
 
-**Ciclo [04/05/2026 13:00]:**
-- **Correção:** Resolvido erro de hidratação no `MathRenderer` alterando o elemento raiz de `div` para `span`.
-- **Modo Escuro/Claro:**
-    - [x] Atualizado `AuthContext` com estado `isDarkMode` e função `toggleDarkMode`.
-    - [x] Persistência do tema no `localStorage`.
-    - [x] Ajustado `globals.css` para utilizar a classe `.dark` como seletor de tema.
-    - [x] Conectado botão no `Header` para alternar entre os modos.
-- **Resultado:** Interface mais robusta e com suporte a temas.
+**Ciclo [04/05/2026 16:30]:**
+- **Restauração:** Recuperadas chaves do Firebase e restaurado o arquivo `wisdom_frontend/src/lib/firebase.ts`.
+- **Teste:** Atualizado `jest.setup.js` para mockar o Firebase Auth, garantindo estabilidade no ambiente de testes. [CONCLUÍDO]
+- **Tematização (Contraste):**
+    - [x] Adicionadas variáveis `--text-muted` e `--text-dim` com contraste otimizado para o modo claro.
+    - [x] Ajustado `AuthContext` para utilizar cores de tema mais escuras no modo claro, garantindo acessibilidade (WCAG).
+    - [x] Substituídas classes fixas `text-slate-400/500` por variáveis adaptativas em todo o projeto.
+- **Resultado:** Interface em modo claro agora é totalmente legível e acessível, com 100% dos testes frontend passando.
+

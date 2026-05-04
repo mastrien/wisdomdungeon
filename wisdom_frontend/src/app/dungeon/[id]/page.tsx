@@ -149,7 +149,7 @@ export default function DungeonPage() {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center text-foreground gap-4">
         <Loader2 className="w-10 h-10 animate-spin text-brand-primary" />
-        <p className="text-slate-500 font-medium">Preparando desafio...</p>
+        <p className="text-muted font-medium">Preparando desafio...</p>
       </div>
     );
   }
@@ -161,7 +161,7 @@ export default function DungeonPage() {
         <div className="max-w-3xl mx-auto p-8 text-center mt-20">
           <Trophy className="w-20 h-20 text-brand-primary mx-auto mb-6" />
           <h1 className="text-4xl font-bold mb-4">Masmorra Concluída!</h1>
-          <p className="text-slate-500 mb-8">Você superou todos os desafios desta semana. Retorne em breve para novas aventuras!</p>
+          <p className="text-muted mb-8">Você superou todos os desafios desta semana. Retorne em breve para novas aventuras!</p>
           <button onClick={() => router.push("/")} className="bg-brand-primary text-slate-950 px-8 py-3 rounded-xl font-bold">Voltar ao Mapa</button>
         </div>
       </div>
@@ -180,7 +180,7 @@ export default function DungeonPage() {
         <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
           <button 
             onClick={handleBack}
-            className="flex items-center gap-2 text-slate-500 hover:text-foreground transition-colors group"
+            className="flex items-center gap-2 text-muted hover:text-foreground transition-colors group"
           >
             <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
             Mapa
@@ -198,7 +198,7 @@ export default function DungeonPage() {
               </div>
             </div>
             <div className="flex items-center gap-2 bg-card border border-border-main px-4 py-2 rounded-full shadow-lg">
-              <Flame className={`w-5 h-5 ${combo > 0 ? "text-orange-500 animate-pulse" : "text-slate-400 dark:text-slate-600"}`} />
+              <Flame className={`w-5 h-5 ${combo > 0 ? "text-orange-500 animate-pulse" : "text-dim dark:text-slate-600"}`} />
               <span className="font-bold text-sm">Combo: {combo}</span>
             </div>
             <div className="flex items-center gap-2 bg-card border border-border-main px-4 py-2 rounded-full shadow-lg">
@@ -222,7 +222,7 @@ export default function DungeonPage() {
               <span className="px-3 py-1 bg-brand-primary/10 border border-brand-primary/20 text-brand-primary text-xs font-bold uppercase tracking-widest rounded-full">
                 {state?.current_dungeon?.title}
               </span>
-              <span className="text-slate-500 font-bold text-sm">
+              <span className="text-muted font-bold text-sm">
                 Sala {state?.room.order}/10
               </span>
             </div>
@@ -244,7 +244,7 @@ export default function DungeonPage() {
                     disabled={!!result}
                     className={`
                       w-full text-left p-5 rounded-xl border-2 transition-all flex items-center justify-between group
-                      ${isSelected ? "border-brand-primary bg-brand-primary/5 text-foreground" : "border-border-main bg-background hover:border-slate-400 dark:hover:border-slate-600 text-slate-500 dark:text-slate-400"}
+                      ${isSelected ? "border-brand-primary bg-brand-primary/5 text-foreground" : "border-border-main bg-background hover:border-slate-400 dark:hover:border-slate-600 text-muted dark:text-dim"}
                       ${result && isCorrect ? "border-green-500 bg-green-500/10 text-foreground" : ""}
                       ${result && isWrong ? "border-red-500 bg-red-500/10 text-foreground" : ""}
                     `}
@@ -267,7 +267,7 @@ export default function DungeonPage() {
               <button
                 onClick={handleSubmit}
                 disabled={!selectedOption || submitting}
-                className="w-full bg-brand-primary hover:bg-brand-hover disabled:bg-slate-100 dark:disabled:bg-slate-800 disabled:text-slate-400 text-slate-950 font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
+                className="w-full bg-brand-primary hover:bg-brand-hover disabled:bg-slate-100 dark:disabled:bg-slate-800 disabled:text-dim text-slate-950 font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
               >
                 {submitting ? <Loader2 className="w-6 h-6 animate-spin" /> : (
                   <>
@@ -297,14 +297,14 @@ export default function DungeonPage() {
                   <div className="flex-1 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-border-main flex items-center gap-3">
                     <Trophy className="text-brand-primary" />
                     <div>
-                      <div className="text-xs text-slate-500 font-bold uppercase">XP</div>
+                      <div className="text-xs text-muted font-bold uppercase">XP</div>
                       <div className="text-xl font-bold text-foreground">+{result.xp}</div>
                     </div>
                   </div>
                   <div className="flex-1 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-border-main flex items-center gap-3">
                     <Coins className="text-yellow-500" />
                     <div>
-                      <div className="text-xs text-slate-500 font-bold uppercase">Ouro</div>
+                      <div className="text-xs text-muted font-bold uppercase">Ouro</div>
                       <div className="text-xl font-bold text-foreground">+{result.gold}</div>
                     </div>
                   </div>
@@ -331,16 +331,16 @@ export default function DungeonPage() {
         
         {/* Active Attributes (Phase 3 visual) */}
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 opacity-60 hover:opacity-100 transition-opacity">
-           <div className="text-xs font-bold text-slate-500 uppercase border-l-2 border-brand-primary pl-3">
+           <div className="text-xs font-bold text-muted uppercase border-l-2 border-brand-primary pl-3">
              XP por questão: <span className="text-foreground">10</span>
            </div>
-           <div className="text-xs font-bold text-slate-500 uppercase border-l-2 border-brand-primary pl-3">
+           <div className="text-xs font-bold text-muted uppercase border-l-2 border-brand-primary pl-3">
              XP por sala: <span className="text-foreground">100</span>
            </div>
-           <div className="text-xs font-bold text-slate-500 uppercase border-l-2 border-yellow-500 pl-3">
+           <div className="text-xs font-bold text-muted uppercase border-l-2 border-yellow-500 pl-3">
              Ouro por questão: <span className="text-foreground">5</span>
            </div>
-           <div className="text-xs font-bold text-slate-500 uppercase border-l-2 border-blue-500 pl-3">
+           <div className="text-xs font-bold text-muted uppercase border-l-2 border-blue-500 pl-3">
              Mult. XP: <span className="text-foreground">1.0x</span>
            </div>
         </div>

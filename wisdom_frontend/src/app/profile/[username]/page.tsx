@@ -122,7 +122,7 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center text-foreground gap-4">
         <Loader2 className="w-10 h-10 animate-spin text-brand-primary" />
-        <p className="text-slate-500 font-medium">Consultando oráculos...</p>
+        <p className="text-muted font-medium">Consultando oráculos...</p>
       </div>
     );
   }
@@ -134,7 +134,7 @@ export default function ProfilePage() {
         <div className="max-w-4xl mx-auto px-4 py-20 text-center">
           <Shield className="w-16 h-16 text-slate-300 dark:text-slate-800 mx-auto mb-6" />
           <h2 className="text-3xl font-bold text-foreground mb-4">{error || "Perfil não encontrado"}</h2>
-          <p className="text-slate-500 mb-8 text-lg">Parece que este aventureiro ainda não cruzou os portões desta dungeon.</p>
+          <p className="text-muted mb-8 text-lg">Parece que este aventureiro ainda não cruzou os portões desta dungeon.</p>
           <button 
             onClick={() => window.location.href = "/"}
             className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-foreground dark:text-white px-8 py-3 rounded-xl font-bold transition-all border border-border-main"
@@ -181,7 +181,7 @@ export default function ProfilePage() {
                       disabled={followLoading}
                       className={`px-6 py-1.5 rounded-full font-bold text-sm transition-all border ${
                         profileData.is_following 
-                        ? "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300 border-border-main hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/50" 
+                        ? "bg-slate-100 dark:bg-slate-800 text-muted dark:text-slate-300 border-border-main hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/50" 
                         : "bg-brand-primary text-slate-950 border-brand-primary/30 hover:bg-brand-hover"
                       } disabled:opacity-50`}
                     >
@@ -194,7 +194,7 @@ export default function ProfilePage() {
                   )}
                 </div>
 
-                <div className="flex items-center justify-center md:justify-start gap-6 text-sm font-medium text-slate-500 mb-3">
+                <div className="flex items-center justify-center md:justify-start gap-6 text-sm font-medium text-muted mb-3">
                   <div className="flex items-center gap-2">
                     <span className="text-foreground font-bold">{profileData.followers_count}</span>
                     Seguidores
@@ -205,7 +205,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                <p className="text-slate-500 font-medium flex items-center justify-center md:justify-start gap-2">
+                <p className="text-muted font-medium flex items-center justify-center md:justify-start gap-2">
                   <UserIcon className="w-4 h-4" />
                   {profileData.bio || "Este aventureiro ainda não escreveu sua lenda."}
                 </p>
@@ -233,7 +233,7 @@ export default function ProfilePage() {
               <h2 className="text-2xl font-bold text-foreground mb-6">Forjar Perfil</h2>
               <form onSubmit={handleUpdateProfile} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Username</label>
+                  <label className="block text-sm font-bold text-muted uppercase tracking-wider mb-2">Username</label>
                   <input 
                     type="text"
                     value={editUsername}
@@ -242,7 +242,7 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Bio</label>
+                  <label className="block text-sm font-bold text-muted uppercase tracking-wider mb-2">Bio</label>
                   <textarea 
                     value={editBio}
                     onChange={(e) => setEditBio(e.target.value)}
@@ -277,19 +277,19 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
           <div className="bg-card/50 border border-border-main p-8 rounded-3xl backdrop-blur-sm group hover:border-brand-primary/30 transition-colors">
             <Trophy className="w-8 h-8 text-brand-primary mb-4 group-hover:scale-110 transition-transform" />
-            <div className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Experiência Total</div>
+            <div className="text-xs text-muted font-bold uppercase tracking-wider mb-1">Experiência Total</div>
             <div className="text-3xl font-black text-foreground">{profileData.xp} XP</div>
           </div>
           
           <div className="bg-card/50 border border-border-main p-8 rounded-3xl backdrop-blur-sm group hover:border-brand-primary/30 transition-colors">
             <Coins className="w-8 h-8 text-yellow-500 mb-4 group-hover:scale-110 transition-transform" />
-            <div className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Ouro Acumulado</div>
+            <div className="text-xs text-muted font-bold uppercase tracking-wider mb-1">Ouro Acumulado</div>
             <div className="text-3xl font-black text-foreground">{profileData.gold}</div>
           </div>
 
           <div className="bg-card/50 border border-border-main p-8 rounded-3xl backdrop-blur-sm group hover:border-brand-primary/30 transition-colors">
             <Calendar className="w-8 h-8 text-blue-500 mb-4 group-hover:scale-110 transition-transform" />
-            <div className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Membro Desde</div>
+            <div className="text-xs text-muted font-bold uppercase tracking-wider mb-1">Membro Desde</div>
             <div className="text-3xl font-black text-foreground">MAI 2026</div>
           </div>
         </div>
@@ -303,7 +303,7 @@ export default function ProfilePage() {
               "Matador de Derivadas",
               "Mestre das Matrizes"
             ].map((achievement) => (
-              <div key={achievement} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-sm text-slate-500 dark:text-slate-400 font-medium border border-border-main">
+              <div key={achievement} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-sm text-muted dark:text-slate-400 font-medium border border-border-main">
                 {achievement}
               </div>
             ))}

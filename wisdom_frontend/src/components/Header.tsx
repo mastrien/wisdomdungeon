@@ -27,7 +27,7 @@ export default function Header() {
                   <span>Nível {profile.level}</span>
                 </div>
                 <div className="w-px h-4 bg-border-main"></div>
-                <div className="text-sm font-bold text-slate-600 dark:text-slate-300">{profile.xp} XP</div>
+                <div className="text-sm font-bold text-muted dark:text-slate-300">{profile.xp} XP</div>
                 <div className="w-px h-4 bg-border-main"></div>
                 <div className="flex items-center gap-1.5 text-sm font-bold text-brand-primary">
                   <Coins className="w-4 h-4" />
@@ -39,7 +39,7 @@ export default function Header() {
                 href={`/profile/${profile.user.username}`}
                 className="flex items-center gap-2 pl-2 pr-1 py-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors group"
               >
-                <span className="text-sm font-bold text-slate-600 dark:text-slate-300 group-hover:text-foreground hidden lg:block">
+                <span className="text-sm font-bold text-muted dark:text-slate-300 group-hover:text-foreground hidden lg:block">
                   {profile.user.username}
                 </span>
                 <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 border border-border-main flex items-center justify-center text-xs font-bold text-brand-primary overflow-hidden shadow-inner">
@@ -50,7 +50,7 @@ export default function Header() {
               <div className="relative">
                 <button 
                   onClick={() => setShowMenu(!showMenu)}
-                  className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-500 hover:text-foreground transition-colors"
+                  className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-dim hover:text-foreground transition-colors"
                   aria-label="Mais opções"
                 >
                   <MoreVertical className="w-5 h-5" />
@@ -65,14 +65,14 @@ export default function Header() {
                     <div className="absolute right-0 mt-2 w-48 bg-background border border-border-main rounded-xl shadow-2xl py-2 z-20 overflow-hidden">
                       <Link 
                         href="/settings"
-                        className="flex items-center gap-3 px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm text-slate-600 dark:text-slate-300 hover:text-foreground transition-colors"
+                        className="flex items-center gap-3 px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm text-muted dark:text-slate-300 hover:text-foreground transition-colors"
                         onClick={() => setShowMenu(false)}
                       >
                         <Settings className="w-4 h-4" />
                         Configurações
                       </Link>
                       <button 
-                        className="w-full flex items-center gap-3 px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm text-slate-600 dark:text-slate-300 hover:text-foreground transition-colors"
+                        className="w-full flex items-center gap-3 px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm text-muted dark:text-slate-300 hover:text-foreground transition-colors"
                         onClick={() => {
                           toggleDarkMode();
                           setShowMenu(false);
