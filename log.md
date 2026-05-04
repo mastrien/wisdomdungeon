@@ -8,10 +8,10 @@
 - Procedimento de desenvolvimento (Test-First) estabelecido em `procedimento.md`.
 
 ### Próximos Passos (Imediatos)
-1. **Sincronização de Ambiente:** Sincronizar relógio do sistema local para mitigar o erro 403 (Token used too early).
-2. **Expansão de Testes Frontend:** Adicionar testes para `LoginPage` e `HistoryPage`.
-3. **Mecânica de Gamificação:** Implementar feedbacks visuais mais ricos para ganho de XP/Ouro.
-4. **Deploy:** Preparar scripts para deploy inicial (Supabase Migrations + Vercel).
+1. **Página Inicial Dinâmica:** Atualizar a `HomePage` para listar masmorras da `WeeklyDungeon` via API.
+2. **Interface de Inventário:** Criar página para o usuário equipar itens e ver consumíveis.
+3. **Masmorra Elite:** Implementar trava visual e lógica na lista de masmorras.
+4. **Deploy:** Validar migrações em ambiente de staging.
 
 ---
 **Decisões Técnicas:**
@@ -184,33 +184,29 @@
     - [x] Refatorar os cards de masmorra na `HomePage` para exibir quantidade de desafios resolvidos e taxa de acerto do dia.
     - [x] Remover informações estáticas irrelevantes (como dificuldade fixa).
     - [x] Adicionar feedback visual de progresso diário total no rodapé da lista.
-- **Git:**
-    **Ciclo [03/05/2026 21:00]:**
-- **Ação:** Início da Fase 1 do Plano de Engajamento - Modelagem de Dados (Parte 1).
-- **Teste:** Criar `core/tests/test_engagement_models.py` para validar `FixedQuestion` e a expansão de `Profile`.
-- **Implementação:** Atualizar `core/models.py` com novos campos e o modelo `FixedQuestion`.
-- **Refatoração:** Aplicar migrações e verificar integridade. [CONCLUÍDO]
+
+**Ciclo [03/05/2026 21:00]:**
+- **Ação:** Fase 1 - Fundação de Dados e Modelagem.
+- **Teste:** Criar `core/tests/test_engagement_models.py` para validar novos modelos. [CONCLUÍDO]
+- **Implementação:** Atualizar `core/models.py` com `WeeklyDungeon`, `FixedQuestion`, etc. [CONCLUÍDO]
+- **Refatoração:** Aplicar migrações. [CONCLUÍDO]
 
 **Ciclo [03/05/2026 21:30]:**
-- **Ação:** Fase 2 - Refatoração do Fluxo de Masmorras (Parte 1: Seed Semanal).
-- **Teste:** Criar `core/tests/test_seeding.py` para validar o comando de geração de masmorras semanais.
-- **Implementação:** Criar `core/management/commands/seed_weekly_dungeons.py`.
-- **Refatoração:** Garantir que questões sejam reutilizadas ou geradas corretamente. [CONCLUÍDO]
+- **Ação:** Fase 2 - Seed Semanal.
+- **Teste:** Criar `core/tests/test_seeding.py`. [CONCLUÍDO]
+- **Implementação:** Criar comando `seed_weekly_dungeons`. [CONCLUÍDO]
 
 **Ciclo [03/05/2026 22:00]:**
-- **Ação:** Fase 2 - Refatoração do Fluxo de Masmorras (Parte 2: API de Progressão).
-- **Teste:** Criar `core/tests/test_progression_api.py` para validar `GET /api/dungeon/current/` e `POST /api/answer/`.
-- **Implementação:** Criar `DungeonCurrentView` e refatorar `QuestionView` (ou criar `AnswerView`).
-- **Refatoração:** Integrar lógica de streak e telemetria no `AnswerService`. [CONCLUÍDO]
+- **Ação:** Fase 2 - API de Progressão.
+- **Teste:** Criar `core/tests/test_progression_api.py`. [CONCLUÍDO]
+- **Implementação:** Criar `DungeonCurrentView` e `AnswerView`. [CONCLUÍDO]
 
 **Ciclo [03/05/2026 22:30]:**
-- **Ação:** Fase 3 - Sistema de Itemização e Inventário.
-- **Teste:** Criar `core/tests/test_item_system.py` para validar modificadores de itens no `AnswerService` e endpoints de inventário.
-- **Implementação:** Criar `InventoryView` e atualizar `AnswerService`.
-- **Refatoração:** Adicionar suporte a bônus dinâmicos baseados no item equipado. [CONCLUÍDO]
+- **Ação:** Fase 3 - Itemização.
+- **Teste:** Criar `core/tests/test_item_system.py`. [CONCLUÍDO]
+- **Implementação:** Adicionar suporte a bônus de itens no `AnswerService` e `InventoryView`. [CONCLUÍDO]
 
 **Ciclo [03/05/2026 23:00]:**
-- **Ação:** Fase 4 - Experiência do Usuário (Frontend - HUD v2).
-- **Teste:** Atualizar `DungeonPage.test.tsx` para validar a exibição do Timer, Combo e Barra de Progresso.
-- **Implementação:** Refatorar `src/app/dungeon/[id]/page.tsx` para integrar com `dungeon/current/` e exibir novos elementos de interface.
-- **Refatoração:** Adicionar lógica de cronômetro e contador de sequência no estado do componente.
+- **Ação:** Fase 4 - HUD v2.
+- **Teste:** Atualizar `DungeonPage.test.tsx`. [CONCLUÍDO]
+- **Implementação:** Refatorar `DungeonPage` com Timer, Combo e Progresso. [CONCLUÍDO]

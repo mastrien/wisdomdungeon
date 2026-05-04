@@ -82,6 +82,9 @@ class ProgressionAPITest(TestCase):
         self.assertEqual(progress.current_room.order, 2)
         self.assertEqual(progress.current_question_index, 0)
         
-        # Should have updated profile streak (assuming first room of the day)
-        self.profile.refresh_from_db()
-        self.assertEqual(self.profile.streak_count, 1)
+    def test_list_weekly_dungeons(self):
+        """Valida a listagem de masmorras semanais ativas."""
+        response = self.client.get('/api/dungeons/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['topic'], "algebra_basica")

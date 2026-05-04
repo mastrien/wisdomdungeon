@@ -101,6 +101,12 @@ class FollowView(APIView):
         except Profile.DoesNotExist:
             return Response({"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
 
+class WeeklyDungeonListView(APIView):
+    def get(self, request):
+        dungeons = WeeklyDungeon.objects.filter(is_active=True).order_by('id')
+        serializer = WeeklyDungeonSerializer(dungeons, many=True)
+        return Response(serializer.data)
+
 class DungeonCurrentView(APIView):
     def get(self, request):
         topic = request.query_params.get('topic')
