@@ -1,31 +1,54 @@
-[04/May/2026 00:05:46] "POST /api/answer/ HTTP/1.1" 500 100054
-Internal Server Error: /api/answer/
-Traceback (most recent call last):
-  File "C:\Users\G51 Informática\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
-    response = get_response(request)
-  File "C:\Users\G51 Informática\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "C:\Users\G51 Informática\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
-    return view_func(request, *args, **kwargs)
-  File "C:\Users\G51 Informática\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\views\generic\base.py", line 105, in view
-    return self.dispatch(request, *args, **kwargs)
-           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\G51 Informática\AppData\Local\Programs\Python\Python313\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
-    response = self.handle_exception(exc)
-  File "C:\Users\G51 Informática\AppData\Local\Programs\Python\Python313\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
-    self.raise_uncaught_exception(exc)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
-  File "C:\Users\G51 Informática\AppData\Local\Programs\Python\Python313\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
-    raise exc
-  File "C:\Users\G51 Informática\AppData\Local\Programs\Python\Python313\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
-    response = handler(request, *args, **kwargs)
-  File "C:\root_lab\antigravity\wisdomdungeon\wisdom_backend\core\views.py", line 150, in post
-    result = service.submit_answer(
-        profile=profile,
-    ...<5 lines>...
-        dungeon_type=data.get('type', 'normal')
-    )
-  File "C:\root_lab\antigravity\wisdomdungeon\wisdom_backend\core\services\answer_service.py", line 21, in submit_answer
-    if progress and is_correct:
-                    ^^^^^^^^^^
-NameError: name 'is_correct' is not defined
+## Error Type
+Console Error
+
+## Error Message
+In HTML, <div> cannot be a descendant of <p>.
+This will cause a hydration error.
+
+  ...
+    <RedirectErrorBoundary router={{...}}>
+      <InnerLayoutRouter url="/dungeon/a..." tree={[...]} params={{id:"algebr..."}} cacheNode={{rsc:<Fragment>, ...}} ...>
+        <SegmentViewNode type="page" pagePath="dungeon/[i...">
+          <SegmentTrieNode>
+          <ClientPageRoot Component={function DungeonPage} serverProvidedParams={{...}}>
+            <DungeonPage params={Promise} searchParams={Promise}>
+              <div className="min-h-scre...">
+                <Header>
+                <div className="p-4 md:p-8">
+                  <div className="max-w-3xl ...">
+                    <div>
+                    <div className="bg-slate-9...">
+                      <div>
+                      <div className="p-8 md:p-12">
+                        <div>
+                        <div>
+                        <div>
+                        <div className="space-y-6 ...">
+                          <div className="p-6 rounde...">
+                            <CircleX>
+                            <div>
+                              <h3>
+>                             <p className="text-sm opacity-80">
+                                <MathRenderer tex="$10$" displayMode={false} className="font-bold">
+>                                 <div className="inline-block max-w-full font-bold">
+                          ...
+                    ...
+        ...
+      ...
+
+
+
+    at div (<anonymous>:null:null)
+    at MathRenderer (src/components/MathRenderer.tsx:34:5)
+    at DungeonPage (src/app/dungeon/[id]/page.tsx:291:46)
+
+## Code Frame
+  32 |
+  33 |   return (
+> 34 |     <div className={`inline-block max-w-full ${className}`}>
+     |     ^
+  35 |       {segments.map((seg, i) => (
+  36 |         <Segment key={i} segment={seg} />
+  37 |       ))}
+
+Next.js version: 16.2.4 (Turbopack)

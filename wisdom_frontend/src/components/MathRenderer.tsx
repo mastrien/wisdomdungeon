@@ -31,11 +31,11 @@ export default function MathRenderer({ tex, displayMode = false, className = "" 
   }, [tex, displayMode]);
 
   return (
-    <div className={`inline-block max-w-full ${className}`}>
+    <span className={`inline-block max-w-full ${className}`}>
       {segments.map((seg, i) => (
         <Segment key={i} segment={seg} />
       ))}
-    </div>
+    </span>
   );
 }
 

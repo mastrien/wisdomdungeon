@@ -3,7 +3,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { History, Play, Target, CheckCircle2, Loader2, Lock, Trophy, Flame, ShieldAlert } from "lucide-react";
+import { History, Play, Target, CheckCircle2, Loader2, Lock, Trophy, Flame, ShieldAlert, Coins } from "lucide-react";
 import Header from "@/components/Header";
 import api from "@/services/api";
 

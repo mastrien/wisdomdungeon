@@ -227,3 +227,19 @@
     - [x] Atualizado modelo `Profile` com `hp`, `max_hp`, `theme_color` e `font_size`.
     - [x] Refatorado `AnswerService.submit_answer` para aplicar as novas regras.
 - **Resultado:** Testes passando e migrações aplicadas.
+
+**Ciclo [04/05/2026 12:00]:**
+- **Fase 2, 3, 4 e 5 (Frontend):** Implementação completa da UI de Engajamento.
+- **Tematização:** 
+    - [x] Refatorado `globals.css` com variáveis CSS.
+    - [x] Substituídas cores fixas `amber-` por `brand-primary` em todo o projeto.
+    - [x] Injeção de tema dinâmica implementada no `AuthContext`.
+- **Interface:**
+    - [x] Header atualizado com menu de "Mais Opções" e dropdown.
+    - [x] Criada `SettingsPage` para ajuste de cores e fonte (com trava por nível).
+    - [x] Adicionado visualizador de HP (Vidas) e resposta correta no HUD da `DungeonPage`.
+    - [x] Exibição de taxa de acerto diária nos cards da `HomePage`.
+- **Infraestrutura:**
+    - [x] Adicionada regra de commits granulares ao `procedimento.md`.
+    - [x] Realizados commits sequenciais para cada melhoria validada.
+- **Resultado:** Sistema de engajamento visualmente completo e funcional.
