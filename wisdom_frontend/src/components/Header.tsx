@@ -21,7 +21,10 @@ export default function Header() {
         <div className="flex items-center gap-4">
           {profile ? (
             <>
-              <div className="hidden md:flex items-center gap-4 px-4 py-1.5 bg-card dark:bg-slate-800 rounded-full border border-border-main shadow-sm">
+              <Link 
+                href="/progression"
+                className="hidden md:flex items-center gap-4 px-4 py-1.5 bg-card dark:bg-slate-800 rounded-full border border-border-main shadow-sm hover:bg-slate-200/50 dark:hover:bg-slate-700 transition-colors group cursor-pointer"
+              >
                 <div className="flex items-center gap-1.5 text-sm font-bold text-foreground">
                   <Trophy className="w-4 h-4 text-brand-primary" />
                   <span>Nível {profile.level}</span>
@@ -33,7 +36,7 @@ export default function Header() {
                   <Coins className="w-4 h-4" />
                   <span>{profile.gold} Ouro</span>
                 </div>
-              </div>
+              </Link>
 
               <Link 
                 href={`/profile/${profile.user.username}`}

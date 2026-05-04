@@ -1,7 +1,8 @@
 from django.urls import path
 from core.views import (
     ProfileView, PublicProfileView, FollowView, QuestionView, 
-    HistoryView, TopicsView, MasteryView, DungeonCurrentView, AnswerView, InventoryView, WeeklyDungeonListView
+    HistoryView, TopicsView, MasteryView, DungeonCurrentView, AnswerView, 
+    InventoryView, WeeklyDungeonListView, ProgressionRewardsView
 )
 
 urlpatterns = [
@@ -17,4 +18,5 @@ urlpatterns = [
     path('inventory/<int:pk>/equip/', InventoryView.as_view(), name='inventory_equip'),
     path('history/', HistoryView.as_view(), name='history'),
     path('mastery/', MasteryView.as_view(), name='mastery'),
+    path('progression/rewards/', ProgressionRewardsView.as_view(), name='progression_rewards'),
 ]

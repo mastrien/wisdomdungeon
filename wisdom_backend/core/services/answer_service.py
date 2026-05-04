@@ -104,6 +104,14 @@ class AnswerService:
             
             profile.xp += xp_gained
             profile.gold += gold_gained
+            
+            # Recalculate level
+            from core.services.progression_service import ProgressionService
+            new_level = ProgressionService.get_level_for_xp(profile.xp)
+            if new_level > profile.level:
+                profile.level = new_level
+                # Optionally add logic for level up notification or rewards here
+                
             profile.save()
             
         return {

@@ -244,3 +244,9 @@ class TopicsView(APIView):
             {"id": "probabilidade", "name": "Probabilidade"},
         ]
         return Response(topics)
+
+class ProgressionRewardsView(APIView):
+    def get(self, request):
+        from core.services.progression_service import ProgressionService
+        rewards = ProgressionService.get_rewards()
+        return Response(rewards)

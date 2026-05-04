@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import api from "@/services/api";
 import { useAuth } from "@/context/AuthContext";
 import { 
@@ -11,7 +11,8 @@ import {
   Settings, 
   Shield, 
   Loader2,
-  Calendar
+  Calendar,
+  ChevronLeft
 } from "lucide-react";
 import Header from "@/components/Header";
 
@@ -31,6 +32,7 @@ interface ProfileData {
 
 export default function ProfilePage() {
   const { username } = useParams();
+  const router = useRouter();
   const { profile: loggedInProfile, loading: authLoading, refreshProfile } = useAuth();
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -275,11 +277,26 @@ export default function ProfilePage() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-          <div className="bg-card/50 border border-border-main p-8 rounded-3xl backdrop-blur-sm group hover:border-brand-primary/30 transition-colors">
-            <Trophy className="w-8 h-8 text-brand-primary mb-4 group-hover:scale-110 transition-transform" />
-            <div className="text-xs text-muted font-bold uppercase tracking-wider mb-1">Experiência Total</div>
-            <div className="text-3xl font-black text-foreground">{profileData.xp} XP</div>
-          </div>
+          {isOwner ? (
+            <button 
+              onClick={() => router.push("/progression")}
+              className="bg-card/50 border border-border-main p-8 rounded-3xl backdrop-blur-sm group hover:border-brand-primary/30 transition-all text-left"
+            >
+              <Trophy className="w-8 h-8 text-brand-primary mb-4 group-hover:scale-110 transition-transform" />
+              <div className="text-xs text-muted font-bold uppercase tracking-wider mb-1">Experiência Total</div>
+              <div className="text-3xl font-black text-foreground">{profileData.xp} XP</div>
+              <div className="mt-4 text-xs font-bold text-brand-primary flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                Ver Trilha de Recompensas
+                <ChevronLeft className="w-3 h-3 rotate-180" />
+              </div>
+            </button>
+          ) : (
+            <div className="bg-card/50 border border-border-main p-8 rounded-3xl backdrop-blur-sm group hover:border-brand-primary/30 transition-colors">
+              <Trophy className="w-8 h-8 text-brand-primary mb-4 group-hover:scale-110 transition-transform" />
+              <div className="text-xs text-muted font-bold uppercase tracking-wider mb-1">Experiência Total</div>
+              <div className="text-3xl font-black text-foreground">{profileData.xp} XP</div>
+            </div>
+          )}
           
           <div className="bg-card/50 border border-border-main p-8 rounded-3xl backdrop-blur-sm group hover:border-brand-primary/30 transition-colors">
             <Coins className="w-8 h-8 text-yellow-500 mb-4 group-hover:scale-110 transition-transform" />

@@ -12,6 +12,8 @@ class ProfileSerializer(serializers.ModelSerializer):
     followers_count = serializers.IntegerField(source='followers.count', read_only=True)
     following_count = serializers.IntegerField(source='following.count', read_only=True)
     is_following = serializers.SerializerMethodField()
+    next_level_xp = serializers.SerializerMethodField()
+    current_level_xp_threshold = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
@@ -19,7 +21,8 @@ class ProfileSerializer(serializers.ModelSerializer):
             'user', 'xp', 'gold', 'level', 'firebase_uid', 'bio', 
             'followers_count', 'following_count', 'is_following',
             'streak_count', 'total_normal_dungeons_completed', 'total_elite_dungeons_completed',
-            'hp', 'max_hp', 'theme_color', 'font_size'
+            'hp', 'max_hp', 'theme_color', 'font_size',
+            'next_level_xp', 'current_level_xp_threshold'
         ]
 
     def get_is_following(self, obj):
@@ -30,6 +33,14 @@ class ProfileSerializer(serializers.ModelSerializer):
             except Profile.DoesNotExist:
                 return False
         return False
+
+    def get_next_level_xp(self, obj):
+        from core.services.progression_service import ProgressionService
+        return ProgressionService.get_xp_for_next_level(obj.level)
+
+    def get_current_level_xp_threshold(self, obj):
+        from core.services.progression_service import ProgressionService
+        return ProgressionService.get_level_threshold(obj.level)
 
 class FixedQuestionSerializer(serializers.ModelSerializer):
     class Meta:
