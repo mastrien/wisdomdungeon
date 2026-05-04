@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import api from "@/services/api";
 import { useAuth } from "@/context/AuthContext";
 import { 
@@ -24,6 +24,7 @@ interface Question {
   enunciado: string;
   opcoes: string[];
   hash: string;
+  resposta_correta?: string;
 }
 
 interface DungeonState {
@@ -36,6 +37,8 @@ interface DungeonState {
 
 export default function DungeonPage() {
   const { id } = useParams();
+  const searchParams = useSearchParams();
+  const dungeonType = searchParams.get("type") || "normal";
   const router = useRouter();
   const { user, loading: authLoading, refreshProfile } = useAuth();
   
@@ -62,7 +65,7 @@ export default function DungeonPage() {
     setResult(null);
     setSeconds(0);
     try {
-      const response = await api.get(`/dungeon/current/?topic=${id}`);
+      const response = await api.get(`/dungeon/current/?topic=${id}&type=${dungeonType}`);
       setState(response.data);
     } catch (err) {
       console.error("Erro ao buscar estado da masmorra:", err);
@@ -77,7 +80,7 @@ export default function DungeonPage() {
     } else if (user) {
       fetchDungeonState();
     }
-  }, [user, authLoading, id]);
+  }, [user, authLoading, id, dungeonType]);
 
   // Timer Logic
   useEffect(() => {
@@ -100,9 +103,10 @@ export default function DungeonPage() {
     try {
       const response = await api.post("/answer/", {
         topic: id,
+        type: dungeonType,
         hash: state.question.hash,
         selected_answer: selectedOption,
-        correct_answer: state.question.resposta_correta, // Actually the backend handles this now, but keeping for compatibility if needed
+        correct_answer: state.question.resposta_correta,
         time_spent_ms: seconds * 1000
       });
       
@@ -242,7 +246,7 @@ export default function DungeonPage() {
               <button
                 onClick={handleSubmit}
                 disabled={!selectedOption || submitting}
-                className="w-full bg-amber-500 hover:bg-amber-400 disabled:bg-slate-800 disabled:text-slate-500 text-slate-950 font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-amber-500/10"
+                className="w-full bg-amber-500 hover:bg-amber-400 disabled:bg-slate-800 disabled:text-slate-500 text-slate-950 font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
               >
                 {submitting ? <Loader2 className="w-6 h-6 animate-spin" /> : (
                   <>

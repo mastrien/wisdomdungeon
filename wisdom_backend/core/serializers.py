@@ -18,8 +18,17 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = [
             'user', 'xp', 'gold', 'level', 'firebase_uid', 'bio', 
             'followers_count', 'following_count', 'is_following',
-            'streak_count', 'total_dungeons_completed'
+            'streak_count', 'total_normal_dungeons_completed', 'total_elite_dungeons_completed'
         ]
+
+    def get_is_following(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            try:
+                return request.user.profile.following.filter(id=obj.id).exists()
+            except Profile.DoesNotExist:
+                return False
+        return False
 
 class FixedQuestionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,9 +36,45 @@ class FixedQuestionSerializer(serializers.ModelSerializer):
         fields = ['enunciado', 'opcoes', 'hash']
 
 class WeeklyDungeonSerializer(serializers.ModelSerializer):
+    progress = serializers.SerializerMethodField()
+    is_locked = serializers.SerializerMethodField()
+
     class Meta:
         model = WeeklyDungeon
-        fields = ['id', 'title', 'type', 'topic', 'start_date', 'end_date']
+        fields = ['id', 'title', 'type', 'topic', 'start_date', 'end_date', 'progress', 'is_locked']
+
+    def get_progress(self, obj):
+        request = self.context.get('request')
+        if not request or not request.user.is_authenticated:
+            return 0
+        
+        from core.models import UserDungeonProgress
+        progress = UserDungeonProgress.objects.filter(profile=request.user.profile, dungeon=obj).first()
+        if not progress:
+            return 0
+        if progress.is_completed:
+            return 100
+        
+        # Cada masmorra tem 10 salas de 10 questões = 100 total
+        solved = ((progress.current_room.order - 1) * 10) + progress.current_question_index
+        return solved
+
+    def get_is_locked(self, obj):
+        if obj.type == 'normal':
+            return False
+        
+        request = self.context.get('request')
+        if not request or not request.user.is_authenticated:
+            return True
+            
+        from core.models import WeeklyDungeon, UserDungeonProgress
+        # Verifica se a masmorra Normal do mesmo tópico foi concluída
+        normal_dungeon = WeeklyDungeon.objects.filter(topic=obj.topic, type='normal', is_active=True).first()
+        if not normal_dungeon:
+            return False
+            
+        progress = UserDungeonProgress.objects.filter(profile=request.user.profile, dungeon=normal_dungeon).first()
+        return not (progress and progress.is_completed)
 
 class DungeonRoomSerializer(serializers.ModelSerializer):
     class Meta:

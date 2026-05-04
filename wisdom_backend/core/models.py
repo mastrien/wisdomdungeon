@@ -20,7 +20,8 @@ class Profile(models.Model):
     last_activity_date = models.DateField(null=True, blank=True)
     streak_protected_until = models.DateField(null=True, blank=True)
     equipped_item_id = models.IntegerField(null=True, blank=True)
-    total_dungeons_completed = models.IntegerField(default=0)
+    total_normal_dungeons_completed = models.IntegerField(default=0)
+    total_elite_dungeons_completed = models.IntegerField(default=0)
 
     def __str__(self):
         return self.user.username

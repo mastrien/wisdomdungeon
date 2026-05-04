@@ -16,12 +16,14 @@ class EngagementModelsTest(TestCase):
         """Valida os novos campos de engajamento no Profile."""
         profile = self.user.profile
         profile.streak_count = 5
-        profile.total_dungeons_completed = 2
+        profile.total_normal_dungeons_completed = 2
+        profile.total_elite_dungeons_completed = 1
         profile.save()
         
         p = Profile.objects.get(id=profile.id)
         self.assertEqual(p.streak_count, 5)
-        self.assertEqual(p.total_dungeons_completed, 2)
+        self.assertEqual(p.total_normal_dungeons_completed, 2)
+        self.assertEqual(p.total_elite_dungeons_completed, 1)
 
     def test_fixed_question_model(self):
         """Valida a criação de uma questão fixa com telemetria."""

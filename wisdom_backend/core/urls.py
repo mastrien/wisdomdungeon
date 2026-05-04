@@ -1,7 +1,7 @@
 from django.urls import path
 from core.views import (
     ProfileView, PublicProfileView, FollowView, QuestionView, 
-    HistoryView, TopicsView, MasteryView, DungeonCurrentView, AnswerView, InventoryView
+    HistoryView, TopicsView, MasteryView, DungeonCurrentView, AnswerView, InventoryView, WeeklyDungeonListView
 )
 
 urlpatterns = [

@@ -3,7 +3,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { History, Play, Target, CheckCircle2, Loader2, Lock, Trophy, Flame } from "lucide-react";
+import { History, Play, Target, CheckCircle2, Loader2, Lock, Trophy, Flame, ShieldAlert } from "lucide-react";
 import Header from "@/components/Header";
 import api from "@/services/api";
 
@@ -19,6 +19,8 @@ interface Dungeon {
   title: string;
   type: 'normal' | 'elite';
   topic: string;
+  progress: number;
+  is_locked: boolean;
 }
 
 export default function HomePage() {
@@ -90,8 +92,15 @@ export default function HomePage() {
               <div className="bg-slate-900/50 border border-slate-800 px-6 py-3 rounded-2xl flex items-center gap-3">
                 <Trophy className="text-amber-500 w-6 h-6" />
                 <div>
-                  <div className="text-[10px] text-slate-500 font-bold uppercase">Masmorras</div>
-                  <div className="text-xl font-black text-white">{profile.total_dungeons_completed} Finalizadas</div>
+                  <div className="text-[10px] text-slate-500 font-bold uppercase">Normais</div>
+                  <div className="text-xl font-black text-white">{profile.total_normal_dungeons_completed}</div>
+                </div>
+              </div>
+              <div className="bg-slate-900/50 border border-slate-800 px-6 py-3 rounded-2xl flex items-center gap-3">
+                <ShieldAlert className="text-purple-500 w-6 h-6" />
+                <div>
+                  <div className="text-[10px] text-slate-500 font-bold uppercase">Elite</div>
+                  <div className="text-xl font-black text-white">{profile.total_elite_dungeons_completed}</div>
                 </div>
               </div>
             </div>
@@ -101,20 +110,21 @@ export default function HomePage() {
         {/* Dungeon List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {weeklyDungeons.map((dungeon) => {
-            const stat = dailyStats[dungeon.topic];
             const isElite = dungeon.type === 'elite';
+            const isLocked = dungeon.is_locked;
+            const progress = dungeon.progress || 0;
             
             return (
               <div 
                 key={dungeon.id}
-                onClick={() => !isElite && router.push(`/dungeon/${dungeon.topic}`)}
+                onClick={() => !isLocked && router.push(`/dungeon/${dungeon.topic}?type=${dungeon.type}`)}
                 className={`
                   group bg-slate-900 border border-slate-800 p-6 rounded-3xl transition-all relative overflow-hidden flex flex-col justify-between min-h-[240px]
-                  ${isElite ? 'opacity-50 cursor-not-allowed grayscale' : 'hover:border-amber-500/50 cursor-pointer'}
+                  ${isLocked ? 'opacity-50 cursor-not-allowed grayscale' : 'hover:border-amber-500/50 cursor-pointer'}
                 `}
               >
                 <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-20 group-hover:text-amber-500 transition-opacity">
-                  {isElite ? <Lock className="w-12 h-12" /> : <Play className="w-12 h-12 fill-current" />}
+                  {isLocked ? <Lock className="w-12 h-12" /> : <Play className="w-12 h-12 fill-current" />}
                 </div>
                 
                 <div>
@@ -124,31 +134,30 @@ export default function HomePage() {
                     </span>
                   </div>
                   <h3 className="text-xl font-bold text-white mb-1">{dungeon.title}</h3>
-                  <p className="text-slate-500 text-sm">{String(dungeon.topic).replace("_", " ")}</p>
                 </div>
 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider">
                     <div className="flex items-center gap-2 text-slate-500">
                       <Target className="w-3.5 h-3.5" />
-                      <span>Progresso: {stat?.total_solved || 0}/100</span>
+                      <span>Progresso: {progress}/100</span>
                     </div>
                   </div>
                   
                   <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
                     <div 
                       className={`h-full transition-all ${isElite ? 'bg-purple-500' : 'bg-amber-500'}`}
-                      style={{ width: `${Math.min((stat?.total_solved || 0), 100)}%` }}
+                      style={{ width: `${Math.min(progress, 100)}%` }}
                     />
                   </div>
                   
                   <button 
-                    disabled={isElite}
+                    disabled={isLocked}
                     className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg flex items-center justify-center gap-2
-                      ${isElite ? 'bg-slate-800 text-slate-500' : 'bg-slate-800 group-hover:bg-amber-500 group-hover:text-slate-950 text-white'}
+                      ${isLocked ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-slate-800 group-hover:bg-amber-500 group-hover:text-slate-950 text-white cursor-pointer'}
                     `}
                   >
-                    {isElite ? (
+                    {isLocked ? (
                       <><Lock className="w-4 h-4" /> Bloqueado</>
                     ) : (
                       'Explorar'

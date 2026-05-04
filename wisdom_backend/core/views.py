@@ -104,16 +104,17 @@ class FollowView(APIView):
 class WeeklyDungeonListView(APIView):
     def get(self, request):
         dungeons = WeeklyDungeon.objects.filter(is_active=True).order_by('id')
-        serializer = WeeklyDungeonSerializer(dungeons, many=True)
+        serializer = WeeklyDungeonSerializer(dungeons, many=True, context={'request': request})
         return Response(serializer.data)
 
 class DungeonCurrentView(APIView):
     def get(self, request):
         topic = request.query_params.get('topic')
+        dungeon_type = request.query_params.get('type', 'normal')
         profile = request.user.profile
         
-        # Find active dungeon for this topic
-        dungeon = WeeklyDungeon.objects.filter(topic=topic, is_active=True, type='normal').first()
+        # Find active dungeon for this topic and type
+        dungeon = WeeklyDungeon.objects.filter(topic=topic, is_active=True, type=dungeon_type).first()
         if not dungeon:
             return Response({"current_dungeon": None})
             
@@ -152,7 +153,8 @@ class AnswerView(APIView):
             question_hash=data.get('hash'),
             selected_answer=data.get('selected_answer'),
             correct_answer=data.get('correct_answer'),
-            time_spent_ms=data.get('time_spent_ms', 0)
+            time_spent_ms=data.get('time_spent_ms', 0),
+            dungeon_type=data.get('type', 'normal')
         )
         
         return Response(result)

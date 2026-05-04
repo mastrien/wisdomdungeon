@@ -13,6 +13,9 @@ interface Profile {
   xp: number;
   gold: number;
   level: number;
+  streak_count: number;
+  total_normal_dungeons_completed: number;
+  total_elite_dungeons_completed: number;
 }
 
 interface AuthContextType {

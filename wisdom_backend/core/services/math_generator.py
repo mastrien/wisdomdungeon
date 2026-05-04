@@ -321,7 +321,7 @@ class MathGenerator:
             azuis = random.randint(1, 10)
             total = vermelhas + azuis
             prob = Fraction(vermelhas, total)
-            enunciado = f"Uma urna contém {vermelhas} bolas vermelhas e {azuis} bolas azuis. Qual a probabilidade de retirar uma bola vermelha?"
+            enunciado = f"Uma urna contém ${vermelhas}$ bolas vermelhas e ${azuis}$ bolas azuis. Qual a probabilidade de retirar uma bola vermelha?"
             resposta_correta = f"${prob.numerator}/{prob.denominator}$"
             params = {"v": vermelhas, "a": azuis, "type": "prob_balls"}
         else:

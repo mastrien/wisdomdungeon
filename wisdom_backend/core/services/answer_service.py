@@ -5,12 +5,12 @@ class AnswerService:
     XP_REWARD = 10
     GOLD_REWARD = 5
 
-    def submit_answer(self, profile, topic, question_hash, selected_answer, correct_answer, time_spent_ms=0):
-        is_correct = selected_answer == correct_answer
-        
-        # 1. Update FixedQuestion Telemetry
+    def submit_answer(self, profile, topic, question_hash, selected_answer, correct_answer=None, time_spent_ms=0, dungeon_type='normal'):
+        # 1. Get FixedQuestion and validate
         try:
             fixed_q = FixedQuestion.objects.get(hash=question_hash)
+            is_correct = selected_answer == fixed_q.resposta_correta
+            
             fixed_q.total_attempts += 1
             if is_correct:
                 fixed_q.total_correct += 1
@@ -22,6 +22,8 @@ class AnswerService:
             fixed_q.save()
         except FixedQuestion.DoesNotExist:
             fixed_q = None
+            # Fallback to procedural validation if correct_answer was provided
+            is_correct = selected_answer == correct_answer
 
         # 2. Save history
         QuestionHistory.objects.create(
@@ -34,7 +36,13 @@ class AnswerService:
         )
         
         # 3. Update UserDungeonProgress
-        progress = UserDungeonProgress.objects.filter(profile=profile, dungeon__topic=topic, dungeon__is_active=True).first()
+        progress = UserDungeonProgress.objects.filter(
+            profile=profile, 
+            dungeon__topic=topic, 
+            dungeon__type=dungeon_type,
+            dungeon__is_active=True
+        ).first()
+        
         room_completed = False
         dungeon_completed = False
 
@@ -53,7 +61,10 @@ class AnswerService:
                     # Dungeon completed
                     progress.is_completed = True
                     dungeon_completed = True
-                    profile.total_dungeons_completed += 1
+                    if progress.dungeon.type == 'elite':
+                        profile.total_elite_dungeons_completed += 1
+                    else:
+                        profile.total_normal_dungeons_completed += 1
                 
                 # Update Streak on room completion
                 self._update_streak(profile)
@@ -75,7 +86,6 @@ class AnswerService:
                         xp_gained = int(xp_gained * item.effect_value)
                     elif item.effect_type == "gold_bonus_flat":
                         gold_gained += int(item.effect_value)
-                    # Add more effects as needed (combo_shield, etc.)
                 except Item.DoesNotExist:
                     profile.equipped_item_id = None
             

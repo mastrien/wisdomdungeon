@@ -20,7 +20,6 @@ class AnswerServiceTest(TestCase):
             profile=self.profile,
             topic="algebra_basica",
             question_hash=question["hash"],
-            enunciado=question["enunciado"],
             selected_answer=question["resposta_correta"],
             correct_answer=question["resposta_correta"]
         )
@@ -43,7 +42,6 @@ class AnswerServiceTest(TestCase):
             profile=self.profile,
             topic="algebra_basica",
             question_hash=question["hash"],
-            enunciado=question["enunciado"],
             selected_answer=wrong_answer,
             correct_answer=question["resposta_correta"]
         )
