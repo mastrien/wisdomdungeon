@@ -76,31 +76,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const toggleDarkMode = () => {
-    const newVal = !isDarkMode;
-    setIsDarkMode(newVal);
-    localStorage.setItem("theme", newVal ? "dark" : "light");
-    if (newVal) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    // Disabled for now, forcing dark mode
   };
 
   useEffect(() => {
-    // Initial theme check
-    const savedTheme = localStorage.getItem("theme");
-    const preferDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    
-    if (savedTheme === "light") {
-      setIsDarkMode(false);
-      document.documentElement.classList.remove("dark");
-    } else if (savedTheme === "dark" || preferDark) {
-      setIsDarkMode(true);
-      document.documentElement.classList.add("dark");
-    } else {
-      setIsDarkMode(false);
-      document.documentElement.classList.remove("dark");
-    }
+    // Force dark mode only
+    setIsDarkMode(true);
+    document.documentElement.classList.add("dark");
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
@@ -119,16 +101,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const colors = colorMap[profile.theme_color as keyof typeof colorMap] || colorMap.amber;
       const fontSize = fontSizeMap[profile.font_size as keyof typeof fontSizeMap] || fontSizeMap.medium;
 
-      // In light mode, we use the 'hover' color (darker) as the primary for better contrast
-      const primary = isDarkMode ? colors.primary : colors.hover;
-      const hover = isDarkMode ? colors.hover : colors.primary; // Or something else
-
-      document.documentElement.style.setProperty("--brand-primary", primary);
-      document.documentElement.style.setProperty("--brand-primary-hover", hover);
+      document.documentElement.style.setProperty("--brand-primary", colors.primary);
+      document.documentElement.style.setProperty("--brand-primary-hover", colors.hover);
       document.documentElement.style.setProperty("--brand-primary-glow", colors.glow);
       document.documentElement.style.setProperty("--font-size-base", fontSize);
     }
-  }, [profile, isDarkMode]);
+  }, [profile]);
 
   return (
     <AuthContext.Provider value={{ user, profile, loading, refreshProfile, isDarkMode, toggleDarkMode }}>

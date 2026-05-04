@@ -2,12 +2,12 @@
 
 import { useAuth } from "@/context/AuthContext";
 import { auth } from "@/lib/firebase";
-import { LogOut, Sword, Trophy, Coins, MoreVertical, Settings, Moon, Sun } from "lucide-react";
+import { LogOut, Sword, Trophy, Coins, MoreVertical, Settings } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 export default function Header() {
-  const { profile, isDarkMode, toggleDarkMode } = useAuth();
+  const { profile } = useAuth();
   const [showMenu, setShowMenu] = useState(false);
 
   return (
@@ -71,16 +71,6 @@ export default function Header() {
                         <Settings className="w-4 h-4" />
                         Configurações
                       </Link>
-                      <button 
-                        className="w-full flex items-center gap-3 px-4 py-2 hover:bg-slate-200/60 dark:hover:bg-slate-800 text-sm text-muted dark:text-slate-300 hover:text-slate-950 dark:hover:text-foreground transition-colors"
-                        onClick={() => {
-                          toggleDarkMode();
-                          setShowMenu(false);
-                        }}
-                      >
-                        {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                        {isDarkMode ? "Modo Claro" : "Modo Escuro"}
-                      </button>
                       <div className="h-px bg-border-main my-1 mx-2"></div>
                       <button 
                         onClick={() => auth.signOut()}
