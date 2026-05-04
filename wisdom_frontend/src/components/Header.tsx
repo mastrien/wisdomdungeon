@@ -2,20 +2,20 @@
 
 import { useAuth } from "@/context/AuthContext";
 import { auth } from "@/lib/firebase";
-import { LogOut, Sword, Trophy, Coins, MoreVertical, Settings, Moon } from "lucide-react";
+import { LogOut, Sword, Trophy, Coins, MoreVertical, Settings, Moon, Sun } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 export default function Header() {
-  const { profile } = useAuth();
+  const { profile, isDarkMode, toggleDarkMode } = useAuth();
   const [showMenu, setShowMenu] = useState(false);
 
   return (
-    <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-10">
+    <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-10 text-white">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <Sword className="text-brand-primary" />
-          <span className="font-bold text-xl text-white">Wisdom Dungeon</span>
+          <span className="font-bold text-xl">Wisdom Dungeon</span>
         </Link>
         
         <div className="flex items-center gap-4">
@@ -74,12 +74,12 @@ export default function Header() {
                       <button 
                         className="w-full flex items-center gap-3 px-4 py-2 hover:bg-slate-800 text-sm text-slate-300 hover:text-white transition-colors"
                         onClick={() => {
-                          // Toggle theme logic later
+                          toggleDarkMode();
                           setShowMenu(false);
                         }}
                       >
-                        <Moon className="w-4 h-4" />
-                        Alternar Tema
+                        {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                        {isDarkMode ? "Modo Claro" : "Modo Escuro"}
                       </button>
                       <div className="h-px bg-slate-800 my-1"></div>
                       <button 
@@ -106,4 +106,3 @@ export default function Header() {
       </div>
     </header>
   );
-}
