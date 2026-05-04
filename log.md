@@ -243,3 +243,12 @@
     - [x] Adicionada regra de commits granulares ao `procedimento.md`.
     - [x] Realizados commits sequenciais para cada melhoria validada.
 - **Resultado:** Sistema de engajamento visualmente completo e funcional.
+
+**Ciclo [04/05/2026 13:00]:**
+- **Correção:** Resolvido erro de hidratação no `MathRenderer` alterando o elemento raiz de `div` para `span`.
+- **Modo Escuro/Claro:**
+    - [x] Atualizado `AuthContext` com estado `isDarkMode` e função `toggleDarkMode`.
+    - [x] Persistência do tema no `localStorage`.
+    - [x] Ajustado `globals.css` para utilizar a classe `.dark` como seletor de tema.
+    - [x] Conectado botão no `Header` para alternar entre os modos.
+- **Resultado:** Interface mais robusta e com suporte a temas.

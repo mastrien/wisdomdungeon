@@ -88,45 +88,45 @@ export default function HistoryPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white gap-4">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center text-foreground gap-4">
         <Loader2 className="w-10 h-10 animate-spin text-brand-primary" />
-        <p className="text-slate-400 font-medium">Recuperando memórias...</p>
+        <p className="text-slate-500 font-medium">Recuperando memórias...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200">
+    <div className="min-h-screen bg-background text-foreground">
       <Header />
       <div className="max-w-5xl mx-auto p-4 md:p-8">
         <div className="flex items-center gap-4 mb-12">
-          <div className="bg-slate-900 p-3 rounded-2xl border border-slate-800">
+          <div className="bg-card p-3 rounded-2xl border border-border-main">
             <Clock className="w-8 h-8 text-brand-primary" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-white">Salas de Treinamento</h1>
-            <p className="text-slate-400">Analise seu progresso e revise sua jornada nas masmorras.</p>
+            <h1 className="text-3xl font-bold text-foreground">Salas de Treinamento</h1>
+            <p className="text-slate-500">Analise seu progresso e revise sua jornada nas masmorras.</p>
           </div>
         </div>
 
         {/* Mastery Stats Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
           {masteryStats.map((stat) => (
-            <div key={stat.topic_id} className="bg-slate-900 border border-slate-800 p-6 rounded-3xl relative overflow-hidden group hover:border-brand-primary/30 transition-colors">
+            <div key={stat.topic_id} className="bg-card border border-border-main p-6 rounded-3xl relative overflow-hidden group hover:border-brand-primary/30 transition-colors">
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Sword className="w-16 h-16 text-brand-primary rotate-12" />
               </div>
-              <h3 className="text-lg font-bold text-white mb-4">{stat.topic}</h3>
+              <h3 className="text-lg font-bold text-foreground mb-4">{stat.topic}</h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2 text-slate-400">
+                  <div className="flex items-center gap-2 text-slate-500">
                     <Target className="w-4 h-4" />
                     <span>Resolvidos</span>
                   </div>
-                  <span className="text-white font-bold">{stat.total_solved}</span>
+                  <span className="text-foreground font-bold">{stat.total_solved}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2 text-slate-400">
+                  <div className="flex items-center gap-2 text-slate-500">
                     <CheckCircle2 className="w-4 h-4" />
                     <span>Taxa de Acerto</span>
                   </div>
@@ -135,14 +135,14 @@ export default function HistoryPage() {
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2 text-slate-400">
+                  <div className="flex items-center gap-2 text-slate-500">
                     <Trophy className="w-4 h-4" />
                     <span>Maestria</span>
                   </div>
                   <span className="text-brand-primary font-black">{stat.mastery} XP</span>
                 </div>
                 {/* Progress Bar */}
-                <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-brand-primary transition-all duration-1000" 
                     style={{ width: `${stat.success_rate}%` }}
@@ -154,14 +154,14 @@ export default function HistoryPage() {
         </div>
 
         {/* General History Section */}
-        <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-          <Clock className="w-6 h-6 text-slate-500" />
+        <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
+          <Clock className="w-6 h-6 text-slate-400 dark:text-slate-500" />
           Histórico Geral
         </h2>
         
         <div className="space-y-4">
           {history.length === 0 ? (
-            <div className="text-center py-20 bg-slate-900/50 border border-dashed border-slate-800 rounded-3xl">
+            <div className="text-center py-20 bg-card/50 border border-dashed border-border-main rounded-3xl">
               <p className="text-slate-500 italic">Nenhum registro encontrado. Comece a explorar as dungeons!</p>
             </div>
           ) : (
@@ -169,11 +169,11 @@ export default function HistoryPage() {
               {history.map((entry, index) => (
                 <div 
                   key={index}
-                  className="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-slate-700 transition-colors"
+                  className="bg-card border border-border-main p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="px-2 py-0.5 bg-slate-800 text-slate-400 text-[10px] font-bold uppercase tracking-wider rounded border border-slate-700">
+                      <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wider rounded border border-border-main">
                         {entry.topic.replace("_", " ")}
                       </span>
                       <span className="text-xs text-slate-500">
@@ -186,15 +186,15 @@ export default function HistoryPage() {
                         })}
                       </span>
                     </div>
-                    <div className="text-white font-medium line-clamp-2">
+                    <div className="text-foreground font-medium line-clamp-2">
                       <MathRenderer tex={entry.enunciado} displayMode={false} className="inline" />
                     </div>
                   </div>
 
                   <div className={`flex items-center gap-2 font-bold px-4 py-2 rounded-xl border shrink-0 ${
                     entry.is_correct 
-                      ? "bg-green-500/10 border-green-500/30 text-green-500" 
-                      : "bg-red-500/10 border-red-500/30 text-red-500"
+                      ? "bg-green-500/10 border-green-500/30 text-green-600 dark:text-green-500" 
+                      : "bg-red-500/10 border-red-500/30 text-red-600 dark:text-red-500"
                   }`}>
                     {entry.is_correct ? <CheckCircle2 className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
                     {entry.is_correct ? "Correto" : "Incorreto"}
@@ -207,7 +207,7 @@ export default function HistoryPage() {
                   <button
                     onClick={handleLoadMore}
                     disabled={loadingMore}
-                    className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-8 py-3 rounded-xl font-bold transition-all border border-slate-700 disabled:opacity-50"
+                    className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-foreground px-8 py-3 rounded-xl font-bold transition-all border border-border-main disabled:opacity-50"
                   >
                     {loadingMore ? <Loader2 className="w-5 h-5 animate-spin" /> : <ChevronDown className="w-5 h-5" />}
                     Ver Mais Desafios
@@ -221,3 +221,4 @@ export default function HistoryPage() {
     </div>
   );
 }
+

@@ -120,24 +120,24 @@ export default function ProfilePage() {
 
   if (loading || authLoading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white gap-4">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center text-foreground gap-4">
         <Loader2 className="w-10 h-10 animate-spin text-brand-primary" />
-        <p className="text-slate-400 font-medium">Consultando oráculos...</p>
+        <p className="text-slate-500 font-medium">Consultando oráculos...</p>
       </div>
     );
   }
 
   if (error || !profileData) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-200">
+      <div className="min-h-screen bg-background text-foreground">
         <Header />
         <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-          <Shield className="w-16 h-16 text-slate-800 mx-auto mb-6" />
-          <h2 className="text-3xl font-bold text-white mb-4">{error || "Perfil não encontrado"}</h2>
+          <Shield className="w-16 h-16 text-slate-300 dark:text-slate-800 mx-auto mb-6" />
+          <h2 className="text-3xl font-bold text-foreground mb-4">{error || "Perfil não encontrado"}</h2>
           <p className="text-slate-500 mb-8 text-lg">Parece que este aventureiro ainda não cruzou os portões desta dungeon.</p>
           <button 
             onClick={() => window.location.href = "/"}
-            className="bg-slate-800 hover:bg-slate-700 text-white px-8 py-3 rounded-xl font-bold transition-all"
+            className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-foreground dark:text-white px-8 py-3 rounded-xl font-bold transition-all border border-border-main"
           >
             Voltar para o Mapa
           </button>
@@ -147,12 +147,12 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200">
+    <div className="min-h-screen bg-background text-foreground">
       <Header />
       
       <main className="max-w-4xl mx-auto px-4 py-12">
         {/* Cover / Backdrop (Placeholder) */}
-        <div className="h-48 bg-gradient-to-r from-brand-primary/20 to-slate-900 rounded-3xl border border-slate-800 mb-[-4rem] relative z-0 overflow-hidden">
+        <div className="h-48 bg-gradient-to-r from-brand-primary/20 to-slate-100 dark:to-slate-900 rounded-3xl border border-border-main mb-[-4rem] relative z-0 overflow-hidden">
           <div className="absolute inset-0 opacity-20 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
         </div>
 
@@ -160,15 +160,15 @@ export default function ProfilePage() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="flex flex-col md:flex-row items-center md:items-end gap-6">
               {/* Avatar Placeholder */}
-              <div className="w-32 h-32 rounded-3xl bg-slate-900 border-4 border-slate-950 flex items-center justify-center shadow-2xl overflow-hidden ring-1 ring-slate-800">
-                <div className="w-full h-full flex items-center justify-center bg-slate-800 text-4xl font-black text-brand-primary">
+              <div className="w-32 h-32 rounded-3xl bg-card border-4 border-background flex items-center justify-center shadow-2xl overflow-hidden ring-1 ring-border-main">
+                <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-4xl font-black text-brand-primary">
                   {profileData.user.username[0].toUpperCase()}
                 </div>
               </div>
               
               <div className="text-center md:text-left pb-2">
                 <div className="flex flex-col md:flex-row items-center gap-4 mb-2">
-                  <h1 className="text-4xl font-extrabold text-white flex items-center gap-3">
+                  <h1 className="text-4xl font-extrabold text-foreground flex items-center gap-3">
                     {profileData.user.username}
                     <span className="text-xs uppercase tracking-[0.2em] px-2 py-1 bg-brand-primary/10 border border-brand-primary/20 text-brand-primary rounded-md">
                       LVL {profileData.level}
@@ -181,7 +181,7 @@ export default function ProfilePage() {
                       disabled={followLoading}
                       className={`px-6 py-1.5 rounded-full font-bold text-sm transition-all border ${
                         profileData.is_following 
-                        ? "bg-slate-800 text-slate-300 border-slate-700 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/50" 
+                        ? "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300 border-border-main hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/50" 
                         : "bg-brand-primary text-slate-950 border-brand-primary/30 hover:bg-brand-hover"
                       } disabled:opacity-50`}
                     >
@@ -194,18 +194,18 @@ export default function ProfilePage() {
                   )}
                 </div>
 
-                <div className="flex items-center justify-center md:justify-start gap-6 text-sm font-medium text-slate-400 mb-3">
+                <div className="flex items-center justify-center md:justify-start gap-6 text-sm font-medium text-slate-500 mb-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-white font-bold">{profileData.followers_count}</span>
+                    <span className="text-foreground font-bold">{profileData.followers_count}</span>
                     Seguidores
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-white font-bold">{profileData.following_count}</span>
+                    <span className="text-foreground font-bold">{profileData.following_count}</span>
                     Seguindo
                   </div>
                 </div>
 
-                <p className="text-slate-400 font-medium flex items-center justify-center md:justify-start gap-2">
+                <p className="text-slate-500 font-medium flex items-center justify-center md:justify-start gap-2">
                   <UserIcon className="w-4 h-4" />
                   {profileData.bio || "Este aventureiro ainda não escreveu sua lenda."}
                 </p>
@@ -216,7 +216,7 @@ export default function ProfilePage() {
               <div className="flex justify-center md:justify-end pb-2">
                 <button 
                   onClick={() => setIsEditModalOpen(true)}
-                  className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-6 py-2.5 rounded-xl font-bold transition-all border border-slate-700 shadow-lg"
+                  className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-foreground dark:text-white px-6 py-2.5 rounded-xl font-bold transition-all border border-border-main shadow-lg"
                 >
                   <Settings className="w-4 h-4" />
                   Editar Perfil
@@ -228,9 +228,9 @@ export default function ProfilePage() {
 
         {/* Edit Modal */}
         {isEditModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-200">
-              <h2 className="text-2xl font-bold text-white mb-6">Forjar Perfil</h2>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <div className="bg-card border border-border-main rounded-3xl p-8 max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-200">
+              <h2 className="text-2xl font-bold text-foreground mb-6">Forjar Perfil</h2>
               <form onSubmit={handleUpdateProfile} className="space-y-6">
                 <div>
                   <label className="block text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Username</label>
@@ -238,7 +238,7 @@ export default function ProfilePage() {
                     type="text"
                     value={editUsername}
                     onChange={(e) => setEditUsername(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand-primary transition-colors"
+                    className="w-full bg-background border border-border-main rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-brand-primary transition-colors"
                   />
                 </div>
                 <div>
@@ -247,7 +247,7 @@ export default function ProfilePage() {
                     value={editBio}
                     onChange={(e) => setEditBio(e.target.value)}
                     rows={4}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand-primary transition-colors resize-none"
+                    className="w-full bg-background border border-border-main rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-brand-primary transition-colors resize-none"
                     placeholder="Conte sua história..."
                   />
                 </div>
@@ -255,7 +255,7 @@ export default function ProfilePage() {
                   <button 
                     type="button"
                     onClick={() => setIsEditModalOpen(false)}
-                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-xl transition-all"
+                    className="flex-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-foreground dark:text-white font-bold py-3 rounded-xl transition-all border border-border-main"
                   >
                     Cancelar
                   </button>
@@ -275,35 +275,35 @@ export default function ProfilePage() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-          <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-3xl backdrop-blur-sm group hover:border-brand-primary/30 transition-colors">
+          <div className="bg-card/50 border border-border-main p-8 rounded-3xl backdrop-blur-sm group hover:border-brand-primary/30 transition-colors">
             <Trophy className="w-8 h-8 text-brand-primary mb-4 group-hover:scale-110 transition-transform" />
             <div className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Experiência Total</div>
-            <div className="text-3xl font-black text-white">{profileData.xp} XP</div>
+            <div className="text-3xl font-black text-foreground">{profileData.xp} XP</div>
           </div>
           
-          <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-3xl backdrop-blur-sm group hover:border-brand-primary/30 transition-colors">
+          <div className="bg-card/50 border border-border-main p-8 rounded-3xl backdrop-blur-sm group hover:border-brand-primary/30 transition-colors">
             <Coins className="w-8 h-8 text-yellow-500 mb-4 group-hover:scale-110 transition-transform" />
             <div className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Ouro Acumulado</div>
-            <div className="text-3xl font-black text-white">{profileData.gold}</div>
+            <div className="text-3xl font-black text-foreground">{profileData.gold}</div>
           </div>
 
-          <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-3xl backdrop-blur-sm group hover:border-brand-primary/30 transition-colors">
+          <div className="bg-card/50 border border-border-main p-8 rounded-3xl backdrop-blur-sm group hover:border-brand-primary/30 transition-colors">
             <Calendar className="w-8 h-8 text-blue-500 mb-4 group-hover:scale-110 transition-transform" />
             <div className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Membro Desde</div>
-            <div className="text-3xl font-black text-white">MAI 2026</div>
+            <div className="text-3xl font-black text-foreground">MAI 2026</div>
           </div>
         </div>
 
         {/* Placeholder for achievements or recent activity */}
-        <div className="mt-12 bg-slate-900 border border-slate-800 rounded-3xl p-8">
-          <h3 className="text-xl font-bold text-white mb-6">Conquistas Recentes</h3>
+        <div className="mt-12 bg-card border border-border-main rounded-3xl p-8">
+          <h3 className="text-xl font-bold text-foreground mb-6">Conquistas Recentes</h3>
           <div className="flex flex-wrap gap-4">
             {[
               "Iniciante em Álgebra",
               "Matador de Derivadas",
               "Mestre das Matrizes"
             ].map((achievement) => (
-              <div key={achievement} className="px-4 py-2 bg-slate-800 rounded-lg text-sm text-slate-400 font-medium border border-slate-700">
+              <div key={achievement} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-sm text-slate-500 dark:text-slate-400 font-medium border border-border-main">
                 {achievement}
               </div>
             ))}

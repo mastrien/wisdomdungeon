@@ -47,27 +47,27 @@ export default function SettingsPage() {
 
   if (authLoading || !profile) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white gap-4">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center text-foreground gap-4">
         <Loader2 className="w-10 h-10 animate-spin text-brand-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200">
+    <div className="min-h-screen bg-background text-foreground">
       <Header />
       
       <main className="max-w-3xl mx-auto px-4 py-12">
         <button 
           onClick={() => router.push("/")}
-          className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-8 group"
+          className="flex items-center gap-2 text-slate-500 hover:text-foreground transition-colors mb-8 group"
         >
           <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
           Voltar ao Mapa
         </button>
 
-        <h1 className="text-3xl font-bold text-white mb-2">Configurações</h1>
-        <p className="text-slate-400 mb-12">Personalize sua experiência no Wisdom Dungeon.</p>
+        <h1 className="text-3xl font-bold text-foreground mb-2">Configurações</h1>
+        <p className="text-slate-500 mb-12">Personalize sua experiência no Wisdom Dungeon.</p>
 
         <section className="space-y-12">
           {/* Theme Color */}
@@ -76,7 +76,7 @@ export default function SettingsPage() {
               <div className="p-2 bg-brand-primary/10 rounded-lg">
                 <Palette className="w-5 h-5 text-brand-primary" />
               </div>
-              <h2 className="text-xl font-bold text-white">Cor do Tema</h2>
+              <h2 className="text-xl font-bold text-foreground">Cor do Tema</h2>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -93,7 +93,7 @@ export default function SettingsPage() {
                       flex items-center justify-between p-4 rounded-2xl border-2 transition-all
                       ${isSelected 
                         ? "border-brand-primary bg-brand-primary/5" 
-                        : "border-slate-800 bg-slate-900/50 hover:border-slate-700"}
+                        : "border-border-main bg-card hover:border-slate-300 dark:hover:border-slate-700"}
                       ${isLocked ? "opacity-50 grayscale cursor-not-allowed" : "cursor-pointer"}
                     `}
                   >
@@ -125,7 +125,7 @@ export default function SettingsPage() {
               <div className="p-2 bg-brand-primary/10 rounded-lg">
                 <Type className="w-5 h-5 text-brand-primary" />
               </div>
-              <h2 className="text-xl font-bold text-white">Tamanho da Fonte</h2>
+              <h2 className="text-xl font-bold text-foreground">Tamanho da Fonte</h2>
             </div>
             
             <div className="flex flex-wrap gap-4">
@@ -141,7 +141,7 @@ export default function SettingsPage() {
                       px-8 py-4 rounded-2xl border-2 font-bold transition-all
                       ${isSelected 
                         ? "border-brand-primary bg-brand-primary/5 text-brand-primary" 
-                        : "border-slate-800 bg-slate-900/50 hover:border-slate-700 text-slate-400"}
+                        : "border-border-main bg-card hover:border-slate-300 dark:hover:border-slate-700 text-slate-500"}
                     `}
                   >
                     {size.name}
@@ -162,3 +162,4 @@ export default function SettingsPage() {
     </div>
   );
 }
+

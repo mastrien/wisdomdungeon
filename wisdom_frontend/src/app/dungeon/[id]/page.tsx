@@ -147,21 +147,21 @@ export default function DungeonPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white gap-4">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center text-foreground gap-4">
         <Loader2 className="w-10 h-10 animate-spin text-brand-primary" />
-        <p className="text-slate-400 font-medium">Preparando desafio...</p>
+        <p className="text-slate-500 font-medium">Preparando desafio...</p>
       </div>
     );
   }
 
   if (state?.completed) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-200">
+      <div className="min-h-screen bg-background text-foreground">
         <Header />
         <div className="max-w-3xl mx-auto p-8 text-center mt-20">
           <Trophy className="w-20 h-20 text-brand-primary mx-auto mb-6" />
           <h1 className="text-4xl font-bold mb-4">Masmorra Concluída!</h1>
-          <p className="text-slate-400 mb-8">Você superou todos os desafios desta semana. Retorne em breve para novas aventuras!</p>
+          <p className="text-slate-500 mb-8">Você superou todos os desafios desta semana. Retorne em breve para novas aventuras!</p>
           <button onClick={() => router.push("/")} className="bg-brand-primary text-slate-950 px-8 py-3 rounded-xl font-bold">Voltar ao Mapa</button>
         </div>
       </div>
@@ -171,7 +171,7 @@ export default function DungeonPage() {
   const roomProgress = ((state?.question_index || 0) / 10) * 100;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200">
+    <div className="min-h-screen bg-background text-foreground">
       <Header />
       <div className="p-4 md:p-8">
         <div className="max-w-3xl mx-auto">
@@ -180,37 +180,37 @@ export default function DungeonPage() {
         <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
           <button 
             onClick={handleBack}
-            className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors group"
+            className="flex items-center gap-2 text-slate-500 hover:text-foreground transition-colors group"
           >
             <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
             Mapa
           </button>
 
           <div className="flex flex-wrap justify-center gap-4">
-            <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 px-4 py-2 rounded-full shadow-lg">
+            <div className="flex items-center gap-2 bg-card border border-border-main px-4 py-2 rounded-full shadow-lg" aria-label="Vidas">
               <div className="flex gap-1">
                 {[...Array(profile?.max_hp || 3)].map((_, i) => (
                   <Heart 
                     key={i} 
-                    className={`w-4 h-4 ${i < (profile?.hp || 0) ? "text-red-500 fill-red-500" : "text-slate-700"}`} 
+                    className={`w-4 h-4 ${i < (profile?.hp || 0) ? "text-red-500 fill-red-500" : "text-slate-300 dark:text-slate-700"}`} 
                   />
                 ))}
               </div>
             </div>
-            <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 px-4 py-2 rounded-full shadow-lg">
-              <Flame className={`w-5 h-5 ${combo > 0 ? "text-orange-500 animate-pulse" : "text-slate-600"}`} />
+            <div className="flex items-center gap-2 bg-card border border-border-main px-4 py-2 rounded-full shadow-lg">
+              <Flame className={`w-5 h-5 ${combo > 0 ? "text-orange-500 animate-pulse" : "text-slate-400 dark:text-slate-600"}`} />
               <span className="font-bold text-sm">Combo: {combo}</span>
             </div>
-            <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 px-4 py-2 rounded-full shadow-lg">
+            <div className="flex items-center gap-2 bg-card border border-border-main px-4 py-2 rounded-full shadow-lg">
               <Timer className="w-5 h-5 text-brand-primary" />
               <span className="font-mono font-bold text-sm">Tempo: {seconds}s</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
+        <div className="bg-card border border-border-main rounded-3xl overflow-hidden shadow-2xl">
           {/* Progress Bar */}
-          <div className="h-2 bg-slate-800 w-full" role="progressbar" aria-valuenow={roomProgress} aria-valuemin={0} aria-valuemax={100}>
+          <div className="h-2 bg-slate-200 dark:bg-slate-800 w-full" role="progressbar" aria-valuenow={roomProgress} aria-valuemin={0} aria-valuemax={100}>
             <div 
               className="h-full bg-brand-primary shadow-brand transition-all duration-500"
               style={{ width: `${roomProgress}%` }}
@@ -222,13 +222,13 @@ export default function DungeonPage() {
               <span className="px-3 py-1 bg-brand-primary/10 border border-brand-primary/20 text-brand-primary text-xs font-bold uppercase tracking-widest rounded-full">
                 {state?.current_dungeon?.title}
               </span>
-              <span className="text-slate-400 font-bold text-sm">
+              <span className="text-slate-500 font-bold text-sm">
                 Sala {state?.room.order}/10
               </span>
             </div>
 
             <div className="mb-10 flex justify-center">
-              <MathRenderer tex={state?.question.enunciado || ""} className="text-xl md:text-3xl font-bold text-white leading-relaxed text-center" />
+              <MathRenderer tex={state?.question.enunciado || ""} className="text-xl md:text-3xl font-bold text-foreground leading-relaxed text-center" />
             </div>
 
             <div className="grid grid-cols-1 gap-4 mb-10">
@@ -244,19 +244,19 @@ export default function DungeonPage() {
                     disabled={!!result}
                     className={`
                       w-full text-left p-5 rounded-xl border-2 transition-all flex items-center justify-between group
-                      ${isSelected ? "border-brand-primary bg-brand-primary/5 text-white" : "border-slate-800 bg-slate-950 hover:border-slate-600 text-slate-400"}
-                      ${result && isCorrect ? "border-green-500 bg-green-500/10 text-white" : ""}
-                      ${result && isWrong ? "border-red-500 bg-red-500/10 text-white" : ""}
+                      ${isSelected ? "border-brand-primary bg-brand-primary/5 text-foreground" : "border-border-main bg-background hover:border-slate-400 dark:hover:border-slate-600 text-slate-500 dark:text-slate-400"}
+                      ${result && isCorrect ? "border-green-500 bg-green-500/10 text-foreground" : ""}
+                      ${result && isWrong ? "border-red-500 bg-red-500/10 text-foreground" : ""}
                     `}
                   >
                     <MathRenderer tex={option} displayMode={false} className="font-medium text-lg" />
                     <div className={`
                       w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors
-                      ${isSelected ? "border-brand-primary bg-brand-primary" : "border-slate-700"}
+                      ${isSelected ? "border-brand-primary bg-brand-primary" : "border-slate-300 dark:border-slate-700"}
                       ${result && isCorrect ? "border-green-500 bg-green-500" : ""}
                       ${result && isWrong ? "border-red-500 bg-red-500" : ""}
                     `}>
-                      {(isSelected || (result && isCorrect)) && <div className="w-2 h-2 bg-slate-950 rounded-full" />}
+                      {(isSelected || (result && isCorrect)) && <div className="w-2 h-2 bg-white dark:bg-slate-950 rounded-full" />}
                     </div>
                   </button>
                 );
@@ -267,7 +267,7 @@ export default function DungeonPage() {
               <button
                 onClick={handleSubmit}
                 disabled={!selectedOption || submitting}
-                className="w-full bg-brand-primary hover:bg-brand-hover disabled:bg-slate-800 disabled:text-slate-500 text-slate-950 font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
+                className="w-full bg-brand-primary hover:bg-brand-hover disabled:bg-slate-100 dark:disabled:bg-slate-800 disabled:text-slate-400 text-slate-950 font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
               >
                 {submitting ? <Loader2 className="w-6 h-6 animate-spin" /> : (
                   <>
@@ -279,33 +279,33 @@ export default function DungeonPage() {
             ) : (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
                 <div className={`p-6 rounded-2xl border flex items-center gap-4 ${
-                  result.is_correct ? "bg-green-500/10 border-green-500/50 text-green-500" : "bg-red-500/10 border-red-500/50 text-red-500"
+                  result.is_correct ? "bg-green-500/10 border-green-500/50 text-green-600 dark:text-green-500" : "bg-red-500/10 border-red-500/50 text-red-600 dark:text-red-500"
                 }`}>
                   {result.is_correct ? <CheckCircle2 className="w-8 h-8" /> : <XCircle className="w-8 h-8" />}
                   <div>
                     <h3 className="font-bold text-xl">{result.is_correct ? "Excelente!" : "Quase lá!"}</h3>
-                    <p className="text-sm opacity-80">
+                    <div className="text-sm opacity-80">
                       {result.is_correct 
                         ? "Precisão cirúrgica no pensamento!" 
                         : `A resposta correta era: `}
                       {!result.is_correct && <MathRenderer tex={result.correct_answer || ""} displayMode={false} className="font-bold" />}
-                    </p>
+                    </div>
                   </div>
                 </div>
 
                 <div className="flex gap-4">
-                  <div className="flex-1 bg-slate-800/50 p-4 rounded-xl border border-slate-700 flex items-center gap-3">
+                  <div className="flex-1 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-border-main flex items-center gap-3">
                     <Trophy className="text-brand-primary" />
                     <div>
                       <div className="text-xs text-slate-500 font-bold uppercase">XP</div>
-                      <div className="text-xl font-bold text-white">+{result.xp}</div>
+                      <div className="text-xl font-bold text-foreground">+{result.xp}</div>
                     </div>
                   </div>
-                  <div className="flex-1 bg-slate-800/50 p-4 rounded-xl border border-slate-700 flex items-center gap-3">
+                  <div className="flex-1 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-border-main flex items-center gap-3">
                     <Coins className="text-yellow-500" />
                     <div>
                       <div className="text-xs text-slate-500 font-bold uppercase">Ouro</div>
-                      <div className="text-xl font-bold text-white">+{result.gold}</div>
+                      <div className="text-xl font-bold text-foreground">+{result.gold}</div>
                     </div>
                   </div>
                 </div>
@@ -319,7 +319,7 @@ export default function DungeonPage() {
 
                 <button
                   onClick={fetchDungeonState}
-                  className="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 group"
+                  className="w-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-foreground font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 group"
                 >
                   Continuar Jornada
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -332,16 +332,16 @@ export default function DungeonPage() {
         {/* Active Attributes (Phase 3 visual) */}
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 opacity-60 hover:opacity-100 transition-opacity">
            <div className="text-xs font-bold text-slate-500 uppercase border-l-2 border-brand-primary pl-3">
-             XP por questão: <span className="text-white">10</span>
+             XP por questão: <span className="text-foreground">10</span>
            </div>
            <div className="text-xs font-bold text-slate-500 uppercase border-l-2 border-brand-primary pl-3">
-             XP por sala: <span className="text-white">100</span>
+             XP por sala: <span className="text-foreground">100</span>
            </div>
            <div className="text-xs font-bold text-slate-500 uppercase border-l-2 border-yellow-500 pl-3">
-             Ouro por questão: <span className="text-white">5</span>
+             Ouro por questão: <span className="text-foreground">5</span>
            </div>
            <div className="text-xs font-bold text-slate-500 uppercase border-l-2 border-blue-500 pl-3">
-             Mult. XP: <span className="text-white">1.0x</span>
+             Mult. XP: <span className="text-foreground">1.0x</span>
            </div>
         </div>
 

@@ -60,9 +60,9 @@ export default function HomePage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white gap-4">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center text-foreground gap-4">
         <Loader2 className="w-10 h-10 animate-spin text-brand-primary" />
-        <p className="text-slate-400 font-medium">Preparando o mapa...</p>
+        <p className="text-slate-500 font-medium">Preparando o mapa...</p>
       </div>
     );
   }
@@ -70,37 +70,37 @@ export default function HomePage() {
   const totalSolvedToday = Object.values(dailyStats).reduce((sum, s) => sum + s.total_solved, 0);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200">
+    <div className="min-h-screen bg-background text-foreground">
       <Header />
 
       <main className="max-w-6xl mx-auto px-4 py-12">
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
           <div>
-            <h2 className="text-4xl font-extrabold text-white mb-2">Mundo da Matemática</h2>
-            <p className="text-slate-400 text-lg">Selecione uma masmorra e supere os desafios semanais.</p>
+            <h2 className="text-4xl font-extrabold text-foreground mb-2">Mundo da Matemática</h2>
+            <p className="text-slate-500 text-lg">Selecione uma masmorra e supere os desafios semanais.</p>
           </div>
           
           {profile && (
             <div className="flex gap-4">
-              <div className="bg-slate-900/50 border border-slate-800 px-6 py-3 rounded-2xl flex items-center gap-3">
+              <div className="bg-card border border-border-main px-6 py-3 rounded-2xl flex items-center gap-3">
                 <Flame className="text-orange-500 w-6 h-6" />
                 <div>
                   <div className="text-[10px] text-slate-500 font-bold uppercase">Ofensiva</div>
-                  <div className="text-xl font-black text-white">{profile.streak_count} Dias</div>
+                  <div className="text-xl font-black text-foreground">{profile.streak_count} Dias</div>
                 </div>
               </div>
-              <div className="bg-slate-900/50 border border-slate-800 px-6 py-3 rounded-2xl flex items-center gap-3">
+              <div className="bg-card border border-border-main px-6 py-3 rounded-2xl flex items-center gap-3">
                 <Trophy className="text-brand-primary w-6 h-6" />
                 <div>
                   <div className="text-[10px] text-slate-500 font-bold uppercase">Normais</div>
-                  <div className="text-xl font-black text-white">{profile.total_normal_dungeons_completed}</div>
+                  <div className="text-xl font-black text-foreground">{profile.total_normal_dungeons_completed}</div>
                 </div>
               </div>
-              <div className="bg-slate-900/50 border border-slate-800 px-6 py-3 rounded-2xl flex items-center gap-3">
+              <div className="bg-card border border-border-main px-6 py-3 rounded-2xl flex items-center gap-3">
                 <ShieldAlert className="text-purple-500 w-6 h-6" />
                 <div>
                   <div className="text-[10px] text-slate-500 font-bold uppercase">Elite</div>
-                  <div className="text-xl font-black text-white">{profile.total_elite_dungeons_completed}</div>
+                  <div className="text-xl font-black text-foreground">{profile.total_elite_dungeons_completed}</div>
                 </div>
               </div>
             </div>
@@ -119,7 +119,7 @@ export default function HomePage() {
                 key={dungeon.id}
                 onClick={() => !isLocked && router.push(`/dungeon/${dungeon.topic}?type=${dungeon.type}`)}
                 className={`
-                  group bg-slate-900 border border-slate-800 p-6 rounded-3xl transition-all relative overflow-hidden flex flex-col justify-between min-h-[240px]
+                  group bg-card border border-border-main p-6 rounded-3xl transition-all relative overflow-hidden flex flex-col justify-between min-h-[240px]
                   ${isLocked ? 'opacity-50 cursor-not-allowed grayscale' : 'hover:border-brand-primary/50 cursor-pointer'}
                 `}
               >
@@ -133,7 +133,7 @@ export default function HomePage() {
                       {dungeon.type}
                     </span>
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-1">{dungeon.title}</h3>
+                  <h3 className="text-xl font-bold text-foreground mb-1">{dungeon.title}</h3>
                 </div>
 
                 <div className="space-y-4">
@@ -150,7 +150,7 @@ export default function HomePage() {
                     )}
                   </div>
                   
-                  <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
                     <div 
                       className={`h-full transition-all ${isElite ? 'bg-purple-500' : 'bg-brand-primary'}`}
                       style={{ width: `${Math.min(progress, 100)}%` }}
@@ -160,7 +160,7 @@ export default function HomePage() {
                   <button 
                     disabled={isLocked}
                     className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg flex items-center justify-center gap-2
-                      ${isLocked ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-slate-800 group-hover:bg-brand-primary group-hover:text-slate-950 text-white cursor-pointer'}
+                      ${isLocked ? 'bg-slate-200 dark:bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-slate-200 dark:bg-slate-800 group-hover:bg-brand-primary group-hover:text-slate-950 text-foreground dark:text-white cursor-pointer'}
                     `}
                   >
                     {isLocked ? (
@@ -176,23 +176,23 @@ export default function HomePage() {
         </div>
 
         {/* Store Placeholder */}
-        <div className="mt-12 p-12 bg-slate-900/30 border-2 border-dashed border-slate-800 rounded-3xl text-center group hover:border-brand-primary/30 transition-colors">
-          <div className="bg-slate-900 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-800 group-hover:scale-110 transition-transform">
+        <div className="mt-12 p-12 bg-card/30 border-2 border-dashed border-border-main rounded-3xl text-center group hover:border-brand-primary/30 transition-colors">
+          <div className="bg-card w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-border-main group-hover:scale-110 transition-transform">
             <Coins className="text-brand-primary w-8 h-8" />
           </div>
-          <h3 className="text-2xl font-bold text-white mb-2">Loja de Itens</h3>
+          <h3 className="text-2xl font-bold text-foreground mb-2">Loja de Itens</h3>
           <p className="text-slate-500 max-w-md mx-auto">
             Em breve você poderá trocar seu ouro acumulado por cosméticos e itens de suporte para suas jornadas.
           </p>
-          <div className="mt-6 inline-flex items-center gap-2 px-4 py-1.5 bg-slate-800/50 rounded-full text-xs font-bold text-slate-400 uppercase tracking-widest border border-slate-700">
+          <div className="mt-6 inline-flex items-center gap-2 px-4 py-1.5 bg-slate-100 dark:bg-slate-800/50 rounded-full text-xs font-bold text-slate-400 uppercase tracking-widest border border-border-main">
             Disponível em breve!
           </div>
         </div>
 
         {/* Stats & History Shortcut */}
-        <div className="mt-12 p-8 bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="mt-12 p-8 bg-card border border-border-main rounded-3xl flex flex-col md:flex-row items-center justify-between gap-8">
           <div>
-            <h3 className="text-2xl font-bold text-white mb-2">Seu Histórico</h3>
+            <h3 className="text-2xl font-bold text-foreground mb-2">Seu Histórico</h3>
             <p className="text-slate-400">
               {totalSolvedToday > 0 
                 ? `Você já resolveu ${totalSolvedToday} desafios hoje. Continue assim!` 
@@ -201,11 +201,12 @@ export default function HomePage() {
           </div>
           <button 
             onClick={() => router.push("/history")}
-            className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-8 py-3 rounded-xl font-bold transition-all border border-slate-700 shadow-xl"
+            className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-foreground dark:text-white px-8 py-3 rounded-xl font-bold transition-all border border-border-main shadow-xl"
           >
             <History className="w-5 h-5" />
             Ver Histórico Geral
           </button>
+
         </div>
       </main>
     </div>

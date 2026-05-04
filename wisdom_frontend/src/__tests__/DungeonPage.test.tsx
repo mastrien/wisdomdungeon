@@ -110,13 +110,14 @@ describe("DungeonPage HUD v2", () => {
 
     render(<DungeonPage />);
     
-    await waitFor(() => screen.getByText(/5/));
-    fireEvent.click(screen.getByText(/5/));
+    await waitFor(() => screen.getByRole("button", { name: /5/ }));
+    fireEvent.click(screen.getByRole("button", { name: /5/ }));
     fireEvent.click(screen.getByText(/Enviar Resposta/i));
 
     await waitFor(() => {
-      expect(screen.getByText(/Resposta correta:/i)).toBeInTheDocument();
-      expect(screen.getByText(/4/)).toBeInTheDocument();
+      expect(screen.getByText(/A resposta correta era:/i)).toBeInTheDocument();
+      // Deve encontrar o "4" tanto na opção quanto no feedback
+      expect(screen.getAllByText(/4/)).toHaveLength(2);
     });
   });
 
@@ -140,8 +141,8 @@ describe("DungeonPage HUD v2", () => {
 
     render(<DungeonPage />);
     
-    await waitFor(() => screen.getByText(/4/));
-    fireEvent.click(screen.getByText(/4/));
+    await waitFor(() => screen.getByRole("button", { name: /4/ }));
+    fireEvent.click(screen.getByRole("button", { name: /4/ }));
     fireEvent.click(screen.getByText(/Enviar Resposta/i));
 
     await waitFor(() => {
