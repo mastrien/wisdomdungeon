@@ -191,6 +191,8 @@ class HistoryView(APIView):
         })
 
 class MasteryView(APIView):
+    permission_classes = [permissions.AllowAny]
+
     def get(self, request):
         username = request.query_params.get('username')
         if username:
@@ -199,6 +201,8 @@ class MasteryView(APIView):
             except Profile.DoesNotExist:
                 return Response({"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
         else:
+            if not request.user.is_authenticated:
+                return Response({"error": "Authentication required"}, status=status.HTTP_403_FORBIDDEN)
             profile = request.user.profile
             
         histories = profile.history.all()

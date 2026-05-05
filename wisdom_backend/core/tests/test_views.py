@@ -72,6 +72,23 @@ class CoreApiTest(APITestCase):
         response = self.client.get(url, {'username': 'ghost'})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_get_mastery_anonymous(self):
+        # Deslogar
+        self.client.force_authenticate(user=None)
+        
+        # Criar um perfil para consultar
+        other_user = User.objects.create_user(username="public_hero", email="public@test.com")
+        Profile.objects.create(user=other_user, firebase_uid="public_uid")
+        
+        url = reverse('mastery')
+        # Acesso anônimo com username deve ser permitido para o perfil público
+        response = self.client.get(url, {'username': 'public_hero'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        # Acesso anônimo SEM username deve ser 403
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
     def test_get_public_profile(self):
         # Deslogar para testar acesso público
         self.client.force_authenticate(user=None)
