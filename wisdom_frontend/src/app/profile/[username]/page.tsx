@@ -12,7 +12,10 @@ import {
   Shield, 
   Loader2,
   Calendar,
-  ChevronLeft
+  ChevronLeft,
+  Flame,
+  ShieldAlert,
+  Target
 } from "lucide-react";
 import Header from "@/components/Header";
 
@@ -28,6 +31,17 @@ interface ProfileData {
   followers_count: number;
   following_count: number;
   is_following: boolean;
+  streak_count: number;
+  total_normal_dungeons_completed: number;
+  total_elite_dungeons_completed: number;
+}
+
+interface MasteryStat {
+  topic: string;
+  topic_id: string;
+  total_solved: number;
+  success_rate: number;
+  mastery: number;
 }
 
 export default function ProfilePage() {
@@ -35,6 +49,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const { profile: loggedInProfile, loading: authLoading, refreshProfile } = useAuth();
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const [masteryData, setMasteryData] = useState<MasteryStat[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [followLoading, setFollowLoading] = useState(false);
@@ -51,10 +66,15 @@ export default function ProfilePage() {
     const fetchProfile = async () => {
       setLoading(true);
       try {
-        const response = await api.get(`/profile/${username}/`);
-        setProfileData(response.data);
-        setEditBio(response.data.bio || "");
-        setEditUsername(response.data.user.username);
+        const [profileRes, masteryRes] = await Promise.all([
+          api.get(`/profile/${username}/`),
+          api.get(`/mastery/?username=${username}`)
+        ]);
+        
+        setProfileData(profileRes.data);
+        setMasteryData(masteryRes.data);
+        setEditBio(profileRes.data.bio || "");
+        setEditUsername(profileRes.data.user.username);
       } catch (err: any) {
         console.error("Erro ao buscar perfil:", err);
         setError(err.response?.status === 404 ? "Aventureiro não encontrado" : "Erro ao carregar perfil");
@@ -275,55 +295,64 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* Stats Grid */}
+        {/* Engagement Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-          {isOwner ? (
-            <button 
-              onClick={() => router.push("/progression")}
-              className="bg-card/50 border border-border-main p-8 rounded-3xl backdrop-blur-sm group hover:border-brand-primary/30 transition-all text-left"
-            >
-              <Trophy className="w-8 h-8 text-brand-primary mb-4 group-hover:scale-110 transition-transform" />
-              <div className="text-xs text-muted font-bold uppercase tracking-wider mb-1">Experiência Total</div>
-              <div className="text-3xl font-black text-foreground">{profileData.xp} XP</div>
-              <div className="mt-4 text-xs font-bold text-brand-primary flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                Ver Trilha de Recompensas
-                <ChevronLeft className="w-3 h-3 rotate-180" />
-              </div>
-            </button>
-          ) : (
-            <div className="bg-card/50 border border-border-main p-8 rounded-3xl backdrop-blur-sm group hover:border-brand-primary/30 transition-colors">
-              <Trophy className="w-8 h-8 text-brand-primary mb-4 group-hover:scale-110 transition-transform" />
-              <div className="text-xs text-muted font-bold uppercase tracking-wider mb-1">Experiência Total</div>
-              <div className="text-3xl font-black text-foreground">{profileData.xp} XP</div>
-            </div>
-          )}
+          <div className="bg-card/50 border border-border-main p-8 rounded-3xl backdrop-blur-sm group hover:border-brand-primary/30 transition-colors">
+            <Flame className="w-8 h-8 text-orange-500 mb-4 group-hover:scale-110 transition-transform" />
+            <div className="text-xs text-muted font-bold uppercase tracking-wider mb-1">Ofensiva Atual</div>
+            <div className="text-3xl font-black text-foreground">{profileData.streak_count} Dias</div>
+          </div>
           
           <div className="bg-card/50 border border-border-main p-8 rounded-3xl backdrop-blur-sm group hover:border-brand-primary/30 transition-colors">
-            <Coins className="w-8 h-8 text-yellow-500 mb-4 group-hover:scale-110 transition-transform" />
-            <div className="text-xs text-muted font-bold uppercase tracking-wider mb-1">Ouro Acumulado</div>
-            <div className="text-3xl font-black text-foreground">{profileData.gold}</div>
+            <Trophy className="w-8 h-8 text-brand-primary mb-4 group-hover:scale-110 transition-transform" />
+            <div className="text-xs text-muted font-bold uppercase tracking-wider mb-1">Masmorras Normais</div>
+            <div className="text-3xl font-black text-foreground">{profileData.total_normal_dungeons_completed}</div>
           </div>
 
           <div className="bg-card/50 border border-border-main p-8 rounded-3xl backdrop-blur-sm group hover:border-brand-primary/30 transition-colors">
-            <Calendar className="w-8 h-8 text-blue-500 mb-4 group-hover:scale-110 transition-transform" />
-            <div className="text-xs text-muted font-bold uppercase tracking-wider mb-1">Membro Desde</div>
-            <div className="text-3xl font-black text-foreground">MAI 2026</div>
+            <ShieldAlert className="w-8 h-8 text-purple-500 mb-4 group-hover:scale-110 transition-transform" />
+            <div className="text-xs text-muted font-bold uppercase tracking-wider mb-1">Masmorras de Elite</div>
+            <div className="text-3xl font-black text-foreground">{profileData.total_elite_dungeons_completed}</div>
           </div>
         </div>
 
-        {/* Placeholder for achievements or recent activity */}
+        {/* Top Mastery Dungeons */}
         <div className="mt-12 bg-card border border-border-main rounded-3xl p-8">
-          <h3 className="text-xl font-bold text-foreground mb-6">Conquistas Recentes</h3>
-          <div className="flex flex-wrap gap-4">
-            {[
-              "Iniciante em Álgebra",
-              "Matador de Derivadas",
-              "Mestre das Matrizes"
-            ].map((achievement) => (
-              <div key={achievement} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-sm text-muted dark:text-dim font-medium border border-border-main">
-                {achievement}
-              </div>
-            ))}
+          <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
+            <Target className="w-5 h-5 text-brand-primary" />
+            Maestria em Masmorras
+          </h3>
+          
+          <div className="space-y-4">
+            {masteryData
+              .sort((a, b) => b.mastery - a.mastery)
+              .slice(0, 3)
+              .map((stat) => (
+                <div key={stat.topic_id} className="bg-background border border-border-main p-6 rounded-2xl flex items-center justify-between group hover:border-brand-primary/50 transition-all">
+                  <div>
+                    <h4 className="font-bold text-foreground text-lg">{stat.topic}</h4>
+                    <div className="flex items-center gap-4 mt-1">
+                      <div className="text-xs font-medium text-muted uppercase tracking-tighter">
+                        Resolvidos: <span className="text-foreground">{stat.total_solved}</span>
+                      </div>
+                      <div className="text-xs font-medium text-muted uppercase tracking-tighter">
+                        Taxa: <span className="text-foreground">{stat.success_rate}%</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="text-right">
+                    <div className="text-[10px] text-muted font-bold uppercase tracking-widest mb-1">Pontos de Maestria</div>
+                    <div className="text-2xl font-black text-brand-primary group-hover:scale-110 transition-transform origin-right">
+                      {stat.mastery}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            
+            {masteryData.length === 0 && (
+              <p className="text-muted text-center py-8">Este aventureiro ainda não conquistou maestria em nenhuma masmorra.</p>
+            )}
           </div>
         </div>
       </main>

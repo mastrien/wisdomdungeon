@@ -25,12 +25,26 @@ describe('ProfilePage', () => {
     bio: 'Sou um aventureiro',
     followers_count: 10,
     following_count: 5,
-    is_following: false
+    is_following: false,
+    streak_count: 7,
+    total_normal_dungeons_completed: 12,
+    total_elite_dungeons_completed: 3
   };
+
+  const mockMasteryData = [
+    { topic: 'Álgebra Básica', topic_id: 'algebra_basica', total_solved: 50, success_rate: 90, mastery: 450 },
+    { topic: 'Cálculo Básico', topic_id: 'calculo_basico', total_solved: 30, success_rate: 80, mastery: 240 },
+    { topic: 'Geometria', topic_id: 'geometria', total_solved: 20, success_rate: 70, mastery: 140 },
+  ];
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseParams.mockReturnValue({ username: 'targetuser' });
+    // Default implementation for API
+    mockApi.get.mockImplementation((url) => {
+      if (url.includes('/mastery/')) return Promise.resolve({ data: mockMasteryData });
+      return Promise.resolve({ data: mockProfileData });
+    });
   });
 
   it('renders loading state initially', () => {
@@ -39,21 +53,26 @@ describe('ProfilePage', () => {
     expect(screen.getByText(/Consultando oráculos/i)).toBeInTheDocument();
   });
 
-  it('displays user profile data and follow stats', async () => {
+  it('displays user profile data, mastery and engagement stats', async () => {
     mockUseAuth.mockReturnValue({ profile: null, loading: false });
-    mockApi.get.mockResolvedValueOnce({ data: mockProfileData });
 
     render(<ProfilePage />);
 
     await waitFor(() => {
       expect(screen.getByText('targetuser')).toBeInTheDocument();
-      expect(screen.getByText('500 XP')).toBeInTheDocument();
-      expect(screen.getByText('200')).toBeInTheDocument();
-      expect(screen.getByText('LVL 5')).toBeInTheDocument();
-      expect(screen.getByText('10')).toBeInTheDocument(); // followers
-      expect(screen.getByText('Seguidores')).toBeInTheDocument();
-      expect(screen.getByText('5')).toBeInTheDocument(); // following
-      expect(screen.getByText('Seguindo')).toBeInTheDocument();
+      
+      // Top 3 Mastery
+      expect(screen.getByText('Álgebra Básica')).toBeInTheDocument();
+      expect(screen.getByText('450')).toBeInTheDocument();
+      expect(screen.getByText('Cálculo Básico')).toBeInTheDocument();
+      expect(screen.getByText('240')).toBeInTheDocument();
+      expect(screen.getByText('Geometria')).toBeInTheDocument();
+      expect(screen.getByText('140')).toBeInTheDocument();
+      
+      // Engagement Stats
+      expect(screen.getByText('7 Dias')).toBeInTheDocument();
+      expect(screen.getByText('12')).toBeInTheDocument(); // normal
+      expect(screen.getByText('3')).toBeInTheDocument(); // elite
     });
   });
 
@@ -62,7 +81,10 @@ describe('ProfilePage', () => {
       profile: { user: { username: 'otheruser' } }, 
       loading: false 
     });
-    mockApi.get.mockResolvedValueOnce({ data: { ...mockProfileData, is_following: false } });
+    mockApi.get.mockImplementation((url) => {
+       if (url.includes('/mastery/')) return Promise.resolve({ data: mockMasteryData });
+       return Promise.resolve({ data: { ...mockProfileData, is_following: false } });
+    });
 
     render(<ProfilePage />);
 
@@ -76,7 +98,10 @@ describe('ProfilePage', () => {
       profile: { user: { username: 'otheruser' } }, 
       loading: false 
     });
-    mockApi.get.mockResolvedValueOnce({ data: { ...mockProfileData, is_following: true } });
+    mockApi.get.mockImplementation((url) => {
+       if (url.includes('/mastery/')) return Promise.resolve({ data: mockMasteryData });
+       return Promise.resolve({ data: { ...mockProfileData, is_following: true } });
+    });
 
     render(<ProfilePage />);
 
@@ -90,7 +115,6 @@ describe('ProfilePage', () => {
       profile: { user: { username: 'targetuser' } }, 
       loading: false 
     });
-    mockApi.get.mockResolvedValueOnce({ data: { ...mockProfileData, is_following: false } });
 
     render(<ProfilePage />);
 
@@ -104,7 +128,6 @@ describe('ProfilePage', () => {
       profile: { user: { username: 'targetuser' } }, 
       loading: false 
     });
-    mockApi.get.mockResolvedValueOnce({ data: mockProfileData });
 
     render(<ProfilePage />);
 
@@ -118,7 +141,6 @@ describe('ProfilePage', () => {
       profile: { user: { username: 'otheruser' } }, 
       loading: false 
     });
-    mockApi.get.mockResolvedValueOnce({ data: mockProfileData });
 
     render(<ProfilePage />);
 
@@ -129,8 +151,11 @@ describe('ProfilePage', () => {
 
   it('displays error if profile not found', async () => {
     mockUseAuth.mockReturnValue({ profile: null, loading: false });
-    mockApi.get.mockRejectedValueOnce({ 
-      response: { status: 404 } 
+    mockApi.get.mockImplementation((url) => {
+        if (url.includes('/profile/')) {
+            return Promise.reject({ response: { status: 404 } });
+        }
+        return Promise.resolve({ data: mockMasteryData });
     });
 
     render(<ProfilePage />);
