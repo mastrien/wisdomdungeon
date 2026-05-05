@@ -192,7 +192,15 @@ class HistoryView(APIView):
 
 class MasteryView(APIView):
     def get(self, request):
-        profile = request.user.profile
+        username = request.query_params.get('username')
+        if username:
+            try:
+                profile = Profile.objects.get(user__username=username)
+            except Profile.DoesNotExist:
+                return Response({"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            profile = request.user.profile
+            
         histories = profile.history.all()
         
         # Check if we only want today's stats

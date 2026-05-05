@@ -58,6 +58,20 @@ class CoreApiTest(APITestCase):
         self.assertEqual(len(response.data), 5) # 5 tópicos definidos no view
         self.assertEqual(response.data[0]['total_solved'], 0)
 
+    def test_get_mastery_by_username(self):
+        # Criar outro usuário
+        other_user = User.objects.create_user(username="other_hero", email="other@test.com")
+        Profile.objects.create(user=other_user, firebase_uid="other_uid")
+        
+        url = reverse('mastery')
+        response = self.client.get(url, {'username': 'other_hero'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 5)
+        
+        # Tentar usuário inexistente
+        response = self.client.get(url, {'username': 'ghost'})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     def test_get_public_profile(self):
         # Deslogar para testar acesso público
         self.client.force_authenticate(user=None)
