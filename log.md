@@ -253,3 +253,19 @@
     - [x] Substituídas classes fixas `text-slate-400/500` por variáveis adaptativas em todo o projeto.
 - **Resultado:** Interface em modo claro agora é totalmente legível e acessível, com 100% dos testes frontend passando.
 
+## [04/05/2026 20:00] - Perfil de Usuário com Maestria e Estatísticas
+### Ação
+Implementar exibição das 3 masmorras com mais maestria e estatísticas de engajamento no perfil.
+### Tarefas
+- [x] Backend: Atualizar `MasteryView` para suportar consulta por `username`.
+- [x] Backend: Testar consulta de maestria por outro usuário.
+- [x] Frontend: Atualizar interface `ProfileData` e `ProfilePage` para exibir maestria e estatísticas.
+- [x] Frontend: Testar exibição dos novos componentes no perfil.
+
+**Correção de Bug [04/05/2026 21:30]:**
+- **Problema:** Erro 403 (Forbidden) ao acessar perfis públicos deslogado.
+- **Causa:** `MasteryView` exigia autenticação por padrão, impedindo visitantes de verem as estatísticas de maestria de outros usuários.
+- **Solução:** Atualizada `MasteryView` para `AllowAny` e implementada lógica para exigir login apenas em consultas sem o parâmetro `username`.
+- **Teste:** Adicionado `test_get_mastery_anonymous` ao backend. Todos os testes passando.
+
+
