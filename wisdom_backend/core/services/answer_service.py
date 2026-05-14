@@ -57,12 +57,15 @@ class AnswerService:
         else:
             item_service.trigger_event(profile, "on_wrong")
             
-        # 5. Handle HP Loss
+        # 5. Handle HP Loss and Death Event
         if not is_correct:
             profile.hp = max(0, profile.hp - 1)
             profile.save()
+            if profile.hp == 0:
+                item_service.trigger_event(profile, "on_death")
+                profile.refresh_from_db() # Check if an item restored HP
         
-        # 5. Update UserDungeonProgress (always advance even on error)
+        # 6. Update UserDungeonProgress
         progress = UserDungeonProgress.objects.filter(
             profile=profile, 
             dungeon__topic=topic, 
@@ -86,6 +89,9 @@ class AnswerService:
                     room_completed = True
                     # Recover Charges
                     self._recover_item_charges(profile)
+                    # Trigger room complete event
+                    item_service.trigger_event(profile, "on_room_complete")
+                    profile.refresh_from_db()
                 else:
                     # Dungeon completed
                     progress.is_completed = True
@@ -106,8 +112,16 @@ class AnswerService:
         gold_gained = 0
         if is_correct:
             if profile.hp > 0:
-                xp_gained = self.XP_REWARD
-                gold_gained = self.GOLD_REWARD
+                xp_reward = self.XP_REWARD
+                gold_reward = self.GOLD_REWARD
+                
+                # Double rewards for Elite Dungeons
+                if dungeon_type == 'elite':
+                    xp_reward *= 2
+                    gold_reward *= 2
+
+                xp_gained = xp_reward
+                gold_gained = gold_reward
                 
                 # Apply Item Modifiers
                 xp_gained, gold_gained = item_service.apply_modifiers(profile, xp_gained, gold_gained)

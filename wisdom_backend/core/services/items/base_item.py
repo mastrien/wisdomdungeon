@@ -12,6 +12,9 @@ class BaseItemStrategy:
     def on_room_complete(self, profile, inv_item, context=None):
         pass
         
+    def on_death(self, profile, inv_item, context=None):
+        pass
+
     def on_question_start(self, profile, inv_item, context=None):
         pass
 

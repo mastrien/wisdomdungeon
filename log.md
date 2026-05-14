@@ -329,6 +329,7 @@ Implementar restrições de nível e pré-requisitos para masmorras de elite, co
 - [x] Backend: Incluir `unlock_reason` na API de masmorras.
 - [x] Backend: Atualizar seeder para definir Nível 10 como requisito para Masmorras de Elite.
 - [x] Frontend: Exibir motivo do bloqueio e requisitos no card da masmorra na `HomePage`.
+- [x] Backend: Implementar recompensas em dobro (XP e Ouro) para Masmorras de Elite no `AnswerService`.
 ### Testes
 - [x] Validar que masmorras normais estão abertas por padrão.
 - [x] Validar que masmorras de elite mostram "Bloqueado" e o motivo correto.
@@ -341,8 +342,13 @@ Implementar o item "Amuleto de Vampirismo" e corrigir metadados de itens existen
 - [x] Backend: Atualizar `ITEM_REGISTRY` com o novo item.
 - [x] Backend: Corrigir "Amuleto do Conhecimento" no seeder para `activatable=True`.
 - [x] Backend: Adicionar "Amuleto de Vampirismo" ao seeder.
+- [x] Backend: Criar `RestfulAmuletStrategy` (cura ao completar sala) e `PhoenixAmuletStrategy` (vida extra).
+- [x] Backend: Disparar eventos `on_room_complete` e `on_death` no `AnswerService`.
 ### Testes
 - [x] Validar cura ao atingir combo de 5 com o amuleto equipado. [PASSOU]
+- [x] Validar cura ao completar sala com Amuleto do Descanso. [PASSOU]
+- [x] Validar ressurreição com Amuleto da Fênix. [PASSOU]
+
 
 
 

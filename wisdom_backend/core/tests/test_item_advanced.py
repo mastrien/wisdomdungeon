@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.utils import timezone
 from core.models import Profile, Item, InventoryItem, FixedQuestion
 from core.services.answer_service import AnswerService
 from core.services.item_service import ItemService
@@ -137,3 +138,54 @@ class ItemAdvancedTest(TestCase):
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.hp, 2)
         self.assertEqual(self.profile.current_combo, 5)
+
+    def test_restful_amulet(self):
+        """Valida que o Amuleto do Descanso recupera vida ao completar sala."""
+        rest_item = Item.objects.create(
+            name="Amuleto do Descanso",
+            type="passive",
+            effect_type="restful_amulet",
+            description="Recovers HP on room complete."
+        )
+        inv_item = InventoryItem.objects.create(profile=self.profile, item=rest_item, is_equipped=True)
+        
+        self.profile.hp = 1
+        self.profile.save()
+        
+        # Room completion is handled in AnswerService. 
+        # We need a progress object.
+        from core.models import WeeklyDungeon, DungeonRoom, UserDungeonProgress
+        dungeon = WeeklyDungeon.objects.create(title="T1", topic="math", type="normal", start_date=timezone.now(), end_date=timezone.now())
+        room1 = DungeonRoom.objects.create(dungeon=dungeon, order=1)
+        room2 = DungeonRoom.objects.create(dungeon=dungeon, order=2)
+        progress = UserDungeonProgress.objects.create(profile=self.profile, dungeon=dungeon, current_room=room1, current_question_index=9)
+        
+        service = AnswerService()
+        # Last question of room 1 -> room complete -> heal
+        service.submit_answer(self.profile, "math", "h1", "2")
+        
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.hp, 2)
+
+    def test_phoenix_amulet(self):
+        """Valida que o Amuleto da Fênix salva o jogador da morte."""
+        phoenix_item = Item.objects.create(
+            name="Amuleto da Fênix",
+            type="passive",
+            effect_type="phoenix_amulet",
+            description="Extra life."
+        )
+        inv_item = InventoryItem.objects.create(profile=self.profile, item=phoenix_item, is_equipped=True)
+        
+        self.profile.hp = 1
+        self.profile.save()
+        
+        service = AnswerService()
+        # Wrong answer -> HP 0 -> trigger on_death -> HP 1, item breaks
+        service.submit_answer(self.profile, "math", "h1", "wrong")
+        
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.hp, 1)
+        
+        inv_item.refresh_from_db()
+        self.assertTrue(inv_item.is_broken)
