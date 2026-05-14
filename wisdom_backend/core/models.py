@@ -17,6 +17,8 @@ class Profile(models.Model):
     
     # Engagement expansion
     streak_count = models.IntegerField(default=0)
+    current_combo = models.IntegerField(default=0)
+    max_combo = models.IntegerField(default=0)
     last_activity_date = models.DateField(null=True, blank=True)
     streak_protected_until = models.DateField(null=True, blank=True)
     equipped_item_id = models.IntegerField(null=True, blank=True)
@@ -27,6 +29,8 @@ class Profile(models.Model):
     max_hp = models.IntegerField(default=3)
     theme_color = models.CharField(max_length=20, default="amber")
     font_size = models.CharField(max_length=20, default="medium")
+    
+    metadata = models.JSONField(default=dict, blank=True)
 
     def __str__(self):
         return self.user.username
@@ -94,10 +98,16 @@ class Item(models.Model):
     description = models.TextField()
     type = models.CharField(max_length=15, choices=TYPE_CHOICES)
     rarity = models.CharField(max_length=20) # e.g., common, rare, legendary
+    price = models.IntegerField(default=0)
     
-    # Efeito simplificado para o plano
-    effect_type = models.CharField(max_length=50) # e.g., xp_multiplier, gold_bonus, combo_shield
+    # Efeito
+    effect_type = models.CharField(max_length=50) # e.g., xp_multiplier, kataha_effect
     effect_value = models.FloatField(default=0.0)
+    
+    # Advanced Attributes
+    activatable = models.BooleanField(default=False)
+    max_charges = models.IntegerField(default=0)
+    recovery_rate = models.IntegerField(default=0) # charges recovered per room
     
     def __str__(self):
         return self.name
@@ -108,10 +118,16 @@ class InventoryItem(models.Model):
     quantity = models.IntegerField(default=1)
     is_equipped = models.BooleanField(default=False)
     acquired_at = models.DateTimeField(auto_now_add=True)
+    
+    # Advanced State
+    current_charges = models.IntegerField(default=0)
+    is_broken = models.BooleanField(default=False)
+    metadata = models.JSONField(default=dict, blank=True)
 
 class QuestionHistory(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='history')
     topic = models.CharField(max_length=50)
+    dungeon_type = models.CharField(max_length=15, default='normal') # normal or elite
     question_hash = models.CharField(max_length=64)
     enunciado = models.TextField()
     is_correct = models.BooleanField()

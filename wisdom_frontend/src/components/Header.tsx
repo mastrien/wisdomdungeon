@@ -2,13 +2,28 @@
 
 import { useAuth } from "@/context/AuthContext";
 import { auth } from "@/lib/firebase";
-import { LogOut, Sword, Trophy, Coins, MoreVertical, Settings } from "lucide-react";
+import { LogOut, Sword, Trophy, Coins, MoreVertical, Settings, ShoppingBag, Package } from "lucide-react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Header() {
   const { profile } = useAuth();
   const [showMenu, setShowMenu] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const handleLogout = async () => {
+    await auth.signOut();
+    setShowMenu(false);
+    
+    // Check if the current page is public
+    const isPublicProfile = pathname?.startsWith("/profile/");
+    
+    if (!isPublicProfile) {
+      router.push("/login");
+    }
+  };
 
   return (
     <header className="border-b border-border-main bg-background/80 backdrop-blur-md sticky top-0 z-10 text-foreground">
@@ -67,6 +82,22 @@ export default function Header() {
                     ></div>
                     <div className="absolute right-0 mt-2 w-48 bg-background border border-border-main rounded-xl shadow-2xl py-2 z-20 overflow-hidden">
                       <Link 
+                        href="/shop"
+                        className="flex items-center gap-3 px-4 py-2 hover:bg-slate-200/60 dark:hover:bg-slate-800 text-sm text-muted dark:text-slate-300 hover:text-slate-950 dark:hover:text-foreground transition-colors"
+                        onClick={() => setShowMenu(false)}
+                      >
+                        <ShoppingBag className="w-4 h-4" />
+                        Loja de Itens
+                      </Link>
+                      <Link 
+                        href="/inventory"
+                        className="flex items-center gap-3 px-4 py-2 hover:bg-slate-200/60 dark:hover:bg-slate-800 text-sm text-muted dark:text-slate-300 hover:text-slate-950 dark:hover:text-foreground transition-colors"
+                        onClick={() => setShowMenu(false)}
+                      >
+                        <Package className="w-4 h-4" />
+                        Seu Inventário
+                      </Link>
+                      <Link 
                         href="/settings"
                         className="flex items-center gap-3 px-4 py-2 hover:bg-slate-200/60 dark:hover:bg-slate-800 text-sm text-muted dark:text-slate-300 hover:text-slate-950 dark:hover:text-foreground transition-colors"
                         onClick={() => setShowMenu(false)}
@@ -76,7 +107,7 @@ export default function Header() {
                       </Link>
                       <div className="h-px bg-border-main my-1 mx-2"></div>
                       <button 
-                        onClick={() => auth.signOut()}
+                        onClick={handleLogout}
                         className="w-full flex items-center gap-3 px-4 py-2 hover:bg-slate-200/60 dark:hover:bg-slate-800 text-sm text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
                       >
                         <LogOut className="w-4 h-4" />

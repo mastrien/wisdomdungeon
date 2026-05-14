@@ -20,9 +20,10 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = [
             'user', 'xp', 'gold', 'level', 'firebase_uid', 'bio', 
             'followers_count', 'following_count', 'is_following',
-            'streak_count', 'total_normal_dungeons_completed', 'total_elite_dungeons_completed',
+            'streak_count', 'current_combo', 'max_combo',
+            'total_normal_dungeons_completed', 'total_elite_dungeons_completed',
             'hp', 'max_hp', 'theme_color', 'font_size',
-            'next_level_xp', 'current_level_xp_threshold'
+            'next_level_xp', 'current_level_xp_threshold', 'metadata'
         ]
 
     def get_is_following(self, obj):
@@ -96,13 +97,20 @@ class DungeonRoomSerializer(serializers.ModelSerializer):
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
-        fields = ['id', 'name', 'description', 'type', 'rarity', 'effect_type', 'effect_value']
+        fields = [
+            'id', 'name', 'description', 'type', 'rarity', 
+            'effect_type', 'effect_value', 'price', 
+            'activatable', 'max_charges', 'recovery_rate'
+        ]
 
 class InventoryItemSerializer(serializers.ModelSerializer):
     item = ItemSerializer(read_only=True)
     class Meta:
         model = InventoryItem
-        fields = ['id', 'item', 'quantity', 'is_equipped', 'acquired_at']
+        fields = [
+            'id', 'item', 'quantity', 'is_equipped', 'acquired_at',
+            'current_charges', 'is_broken', 'metadata'
+        ]
 
 class QuestionHistorySerializer(serializers.ModelSerializer):
     class Meta:

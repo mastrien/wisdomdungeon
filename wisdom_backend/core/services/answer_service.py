@@ -1,11 +1,14 @@
-from core.models import QuestionHistory, UserDungeonProgress, DungeonRoom, FixedQuestion, Item
+from core.models import QuestionHistory, UserDungeonProgress, DungeonRoom, FixedQuestion, Item, InventoryItem
 from django.utils import timezone
+from core.services.item_service import ItemService
 
 class AnswerService:
     XP_REWARD = 10
     GOLD_REWARD = 5
 
     def submit_answer(self, profile, topic, question_hash, selected_answer, correct_answer=None, time_spent_ms=0, dungeon_type='normal'):
+        item_service = ItemService()
+        
         # 1. Get FixedQuestion and validate
         actual_correct_answer = correct_answer
         try:
@@ -31,18 +34,35 @@ class AnswerService:
         QuestionHistory.objects.create(
             profile=profile,
             topic=topic,
+            dungeon_type=dungeon_type,
             question_hash=question_hash,
             enunciado=fixed_q.enunciado if fixed_q else "Questão Procedural",
             is_correct=is_correct,
             time_spent_ms=time_spent_ms
         )
         
-        # 3. Handle HP Loss
+        # 3. Handle Combo
+        if is_correct:
+            profile.current_combo += 1
+            if profile.current_combo > profile.max_combo:
+                profile.max_combo = profile.current_combo
+        else:
+            profile.current_combo = 0
+        profile.save()
+        profile.refresh_from_db() # IMPORTANT: ensures item_service sees updated combo
+
+        # 4. Trigger Reactive Events (NOW with updated combo)
+        if is_correct:
+            item_service.trigger_event(profile, "on_correct")
+        else:
+            item_service.trigger_event(profile, "on_wrong")
+            
+        # 5. Handle HP Loss
         if not is_correct:
             profile.hp = max(0, profile.hp - 1)
             profile.save()
         
-        # 4. Update UserDungeonProgress (always advance even on error)
+        # 5. Update UserDungeonProgress (always advance even on error)
         progress = UserDungeonProgress.objects.filter(
             profile=profile, 
             dungeon__topic=topic, 
@@ -64,6 +84,8 @@ class AnswerService:
                 if next_room:
                     progress.current_room = next_room
                     room_completed = True
+                    # Recover Charges
+                    self._recover_item_charges(profile)
                 else:
                     # Dungeon completed
                     progress.is_completed = True
@@ -79,38 +101,39 @@ class AnswerService:
                 
             progress.save()
 
-        # 5. Rewards with Item Modifiers and HP Penalty
+        # 6. Rewards with Item Modifiers and HP Penalty
         xp_gained = 0
         gold_gained = 0
         if is_correct:
-            xp_gained = self.XP_REWARD
-            gold_gained = self.GOLD_REWARD
-            
-            # Apply HP Penalty (25% if at 0 HP)
-            if profile.hp <= 0:
-                xp_gained = int(xp_gained * 0.25)
-                gold_gained = int(gold_gained * 0.25)
-            
-            # Apply Item Modifiers
-            if profile.equipped_item_id:
-                try:
-                    item = Item.objects.get(id=profile.equipped_item_id)
-                    if item.effect_type == "xp_multiplier":
-                        xp_gained = int(xp_gained * item.effect_value)
-                    elif item.effect_type == "gold_bonus_flat":
-                        gold_gained += int(item.effect_value)
-                except Item.DoesNotExist:
-                    profile.equipped_item_id = None
-            
-            profile.xp += xp_gained
-            profile.gold += gold_gained
-            
-            # Recalculate level
-            from core.services.progression_service import ProgressionService
-            new_level = ProgressionService.get_level_for_xp(profile.xp)
-            if new_level > profile.level:
-                profile.level = new_level
-                # Optionally add logic for level up notification or rewards here
+            if profile.hp > 0:
+                xp_gained = self.XP_REWARD
+                gold_gained = self.GOLD_REWARD
+                
+                # Apply Item Modifiers
+                xp_gained, gold_gained = item_service.apply_modifiers(profile, xp_gained, gold_gained)
+                
+                profile.xp += xp_gained
+                profile.gold += gold_gained
+                
+                # Recalculate level
+                from core.services.progression_service import ProgressionService
+                new_level = ProgressionService.get_level_for_xp(profile.xp)
+                level_up_rewards = []
+                if new_level > profile.level:
+                    # Give rewards for each level skipped
+                    for lv in range(profile.level + 1, new_level + 1):
+                        rewards = ProgressionService.get_rewards_for_level(lv)
+                        for r in rewards:
+                            if r['type'] == 'gold':
+                                profile.gold += r['amount']
+                                level_up_rewards.append(r)
+                            # Handle other reward types if needed
+                    
+                    profile.level = new_level
+            else:
+                # User is dead (0 HP), no rewards
+                xp_gained = 0
+                gold_gained = 0
                 
             profile.save()
             
@@ -121,18 +144,32 @@ class AnswerService:
             "gold_gained": gold_gained,
             "room_completed": room_completed,
             "dungeon_completed": dungeon_completed,
-            "next_question_index": progress.current_question_index if progress else None
+            "next_question_index": progress.current_question_index if progress else None,
+            "combo": profile.current_combo,
+            "hp": profile.hp
         }
+
+    def _recover_item_charges(self, profile):
+        equipped_items = InventoryItem.objects.filter(profile=profile, is_equipped=True, is_broken=False)
+        for inv_item in equipped_items:
+            if inv_item.item.recovery_rate > 0:
+                inv_item.current_charges = min(inv_item.item.max_charges, inv_item.current_charges + inv_item.item.recovery_rate)
+                inv_item.save()
 
     def _update_streak(self, profile):
         today = timezone.now().date()
-        if profile.last_activity_date != today:
-            # If it's the next day, increment
-            if profile.last_activity_date == today - timezone.timedelta(days=1):
-                profile.streak_count += 1
-            elif profile.last_activity_date is None or profile.last_activity_date < today - timezone.timedelta(days=1):
-                # Reset if broke streak, unless protected
-                profile.streak_count = 1
-            
-            profile.last_activity_date = today
-            profile.save()
+        
+        # Only process if it's a new day
+        if profile.last_activity_date == today:
+            return
+
+        # If it's the next day exactly, increment streak
+        if profile.last_activity_date == today - timezone.timedelta(days=1):
+            profile.streak_count += 1
+        else:
+            # If it's more than 1 day or first activity, reset to 1
+            # (unless they are within a protection period - logic can be added later)
+            profile.streak_count = 1
+        
+        profile.last_activity_date = today
+        profile.save()

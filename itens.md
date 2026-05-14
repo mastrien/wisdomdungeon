@@ -10,6 +10,7 @@ Itens podem ser ativáveis ou não. Itens não ativáveis tem algum gatilho (eve
 - XP
 - Ofensiva
 - Sequência (combo)
+- Vida
 
 ## Eventos
 
@@ -57,5 +58,7 @@ Itens com cargas são como consumíveis recarregáveis, mas que ocupam o slot de
 
 
 ## Consumíveis
+
+- **Poção de vida** - Restaura 1 de vida do jogador
 
 ### Atributos de consumíveis

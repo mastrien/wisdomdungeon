@@ -2,7 +2,7 @@ from django.urls import path
 from core.views import (
     ProfileView, PublicProfileView, FollowView, QuestionView, 
     HistoryView, TopicsView, MasteryView, DungeonCurrentView, AnswerView, 
-    InventoryView, WeeklyDungeonListView, ProgressionRewardsView
+    InventoryView, ShopView, WeeklyDungeonListView, ProgressionRewardsView
 )
 
 urlpatterns = [
@@ -16,6 +16,9 @@ urlpatterns = [
     path('dungeon/current/', DungeonCurrentView.as_view(), name='dungeon_current'),
     path('inventory/', InventoryView.as_view(), name='inventory'),
     path('inventory/<int:pk>/equip/', InventoryView.as_view(), name='inventory_equip'),
+    path('inventory/<int:pk>/use/', InventoryView.as_view(), name='inventory_use'),
+    path('shop/', ShopView.as_view(), name='shop_list'),
+    path('shop/<int:pk>/buy/', ShopView.as_view(), name='shop_buy'),
     path('history/', HistoryView.as_view(), name='history'),
     path('mastery/', MasteryView.as_view(), name='mastery'),
     path('progression/rewards/', ProgressionRewardsView.as_view(), name='progression_rewards'),

@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from core.models import WeeklyDungeon, DungeonRoom, FixedQuestion
+from core.models import WeeklyDungeon, DungeonRoom, FixedQuestion, Item
 from core.services.math_generator import MathGenerator
 import datetime
 
@@ -63,3 +63,62 @@ class Command(BaseCommand):
                             room.questions.add(fixed_q)
         
         self.stdout.write(self.style.SUCCESS('Successfully seeded weekly dungeons'))
+
+        # Seed Items
+        items_to_seed = [
+            {
+                "name": "Lâmina de Vidro de Kataha",
+                "description": "Concede +0.5 de multiplicador de XP por sequência de acertos que acumula até +5.0, mas se a sequência for quebrada você recebe uma penalidade de -80% de XP pelas próximas 10 questões e o item quebra.",
+                "type": "passive",
+                "rarity": "rare",
+                "price": 150,
+                "effect_type": "kataha_effect",
+                "effect_value": 0.0,
+            },
+            {
+                "name": "Orbe Restaurador de Zotikotita",
+                "description": "Recupera uma sequência que acabou de ser perdida.",
+                "type": "consumable",
+                "rarity": "rare",
+                "price": 100,
+                "effect_type": "restore_combo",
+                "activatable": True,
+                "max_charges": 0,
+            },
+            {
+                "name": "Amuleto do Conhecimento",
+                "description": "Revela uma das alternativas erradas em cada questão. (3 Cargas)",
+                "type": "passive",
+                "rarity": "common",
+                "price": 50,
+                "effect_type": "reveal_wrong",
+                "activatable": False, # Passive, auto-triggers
+                "max_charges": 3,
+                "recovery_rate": 1,
+            },
+            {
+                "name": "Poção de Vida",
+                "description": "Restaura 1 de vida do jogador.",
+                "type": "consumable",
+                "rarity": "common",
+                "price": 25,
+                "effect_type": "heal_hp",
+                "activatable": True,
+                "max_charges": 0,
+            }
+        ]
+
+        for item_data in items_to_seed:
+            item, created = Item.objects.get_or_create(
+                name=item_data["name"],
+                defaults=item_data
+            )
+            if created:
+                self.stdout.write(f"Created item: {item.name}")
+            else:
+                # Update existing for testing
+                for key, value in item_data.items():
+                    setattr(item, key, value)
+                item.save()
+
+        self.stdout.write(self.style.SUCCESS('Successfully seeded items'))

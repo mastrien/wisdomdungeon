@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import api from "@/services/api";
+import Toast, { ToastType } from "@/components/Toast";
 
 interface Profile {
   user: {
@@ -20,6 +21,7 @@ interface Profile {
   max_hp: number;
   theme_color: string;
   font_size: string;
+  metadata?: any;
 }
 
 const colorMap = {
@@ -43,6 +45,7 @@ interface AuthContextType {
   refreshProfile: () => Promise<void>;
   isDarkMode: boolean;
   toggleDarkMode: () => void;
+  showToast: (message: string, type?: ToastType) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({ 
@@ -51,7 +54,8 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   refreshProfile: async () => {},
   isDarkMode: true,
-  toggleDarkMode: () => {}
+  toggleDarkMode: () => {},
+  showToast: () => {}
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -59,6 +63,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
+
+  const showToast = (message: string, type: ToastType = "info") => {
+    setToast({ message, type });
+  };
 
   const fetchProfile = async () => {
     try {
@@ -109,8 +118,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [profile]);
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, refreshProfile, isDarkMode, toggleDarkMode }}>
+    <AuthContext.Provider value={{ user, profile, loading, refreshProfile, isDarkMode, toggleDarkMode, showToast }}>
       {children}
+      {toast && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={() => setToast(null)} 
+        />
+      )}
     </AuthContext.Provider>
   );
 };

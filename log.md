@@ -262,10 +262,38 @@ Implementar exibição das 3 masmorras com mais maestria e estatísticas de enga
 - [x] Frontend: Atualizar interface `ProfileData` e `ProfilePage` para exibir maestria e estatísticas.
 - [x] Frontend: Testar exibição dos novos componentes no perfil.
 
-**Correção de Bug [04/05/2026 21:30]:**
+**Ciclo [04/05/2026 21:30]:**
 - **Problema:** Erro 403 (Forbidden) ao acessar perfis públicos deslogado.
 - **Causa:** `MasteryView` exigia autenticação por padrão, impedindo visitantes de verem as estatísticas de maestria de outros usuários.
 - **Solução:** Atualizada `MasteryView` para `AllowAny` e implementada lógica para exigir login apenas em consultas sem o parâmetro `username`.
 - **Teste:** Adicionado `test_get_mastery_anonymous` ao backend. Todos os testes passando.
+
+## [06/05/2026 14:00] - Sistema de Itens Reativos e Consumíveis (Fase 1)
+### Ação
+Implementar a mecânica de itens que reagem a eventos e aplicam bônus/penalidades conforme `itens.md`.
+### Tarefas
+- [x] Backend: Expandir modelos `Item` e `InventoryItem` para suportar cargas, ativação e metadados.
+- [x] Backend: Criar `ItemService` para processar eventos e efeitos de itens.
+- [x] Backend: Implementar lógica da "Lâmina de Vidro de Kataha" (quebra e penalidade).
+- [x] Backend: Implementar lógica do "Orbe Restaurador" (restaurar combo).
+- [x] Backend: Implementar lógica do "Amuleto do Conhecimento" (revelar errada).
+- [x] Backend: Criar APIs de Loja e uso de itens.
+- [x] Frontend: Criar interface de Loja e Inventário.
+- [x] Frontend: Integrar uso de itens na tela de Dungeon.
+### Testes
+- [x] Criar `core/tests/test_item_advanced.py` validando os novos comportamentos.
+
+## [14/05/2026 15:00] - Refatoração da Lâmina de Vidro de Kataha (Acúmulos Internos)
+### Ação
+Alterar a lógica da Kataha para usar acúmulos próprios em vez do combo global do perfil, garantindo que o bônus resete ao desequipar.
+### Tarefas
+- [x] Backend: Atualizar `test_item_advanced.py` com novos casos de teste (acúmulos graduais e reset no desequipar).
+- [x] Backend: Refatorar `ItemService._handle_kataha_event` para incrementar `xp_bonus` em +0.5 por acerto.
+- [x] Backend: Implementar lógica de reset de metadados ao desequipar itens na `InventoryView` ou `ItemService`.
+- [x] Backend: Validar que bônus alto pré-existente não afeta o item ao ser equipado.
+### Testes
+- [x] Rodar `pytest core/tests/test_item_advanced.py`.
+
+
 
 

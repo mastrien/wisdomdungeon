@@ -30,6 +30,17 @@ class ProgressionService:
         return ProgressionService.get_level_threshold(current_level + 1)
 
     @staticmethod
+    def get_rewards_for_level(level):
+        """
+        Retorna as recompensas específicas para um nível atingido.
+        """
+        all_rewards = ProgressionService.get_rewards()
+        for r in all_rewards:
+            if r["level"] == level:
+                return r["rewards"]
+        return []
+
+    @staticmethod
     def get_rewards():
         """
         Retorna a trilha de recompensas até o nível 30.

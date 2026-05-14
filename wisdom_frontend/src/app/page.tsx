@@ -3,7 +3,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { History, Play, Target, CheckCircle2, Loader2, Lock, Trophy, Flame, ShieldAlert, Coins } from "lucide-react";
+import { History, Play, Target, CheckCircle2, Loader2, Lock, Trophy, Flame, ShieldAlert, Coins, ShoppingBag } from "lucide-react";
 import Header from "@/components/Header";
 import api from "@/services/api";
 
@@ -41,8 +41,9 @@ export default function HomePage() {
             api.get("/dungeons/")
           ]);
           
-          const statsMap = statsRes.data.reduce((acc: any, stat: DailyStat) => {
-            acc[stat.topic_id] = stat;
+          const statsMap = statsRes.data.reduce((acc: any, stat: any) => {
+            const key = `${stat.topic_id}_${stat.dungeon_type}`;
+            acc[key] = stat;
             return acc;
           }, {});
           
@@ -142,10 +143,10 @@ export default function HomePage() {
                       <Target className="w-3 h-3" />
                       <span>Progresso: {progress}/100</span>
                     </div>
-                    {dailyStats[dungeon.topic] && dailyStats[dungeon.topic].total_solved > 0 && (
+                    {dailyStats[`${dungeon.topic}_${dungeon.type}`] && dailyStats[`${dungeon.topic}_${dungeon.type}`].total_solved > 0 && (
                       <div className="flex items-center gap-1.5 text-brand-primary">
                         <CheckCircle2 className="w-3 h-3" />
-                        <span>Hoje: {dailyStats[dungeon.topic].total_solved} ({dailyStats[dungeon.topic].success_rate}%)</span>
+                        <span>Hoje: {dailyStats[`${dungeon.topic}_${dungeon.type}`].total_solved} ({dailyStats[`${dungeon.topic}_${dungeon.type}`].success_rate}%)</span>
                       </div>
                     )}
                   </div>
@@ -175,17 +176,26 @@ export default function HomePage() {
           })}
         </div>
 
-        {/* Store Placeholder */}
-        <div className="mt-12 p-12 bg-card/30 border-2 border-dashed border-border-main rounded-3xl text-center group hover:border-brand-primary/30 transition-colors">
-          <div className="bg-card w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-border-main group-hover:scale-110 transition-transform">
-            <Coins className="text-brand-primary w-8 h-8" />
+        {/* Store Section */}
+        <div 
+          onClick={() => router.push("/shop")}
+          className="mt-12 p-12 bg-card border-2 border-border-main rounded-3xl text-center group hover:border-brand-primary/50 transition-all cursor-pointer shadow-xl relative overflow-hidden"
+        >
+          <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 group-hover:text-brand-primary transition-opacity">
+            <ShoppingBag className="w-24 h-24" />
           </div>
-          <h3 className="text-2xl font-bold text-foreground mb-2">Loja de Itens</h3>
-          <p className="text-muted max-w-md mx-auto">
-            Em breve você poderá trocar seu ouro acumulado por cosméticos e itens de suporte para suas jornadas.
+          
+          <div className="bg-card w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-border-main group-hover:scale-110 transition-transform relative z-10">
+            <Coins className="text-yellow-500 w-8 h-8" />
+          </div>
+          <h3 className="text-2xl font-bold text-foreground mb-2 relative z-10">Loja de Itens</h3>
+          <p className="text-muted max-w-md mx-auto relative z-10">
+            Troque seu ouro acumulado por consumíveis e itens poderosos para facilitar suas jornadas nas masmorras.
           </p>
-          <div className="mt-6 inline-flex items-center gap-2 px-4 py-1.5 bg-slate-100 dark:bg-slate-800/50 rounded-full text-xs font-bold text-dim uppercase tracking-widest border border-border-main">
-            Disponível em breve!
+          <div className="mt-8 flex justify-center relative z-10">
+            <span className="bg-brand-primary text-slate-950 px-8 py-3 rounded-xl font-bold flex items-center gap-2 group-hover:bg-brand-hover transition-colors">
+              Explorar Mercado <ShoppingBag className="w-5 h-5" />
+            </span>
           </div>
         </div>
 

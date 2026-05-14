@@ -4,6 +4,9 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import api from "@/services/api";
 import { useAuth } from "@/context/AuthContext";
+import Header from "@/components/Header";
+import MathRenderer from "@/components/MathRenderer";
+import InventoryOverlay from "@/components/InventoryOverlay";
 import { 
   Sword, 
   ChevronLeft, 
@@ -16,10 +19,9 @@ import {
   Flame,
   ShieldAlert,
   ArrowRight,
-  Heart
+  Heart,
+  Package
 } from "lucide-react";
-import Header from "@/components/Header";
-import MathRenderer from "@/components/MathRenderer";
 
 interface Question {
   enunciado: string;
@@ -34,6 +36,7 @@ interface DungeonState {
   question_index: number;
   question: Question;
   completed?: boolean;
+  revealed_wrong?: string;
 }
 
 export default function DungeonPage() {
@@ -41,7 +44,7 @@ export default function DungeonPage() {
   const searchParams = useSearchParams();
   const dungeonType = searchParams.get("type") || "normal";
   const router = useRouter();
-  const { user, loading: authLoading, refreshProfile, profile } = useAuth();
+  const { user, loading: authLoading, refreshProfile, profile, showToast } = useAuth();
   
   const [state, setState] = useState<DungeonState | null>(null);
   const [loading, setLoading] = useState(true);
@@ -55,6 +58,17 @@ export default function DungeonPage() {
     correct_answer?: string;
   } | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [showInventory, setShowInventory] = useState(false);
+  const [inventoryMessage, setInventoryMessage] = useState<string | null>(null);
+
+  // Track previous level for level up toast
+  const prevLevelRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (profile && prevLevelRef.current !== null && profile.level > prevLevelRef.current) {
+      showToast(`PARABÉNS! Você subiu para o nível ${profile.level}!`, "success");
+    }
+    if (profile) prevLevelRef.current = profile.level;
+  }, [profile?.level, showToast]);
 
   // HUD States
   const [seconds, setSeconds] = useState(0);
@@ -170,13 +184,19 @@ export default function DungeonPage() {
 
   const roomProgress = ((state?.question_index || 0) / 10) * 100;
 
+  const onUseItem = async (message: string) => {
+    setInventoryMessage(message);
+    await refreshProfile();
+    setTimeout(() => setInventoryMessage(null), 3000);
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
       <div className="p-4 md:p-8">
         <div className="max-w-3xl mx-auto">
         
-        {/* Top HUD */}
+        
         <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
           <button 
             onClick={handleBack}
@@ -187,6 +207,13 @@ export default function DungeonPage() {
           </button>
 
           <div className="flex flex-wrap justify-center gap-4">
+            <button 
+              onClick={() => setShowInventory(true)}
+              className="flex items-center gap-2 bg-card border border-border-main px-4 py-2 rounded-full shadow-lg hover:border-brand-primary transition-colors group"
+            >
+              <Package className="w-5 h-5 text-brand-primary group-hover:scale-110 transition-transform" />
+              <span className="font-bold text-sm text-foreground/80 dark:text-foreground">Inventário</span>
+            </button>
             <div className="flex items-center gap-2 bg-card border border-border-main px-4 py-2 rounded-full shadow-lg" aria-label="Vidas">
               <div className="flex gap-1">
                 {[...Array(profile?.max_hp || 3)].map((_, i) => (
@@ -218,6 +245,11 @@ export default function DungeonPage() {
           </div>
 
           <div className="p-8 md:p-12">
+            {inventoryMessage && (
+              <div className="mb-6 p-4 bg-brand-primary/20 border border-brand-primary/40 rounded-xl text-brand-primary font-bold text-center animate-in slide-in-from-top-4">
+                {inventoryMessage}
+              </div>
+            )}
             <div className="flex items-center justify-between mb-8">
               <span className="px-3 py-1 bg-brand-primary/10 border border-brand-primary/20 text-brand-primary text-xs font-bold uppercase tracking-widest rounded-full">
                 {state?.current_dungeon?.title}
@@ -236,17 +268,19 @@ export default function DungeonPage() {
                 const isSelected = selectedOption === option;
                 const isCorrect = result?.correct_answer === option;
                 const isWrong = isSelected && !result?.is_correct;
+                const isRevealedWrong = state?.revealed_wrong === option;
                 
                 return (
                   <button
                     key={index}
                     onClick={() => !result && setSelectedOption(option)}
-                    disabled={!!result}
+                    disabled={!!result || isRevealedWrong}
                     className={`
                       w-full text-left p-5 rounded-xl border-2 transition-all flex items-center justify-between group
                       ${isSelected ? "border-brand-primary bg-brand-primary/5 text-slate-950 dark:text-brand-primary" : "border-border-main bg-background hover:border-slate-400 dark:hover:border-slate-600 text-muted dark:text-dim"}
                       ${result && isCorrect ? "border-green-500 bg-green-500/10 text-green-900 dark:text-green-400" : ""}
                       ${result && isWrong ? "border-red-500 bg-red-500/10 text-red-900 dark:text-red-400" : ""}
+                      ${isRevealedWrong ? "opacity-30 grayscale cursor-not-allowed border-dashed" : ""}
                     `}
                   >
                     <MathRenderer tex={option} displayMode={false} className="font-medium text-lg" />
@@ -255,8 +289,10 @@ export default function DungeonPage() {
                       ${isSelected ? "border-brand-primary bg-brand-primary" : "border-slate-300 dark:border-slate-700"}
                       ${result && isCorrect ? "border-green-500 bg-green-500" : ""}
                       ${result && isWrong ? "border-red-500 bg-red-500" : ""}
+                      ${isRevealedWrong ? "border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900" : ""}
                     `}>
                       {(isSelected || (result && isCorrect)) && <div className="w-2 h-2 bg-white dark:bg-slate-950 rounded-full" />}
+                      {isRevealedWrong && <XCircle className="w-4 h-4 text-slate-400" />}
                     </div>
                   </button>
                 );
@@ -341,12 +377,19 @@ export default function DungeonPage() {
              Ouro por questão: <span className="text-slate-900 dark:text-foreground">5</span>
            </div>
            <div className="text-xs font-bold text-foreground/60 dark:text-muted uppercase border-l-2 border-blue-500 pl-3">
-             Mult. XP: <span className="text-slate-900 dark:text-foreground">1.0x</span>
+             Mult. XP: <span className="text-slate-900 dark:text-foreground">{profile?.metadata?.xp_multiplier || "1.0"}x</span>
            </div>
         </div>
 
         </div>
       </div>
+
+      {showInventory && (
+        <InventoryOverlay 
+          onClose={() => setShowInventory(false)} 
+          onUseItem={onUseItem}
+        />
+      )}
     </div>
   );
 }

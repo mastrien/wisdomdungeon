@@ -22,20 +22,65 @@ class InventoryView(APIView):
         try:
             inv_item = request.user.profile.inventory.get(id=pk)
             if action == 'equip':
-                # Unequip others of same type if necessary (assuming one active item for now)
-                request.user.profile.inventory.filter(is_equipped=True).update(is_equipped=False)
-                inv_item.is_equipped = True
-                inv_item.save()
+                from core.services.item_service import ItemService
+                service = ItemService()
+                result = service.toggle_equip(request.user.profile, pk)
+                if result.get('success'):
+                    inv_item = request.user.profile.inventory.get(id=pk)
+                    return Response(InventoryItemSerializer(inv_item).data)
+                else:
+                    return Response({"error": result.get('message')}, status=status.HTTP_400_BAD_REQUEST)
+
+            elif action == 'use':
+
+                from core.services.item_service import ItemService
+                service = ItemService()
+                result = service.use_item(request.user.profile, inv_item.id)
+                if result['success']:
+                    return Response(result)
+                return Response(result, status=status.HTTP_400_BAD_REQUEST)
                 
-                profile = request.user.profile
-                profile.equipped_item_id = inv_item.item.id
-                profile.save()
-                
-                return Response(InventoryItemSerializer(inv_item).data)
-            # Add 'use' for consumables here
         except InventoryItem.DoesNotExist:
             return Response({"error": "Item not found in inventory"}, status=status.HTTP_404_NOT_FOUND)
         return Response({"error": "Invalid action"}, status=status.HTTP_400_BAD_REQUEST)
+
+class ShopView(APIView):
+    def get(self, request):
+        items = Item.objects.all().order_by('price')
+        serializer = ItemSerializer(items, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, pk=None):
+        """Buy an item."""
+        try:
+            item = Item.objects.get(id=pk)
+            profile = request.user.profile
+            
+            if profile.gold >= item.price:
+                profile.gold -= item.price
+                profile.save()
+                
+                inv_item, created = InventoryItem.objects.get_or_create(
+                    profile=profile,
+                    item=item,
+                    defaults={'current_charges': item.max_charges}
+                )
+                if not created:
+                    inv_item.quantity += 1
+                    # If it's a consumable, maybe refill charges?
+                    if item.type == 'consumable':
+                        inv_item.current_charges = item.max_charges
+                    inv_item.save()
+                
+                return Response({
+                    "success": True, 
+                    "message": f"Você comprou {item.name}!",
+                    "gold": profile.gold
+                })
+            else:
+                return Response({"error": "Ouro insuficiente"}, status=status.HTTP_400_BAD_REQUEST)
+        except Item.DoesNotExist:
+            return Response({"error": "Item não encontrado"}, status=status.HTTP_404_NOT_FOUND)
 from core.services.math_generator import MathGenerator
 from core.services.answer_service import AnswerService
 
@@ -128,17 +173,32 @@ class DungeonCurrentView(APIView):
             }
         )
         
+        # Reset current_combo if it's a new session (starting at index 0 of room 1?)
+        # For now, let's reset whenever we FETCH the current dungeon state if it was at 0
+        # Actually, let's just ensure it starts at 0 when progress is created.
+        if created:
+            profile.current_combo = 0
+            profile.save()
+        
         if progress.is_completed:
              return Response({"current_dungeon": None, "completed": True})
 
         room = progress.current_room
         question = room.questions.all()[progress.current_question_index]
         
+        # Trigger item event for question start (e.g., Knowledge Amulet)
+        from core.services.item_service import ItemService
+        profile.metadata['revealed_wrong'] = None # Clear previous
+        profile.save()
+        ItemService().trigger_event(profile, "on_question_start", {"question": question})
+        profile.refresh_from_db()
+        
         return Response({
             "current_dungeon": WeeklyDungeonSerializer(dungeon).data,
             "room": DungeonRoomSerializer(room).data,
             "question_index": progress.current_question_index,
-            "question": FixedQuestionSerializer(question).data
+            "question": FixedQuestionSerializer(question).data,
+            "revealed_wrong": profile.metadata.get('revealed_wrong')
         })
 
 class AnswerView(APIView):
