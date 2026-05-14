@@ -188,10 +188,18 @@ class DungeonCurrentView(APIView):
         
         # Trigger item event for question start (e.g., Knowledge Amulet)
         from core.services.item_service import ItemService
-        profile.metadata['revealed_wrong'] = None # Clear previous
-        profile.save()
-        ItemService().trigger_event(profile, "on_question_start", {"question": question})
-        profile.refresh_from_db()
+        
+        # Only clear revealed_wrong if it's NOT the same question as before 
+        # (Using a simple check in profile metadata to track current question)
+        last_q_hash = profile.metadata.get('last_question_hash')
+        current_q_hash = question.hash
+        
+        if last_q_hash != current_q_hash:
+            profile.metadata['revealed_wrong'] = None
+            profile.metadata['last_question_hash'] = current_q_hash
+            profile.save()
+            ItemService().trigger_event(profile, "on_question_start", {"question": question})
+            profile.refresh_from_db()
         
         return Response({
             "current_dungeon": WeeklyDungeonSerializer(dungeon).data,

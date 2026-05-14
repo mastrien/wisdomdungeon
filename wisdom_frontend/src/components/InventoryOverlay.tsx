@@ -155,19 +155,21 @@ export default function InventoryOverlay({ onClose, onUseItem, refreshTrigger }:
                   </div>
 
                   <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEquip(invItem.id)}
-                      disabled={invItem.is_broken || invItem.item.type === 'consumable'}
-                      className={`
-                        px-4 py-1.5 rounded-lg text-xs font-bold transition-all
-                        ${invItem.is_equipped 
-                          ? 'bg-brand-primary text-slate-950' 
-                          : 'bg-slate-100 dark:bg-slate-800 text-foreground hover:bg-slate-200'}
-                        ${(invItem.is_broken || invItem.item.type === 'consumable') ? 'cursor-not-allowed opacity-50' : ''}
-                      `}
-                    >
-                      {invItem.is_equipped ? 'Equipado' : 'Equipar'}
-                    </button>
+                    {invItem.item.type === 'passive' && (
+                      <button
+                        onClick={() => handleEquip(invItem.id)}
+                        disabled={invItem.is_broken}
+                        className={`
+                          px-4 py-1.5 rounded-lg text-xs font-bold transition-all
+                          ${invItem.is_equipped 
+                            ? 'bg-brand-primary text-slate-950' 
+                            : 'bg-slate-100 dark:bg-slate-800 text-foreground hover:bg-slate-200'}
+                          ${invItem.is_broken ? 'cursor-not-allowed opacity-50' : ''}
+                        `}
+                      >
+                        {invItem.is_equipped ? 'Equipado' : 'Equipar'}
+                      </button>
+                    )}
                     
                     {invItem.item.activatable && (
                       <button

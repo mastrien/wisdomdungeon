@@ -1,99 +1,76 @@
 from core.models import InventoryItem, Profile
+from .items.registry import ITEM_REGISTRY
 
 class ItemService:
+    def _get_strategy(self, effect_type):
+        StrategyClass = ITEM_REGISTRY.get(effect_type)
+        if StrategyClass:
+            return StrategyClass()
+        return None
+
     def trigger_event(self, profile, event_name, context=None):
         """
-        Triggers an event for all equipped items.
+        Triggers an event for all relevant items (equipped and broken).
         event_name: 'on_correct', 'on_wrong', 'on_room_complete', 'on_question_start'
         """
-        equipped_items = InventoryItem.objects.filter(profile=profile, is_equipped=True, is_broken=False)
-        broken_items = InventoryItem.objects.filter(profile=profile, is_broken=True)
-        
-        # 1. Handle Broken Item Logic (Decrements penalty count every answer)
+        # 1. Trigger events for broken items FIRST (to handle penalty decay from PREVIOUS turns)
         if event_name in ["on_correct", "on_wrong"]:
+            broken_items = InventoryItem.objects.filter(profile=profile, is_broken=True)
             for inv_item in broken_items:
-                if inv_item.item.effect_type == "kataha_effect":
-                    penalty = inv_item.metadata.get('penalty_remaining', 0)
-                    if penalty > 0:
-                        inv_item.metadata['penalty_remaining'] = penalty - 1
-                        if inv_item.metadata['penalty_remaining'] <= 0:
-                            inv_item.delete()
-                        else:
-                            inv_item.save()
+                strategy = self._get_strategy(inv_item.item.effect_type)
+                if strategy:
+                    method = getattr(strategy, event_name, None)
+                    if method:
+                        method(profile, inv_item, context)
 
-        # 2. Trigger active item events
+        # 2. Trigger events for equipped items
+        equipped_items = InventoryItem.objects.filter(profile=profile, is_equipped=True, is_broken=False)
         for inv_item in equipped_items:
-            effect_type = inv_item.item.effect_type
-            
-            if effect_type == "kataha_effect":
-                self._handle_kataha_event(profile, inv_item, event_name)
-            elif effect_type == "reveal_wrong":
-                self._handle_reveal_wrong(profile, inv_item, event_name, context)
+            strategy = self._get_strategy(inv_item.item.effect_type)
+            if strategy:
+                method = getattr(strategy, event_name, None)
+                if method:
+                    method(profile, inv_item, context)
         
         self._update_profile_multiplier(profile)
 
-    def _handle_reveal_wrong(self, profile, inv_item, event_name, context):
-        if event_name == "on_question_start" and context and 'question' in context:
-            if inv_item.current_charges > 0:
-                question = context['question']
-                correct = question.resposta_correta
-                # Find options that are NOT correct
-                wrongs = [o for o in question.opcoes if o != correct]
-                if wrongs:
-                    import random
-                    revealed = random.choice(wrongs)
-                    # Store in context or profile metadata temporarily
-                    if not hasattr(profile, 'metadata') or profile.metadata is None:
-                        profile.metadata = {}
-                    profile.metadata['revealed_wrong'] = revealed
-                    profile.save()
-                    
-                    inv_item.current_charges -= 1
-                    inv_item.save()
-
     def _update_profile_multiplier(self, profile):
         multiplier = 1.0
-        # Bonus only from equipped active
-        equipped_active = InventoryItem.objects.filter(profile=profile, is_equipped=True, is_broken=False)
-        for inv_item in equipped_active:
-            effect_type = inv_item.item.effect_type
-            if effect_type == "xp_multiplier":
-                multiplier *= inv_item.item.effect_value
-            elif effect_type == "kataha_effect":
-                bonus = inv_item.metadata.get('xp_bonus', 0.0)
-                multiplier *= (1 + bonus)
         
-        # Penalty from ANY broken
-        all_broken = InventoryItem.objects.filter(profile=profile, is_broken=True)
-        for inv_item in all_broken:
-            if inv_item.item.effect_type == "kataha_effect":
-                if inv_item.metadata.get('penalty_remaining', 0) > 0:
-                    multiplier *= 0.2
+        # Penalties from broken items
+        broken_items = InventoryItem.objects.filter(profile=profile, is_broken=True)
+        for inv_item in broken_items:
+             strategy = self._get_strategy(inv_item.item.effect_type)
+             if strategy:
+                 temp_xp, _ = strategy.apply_modifiers(profile, inv_item, 100, 0)
+                 multiplier *= (temp_xp / 100.0)
+
+        # Bonuses from equipped active items
+        equipped_items = InventoryItem.objects.filter(profile=profile, is_equipped=True, is_broken=False)
+        equipped_item_info = None
+        for inv_item in equipped_items:
+             strategy = self._get_strategy(inv_item.item.effect_type)
+             if strategy:
+                 temp_xp, _ = strategy.apply_modifiers(profile, inv_item, 100, 0)
+                 multiplier *= (temp_xp / 100.0)
+                 
+                 # Store info about the equipped item (assuming only one for now)
+                 equipped_item_info = {
+                     "id": inv_item.id,
+                     "name": inv_item.item.name,
+                     "is_broken": inv_item.is_broken,
+                     "current_charges": inv_item.current_charges,
+                     "max_charges": inv_item.item.max_charges,
+                     "activatable": inv_item.item.activatable,
+                     "effect_type": inv_item.item.effect_type,
+                     "xp_bonus": inv_item.metadata.get('xp_bonus', 0.0)
+                 }
         
         if not hasattr(profile, 'metadata') or profile.metadata is None:
             profile.metadata = {}
         profile.metadata['xp_multiplier'] = round(multiplier, 2)
+        profile.metadata['equipped_item'] = equipped_item_info
         profile.save()
-
-    def _handle_kataha_event(self, profile, inv_item, event_name):
-        if event_name == "on_correct":
-            # Increase bonus based on internal stacks
-            # Bônus = +0.5 per hit, max +5.0
-            current_bonus = inv_item.metadata.get('xp_bonus', 0.0)
-            new_bonus = min(5.0, current_bonus + 0.5)
-            inv_item.metadata['xp_bonus'] = round(new_bonus, 2)
-            inv_item.save()
-            
-        elif event_name == "on_wrong":
-            # Breaks and sets penalty
-            inv_item.is_broken = True
-            inv_item.metadata['penalty_remaining'] = 10
-            inv_item.metadata['xp_bonus'] = 0.0 # Reset bonus
-            inv_item.save()
-            
-            # Save the last combo for potential restoration
-            profile.metadata['last_combo'] = profile.current_combo
-            profile.save()
 
     def use_item(self, profile, user_item_id):
         """Manually uses an activatable item."""
@@ -107,30 +84,23 @@ class ItemService:
             elif inv_item.item.type == 'passive' and inv_item.current_charges <= 0:
                  return {"success": False, "message": "Sem cargas."}
 
-            effect_type = inv_item.item.effect_type
-            result = {"success": True}
+            strategy = self._get_strategy(inv_item.item.effect_type)
+            if not strategy:
+                return {"success": False, "message": "Effect not implemented."}
+
+            result = strategy.use(profile, inv_item)
             
-            if effect_type == "restore_combo":
-                last_combo = profile.metadata.get('last_combo', 0)
-                profile.current_combo = last_combo
-                profile.save()
-                result["message"] = f"Combo restaurado para {last_combo}!"
-                
-            elif effect_type == "heal_hp":
-                profile.hp = min(profile.max_hp, profile.hp + 1)
-                profile.save()
-                result["message"] = "Vida restaurada!"
-            
-            # Consume
-            if inv_item.item.type == 'consumable':
-                inv_item.quantity -= 1
-                if inv_item.quantity <= 0:
-                    inv_item.delete()
+            if result.get("success"):
+                # Consume
+                if inv_item.item.type == 'consumable':
+                    inv_item.quantity -= 1
+                    if inv_item.quantity <= 0:
+                        inv_item.delete()
+                    else:
+                        inv_item.save()
                 else:
+                    inv_item.current_charges -= 1
                     inv_item.save()
-            else:
-                inv_item.current_charges -= 1
-                inv_item.save()
                 
             return result
             
@@ -151,7 +121,9 @@ class ItemService:
             for item in equipped_items:
                 if item.id != inv_item.id:
                     item.is_equipped = False
-                    self._handle_unequip(item)
+                    strategy = self._get_strategy(item.item.effect_type)
+                    if strategy:
+                        strategy.on_unequip(profile, item)
                     item.save()
 
             if not is_currently_equipped:
@@ -160,7 +132,9 @@ class ItemService:
                 profile.equipped_item_id = inv_item.item.id
             else:
                 inv_item.is_equipped = False
-                self._handle_unequip(inv_item)
+                strategy = self._get_strategy(inv_item.item.effect_type)
+                if strategy:
+                    strategy.on_unequip(profile, inv_item)
                 inv_item.save()
                 profile.equipped_item_id = None
             
@@ -171,37 +145,23 @@ class ItemService:
         except InventoryItem.DoesNotExist:
             return {"success": False, "message": "Item not found."}
 
-    def _handle_unequip(self, inv_item):
-        """Internal logic for when an item is unequipped."""
-        if inv_item.item.effect_type == "kataha_effect":
-            inv_item.metadata['xp_bonus'] = 0.0
-            # inv_item.save() is called by the caller
-
     def apply_modifiers(self, profile, xp, gold):
         """Applies all active item modifiers to rewards."""
-        # Penalty applies from ANY broken item in inventory
-        broken_items = InventoryItem.objects.filter(profile=profile, is_broken=True)
-        # Bonus applies only from EQUIPPED items
-        equipped_items = InventoryItem.objects.filter(profile=profile, is_equipped=True, is_broken=False)
-        
         final_xp = xp
         final_gold = gold
         
-        # Apply penalties first
+        # Penalties apply from ALL items (broken)
+        broken_items = InventoryItem.objects.filter(profile=profile, is_broken=True)
         for inv_item in broken_items:
-            if inv_item.item.effect_type == "kataha_effect":
-                if inv_item.metadata.get('penalty_remaining', 0) > 0:
-                    final_xp = int(round(final_xp * 0.2))
+            strategy = self._get_strategy(inv_item.item.effect_type)
+            if strategy:
+                final_xp, final_gold = strategy.apply_modifiers(profile, inv_item, final_xp, final_gold)
 
-        # Apply bonuses
+        # Bonuses apply from EQUIPPED items
+        equipped_items = InventoryItem.objects.filter(profile=profile, is_equipped=True, is_broken=False)
         for inv_item in equipped_items:
-            effect_type = inv_item.item.effect_type
-            if effect_type == "xp_multiplier":
-                final_xp = int(final_xp * inv_item.item.effect_value)
-            elif effect_type == "gold_bonus_flat":
-                final_gold += int(inv_item.item.effect_value)
-            elif effect_type == "kataha_effect":
-                bonus = inv_item.metadata.get('xp_bonus', 0.0)
-                final_xp = int(final_xp * (1 + bonus))
+            strategy = self._get_strategy(inv_item.item.effect_type)
+            if strategy:
+                final_xp, final_gold = strategy.apply_modifiers(profile, inv_item, final_xp, final_gold)
                 
         return final_xp, final_gold

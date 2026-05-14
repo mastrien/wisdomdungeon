@@ -23,6 +23,7 @@ class Command(BaseCommand):
         for topic_id, topic_name in topics:
             for d_type in ['normal', 'elite']:
                 d_title = f"{topic_name} - {'Elite' if d_type == 'elite' else 'Semanal'}"
+                level_req = 10 if d_type == 'elite' else 1
                 
                 dungeon, created = WeeklyDungeon.objects.get_or_create(
                     title=d_title,
@@ -31,9 +32,14 @@ class Command(BaseCommand):
                     defaults={
                         'start_date': start_date,
                         'end_date': end_date,
-                        'is_active': True
+                        'is_active': True,
+                        'level_required': level_req
                     }
                 )
+                
+                if not created:
+                    dungeon.level_required = level_req
+                    dungeon.save()
                 
                 if created:
                     self.stdout.write(f"Created dungeon: {d_title}")

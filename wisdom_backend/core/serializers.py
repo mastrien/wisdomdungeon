@@ -51,10 +51,11 @@ class FixedQuestionSerializer(serializers.ModelSerializer):
 class WeeklyDungeonSerializer(serializers.ModelSerializer):
     progress = serializers.SerializerMethodField()
     is_locked = serializers.SerializerMethodField()
+    unlock_reason = serializers.SerializerMethodField()
 
     class Meta:
         model = WeeklyDungeon
-        fields = ['id', 'title', 'type', 'topic', 'start_date', 'end_date', 'progress', 'is_locked']
+        fields = ['id', 'title', 'type', 'topic', 'start_date', 'end_date', 'progress', 'is_locked', 'unlock_reason', 'level_required']
 
     def get_progress(self, obj):
         request = self.context.get('request')
@@ -69,25 +70,51 @@ class WeeklyDungeonSerializer(serializers.ModelSerializer):
             return 100
         
         # Cada masmorra tem 10 salas de 10 questões = 100 total
+        if not progress.current_room:
+            return 0
         solved = ((progress.current_room.order - 1) * 10) + progress.current_question_index
         return solved
 
     def get_is_locked(self, obj):
-        if obj.type == 'normal':
-            return False
-        
         request = self.context.get('request')
         if not request or not request.user.is_authenticated:
             return True
-            
-        from core.models import WeeklyDungeon, UserDungeonProgress
-        # Verifica se a masmorra Normal do mesmo tópico foi concluída
-        normal_dungeon = WeeklyDungeon.objects.filter(topic=obj.topic, type='normal', is_active=True).first()
-        if not normal_dungeon:
-            return False
-            
-        progress = UserDungeonProgress.objects.filter(profile=request.user.profile, dungeon=normal_dungeon).first()
-        return not (progress and progress.is_completed)
+        
+        profile = request.user.profile
+        
+        # 1. Level check
+        if profile.level < obj.level_required:
+            return True
+
+        # 2. Prerequisites check for Elite
+        if obj.type == 'elite':
+            from core.models import WeeklyDungeon, UserDungeonProgress
+            normal_dungeon = WeeklyDungeon.objects.filter(topic=obj.topic, type='normal', is_active=True).first()
+            if normal_dungeon:
+                progress = UserDungeonProgress.objects.filter(profile=profile, dungeon=normal_dungeon).first()
+                return not (progress and progress.is_completed)
+        
+        return False
+
+    def get_unlock_reason(self, obj):
+        request = self.context.get('request')
+        if not request or not request.user.is_authenticated:
+            return "Faça login para desbloquear"
+        
+        profile = request.user.profile
+        
+        if profile.level < obj.level_required:
+            return f"Requer Nível {obj.level_required}"
+
+        if obj.type == 'elite':
+            from core.models import WeeklyDungeon, UserDungeonProgress
+            normal_dungeon = WeeklyDungeon.objects.filter(topic=obj.topic, type='normal', is_active=True).first()
+            if normal_dungeon:
+                progress = UserDungeonProgress.objects.filter(profile=profile, dungeon=normal_dungeon).first()
+                if not (progress and progress.is_completed):
+                    return "Conclua a Masmorra Normal"
+        
+        return None
 
 class DungeonRoomSerializer(serializers.ModelSerializer):
     class Meta:

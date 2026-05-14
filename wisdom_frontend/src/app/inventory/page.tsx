@@ -91,12 +91,14 @@ function InventoryList() {
         <div key={invItem.id} className={`p-6 rounded-2xl border-2 transition-all ${invItem.is_equipped ? "border-brand-primary bg-brand-primary/5" : "border-border-main"}`}>
            <h3 className="font-bold text-lg mb-2">{invItem.item.name}</h3>
            <p className="text-sm text-dim mb-4">{invItem.item.description}</p>
-           <button 
-             onClick={() => handleEquip(invItem.id)}
-             className={`px-4 py-2 rounded-xl font-bold text-sm ${invItem.is_equipped ? "bg-brand-primary text-slate-950" : "bg-slate-100 dark:bg-slate-800 text-foreground"}`}
-           >
-             {invItem.is_equipped ? "Equipado" : "Equipar"}
-           </button>
+           {invItem.item.type === 'passive' && (
+             <button 
+               onClick={() => handleEquip(invItem.id)}
+               className={`px-4 py-2 rounded-xl font-bold text-sm ${invItem.is_equipped ? "bg-brand-primary text-slate-950" : "bg-slate-100 dark:bg-slate-800 text-foreground"}`}
+             >
+               {invItem.is_equipped ? "Equipado" : "Equipar"}
+             </button>
+           )}
         </div>
       ))}
       {items.length === 0 && <p className="text-muted text-center col-span-2">Nenhum item encontrado.</p>}

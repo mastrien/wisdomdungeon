@@ -21,6 +21,8 @@ interface Dungeon {
   topic: string;
   progress: number;
   is_locked: boolean;
+  unlock_reason?: string;
+  level_required: number;
 }
 
 export default function HomePage() {
@@ -160,12 +162,17 @@ export default function HomePage() {
                   
                   <button 
                     disabled={isLocked}
-                    className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg flex items-center justify-center gap-2
-                      ${isLocked ? 'bg-slate-200 dark:bg-slate-800 text-muted cursor-not-allowed' : 'bg-slate-200 dark:bg-slate-800 group-hover:bg-brand-primary group-hover:text-slate-950 text-foreground dark:text-white cursor-pointer'}
+                    className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg flex flex-col items-center justify-center gap-0.5
+                      ${isLocked ? 'bg-slate-100 dark:bg-slate-800/50 text-dim cursor-not-allowed border border-border-main' : 'bg-slate-200 dark:bg-slate-800 group-hover:bg-brand-primary group-hover:text-slate-950 text-foreground dark:text-white cursor-pointer'}
                     `}
                   >
                     {isLocked ? (
-                      <><Lock className="w-4 h-4" /> Bloqueado</>
+                      <>
+                        <div className="flex items-center gap-2 text-[10px] uppercase font-black tracking-widest">
+                          <Lock className="w-3 h-3" /> Bloqueado
+                        </div>
+                        <div className="text-[9px] opacity-70 normal-case font-medium">{dungeon.unlock_reason}</div>
+                      </>
                     ) : (
                       'Explorar'
                     )}

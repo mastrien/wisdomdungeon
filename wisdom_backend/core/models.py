@@ -62,6 +62,7 @@ class WeeklyDungeon(models.Model):
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     topic = models.CharField(max_length=50)
+    level_required = models.IntegerField(default=1)
     is_active = models.BooleanField(default=True)
     
     def __str__(self):

@@ -190,6 +190,34 @@ export default function DungeonPage() {
     setTimeout(() => setInventoryMessage(null), 3000);
   };
 
+  const handleUseActiveItem = async () => {
+    if (!profile?.metadata?.equipped_item) return;
+    const item = profile.metadata.equipped_item;
+    
+    // Only allow manual activation if activatable
+    if (!item.activatable) return;
+
+    setSubmitting(true);
+    try {
+      const response = await api.post(`/inventory/${item.id}/use/`);
+      showToast(response.data.message, "success");
+      
+      // Re-fetch dungeon state to see revealed_wrong
+      const topic = searchParams.get("topic") || state?.current_dungeon?.topic;
+      const res = await api.get(`/dungeon/current/?topic=${topic}&type=${dungeonType}`);
+      setState(res.data);
+      
+      await refreshProfile();    // Refresh metadata (charges)
+    } catch (err: any) {
+      showToast(err.response?.data?.message || "Erro ao usar item", "error");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const activeItem = profile?.metadata?.equipped_item;
+  const isItemActive = state?.revealed_wrong;
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
@@ -297,6 +325,60 @@ export default function DungeonPage() {
                   </button>
                 );
               })}
+            </div>
+
+            {/* Active Item Slot */}
+            <div className="mb-8 p-4 bg-slate-50 dark:bg-slate-900/50 border border-border-main rounded-2xl flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-lg border ${activeItem ? "bg-brand-primary/10 border-brand-primary/30" : "bg-slate-200 dark:bg-slate-800 border-slate-300 dark:border-slate-700"}`}>
+                  <ShieldAlert className={`w-5 h-5 ${activeItem ? "text-brand-primary" : "text-slate-400"}`} />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-foreground">
+                    {activeItem ? activeItem.name : "Nenhum item equipado"}
+                  </h4>
+                  <div className="flex items-center gap-2">
+                    {activeItem ? (
+                      <>
+                        <span className={`text-[10px] font-black uppercase tracking-widest ${
+                          activeItem.is_broken ? "text-red-500" : (isItemActive ? "text-green-500" : "text-brand-primary")
+                        }`}>
+                          {activeItem.is_broken ? "Quebrado" : (isItemActive ? "Efeito Ativo" : "Pronto")}
+                        </span>
+                        {activeItem.max_charges > 0 && (
+                          <span className="text-[10px] text-muted font-bold">
+                            Cargas: {activeItem.current_charges}/{activeItem.max_charges}
+                          </span>
+                        )}
+                        {activeItem.xp_bonus > 0 && (
+                           <span className="text-[10px] text-orange-500 font-bold">
+                             Bonus: +{(activeItem.xp_bonus * 100).toFixed(0)}% XP
+                           </span>
+                        )}
+                      </>
+                    ) : (
+                      <span className="text-[10px] text-dim font-bold uppercase">Visite a loja para se equipar</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
+              {activeItem?.activatable && !result && (
+                <button
+                  onClick={handleUseActiveItem}
+                  disabled={submitting || isItemActive || activeItem.current_charges <= 0 || activeItem.is_broken}
+                  className={`
+                    px-4 py-2 rounded-xl text-xs font-bold transition-all
+                    ${isItemActive 
+                      ? "bg-green-500 text-white cursor-default" 
+                      : (activeItem.current_charges > 0 && !activeItem.is_broken
+                          ? "bg-brand-primary text-slate-950 hover:scale-105 active:scale-95 shadow-lg" 
+                          : "bg-slate-200 dark:bg-slate-800 text-dim cursor-not-allowed")}
+                  `}
+                >
+                  {isItemActive ? "Ativado" : "Ativar"}
+                </button>
+              )}
             </div>
 
             {!result ? (

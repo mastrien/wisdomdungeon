@@ -294,6 +294,45 @@ Alterar a lógica da Kataha para usar acúmulos próprios em vez do combo global
 ### Testes
 - [x] Rodar `pytest core/tests/test_item_advanced.py`.
 
+## [14/05/2026 16:30] - Refatoração Arquitetural do Sistema de Itens (Observer/Strategy)
+### Ação
+Migrar a lógica procedural dos itens para um padrão polimórfico (Strategy), permitindo que cada item seja uma classe isolada que escuta eventos do usuário.
+### Tarefas
+- [x] Backend: Criar interface base `BaseItemStrategy`.
+- [x] Backend: Criar `ITEM_REGISTRY` para mapeamento de efeitos.
+- [x] Backend: Implementar estratégias específicas (`KatahaBladeStrategy`, `RevealWrongAmuletStrategy`, etc.).
+- [x] Backend: Refatorar `ItemService` para atuar como um despachante de eventos (Dispatcher).
+- [x] Backend: Validar isolamento de sessão e integridade transacional.
+### Testes
+- [x] Rodar `python manage.py test core.tests.test_item_advanced core.tests.test_item_system`. [PASSOU]
+
+## [14/05/2026 17:30] - Refatoração de Inventário e Ativação Manual de Itens
+### Ação
+Melhorar a experiência de uso de itens, permitindo ativação manual estratégica durante a masmorra e limpando a UI de inventário.
+### Tarefas
+- [x] Frontend: Ocultar botão "Equipar" para consumíveis no Inventário.
+- [x] Backend: Migrar Amuleto do Conhecimento para ativação manual via método `use()`.
+- [x] Backend: Incluir metadados do item equipado no `Profile` para consumo da UI.
+- [x] Frontend: Criar slot de "Item Ativo" na `DungeonPage` com botão de ativação e status.
+- [x] Backend: Ajustar `DungeonCurrentView` para persistir efeitos ativos entre recarregamentos de página.
+### Testes
+- [x] Validar funcionamento do Amuleto do Conhecimento via botão manual.
+- [x] Verificar reset de `revealed_wrong` ao avançar de questão.
+- [x] Rodar suíte de testes de itens. [PASSOU]
+
+## [14/05/2026 18:30] - Implementação de Masmorras de Elite e Travas de Acesso
+### Ação
+Implementar restrições de nível e pré-requisitos para masmorras de elite, com feedback visual na interface.
+### Tarefas
+- [x] Backend: Adicionar campo `level_required` ao modelo `WeeklyDungeon`.
+- [x] Backend: Atualizar `WeeklyDungeonSerializer` com lógica de bloqueio (Nível + Conclusão da Normal).
+- [x] Backend: Incluir `unlock_reason` na API de masmorras.
+- [x] Backend: Atualizar seeder para definir Nível 10 como requisito para Masmorras de Elite.
+- [x] Frontend: Exibir motivo do bloqueio e requisitos no card da masmorra na `HomePage`.
+### Testes
+- [x] Validar que masmorras normais estão abertas por padrão.
+- [x] Validar que masmorras de elite mostram "Bloqueado" e o motivo correto.
+
 
 
 
