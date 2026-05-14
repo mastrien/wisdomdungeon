@@ -115,3 +115,25 @@ class ItemAdvancedTest(TestCase):
         
         inv_item.refresh_from_db()
         self.assertEqual(inv_item.quantity, 1)
+
+    def test_vampirism_item(self):
+        """Valida que o Amuleto de Vampirismo recupera vida no combo 5."""
+        vamp_item = Item.objects.create(
+            name="Amuleto de Vampirismo",
+            type="passive",
+            effect_type="vampirism",
+            description="Recovers HP every 5 streak."
+        )
+        inv_item = InventoryItem.objects.create(profile=self.profile, item=vamp_item, is_equipped=True)
+        
+        self.profile.hp = 1
+        self.profile.current_combo = 4
+        self.profile.save()
+        
+        service = AnswerService()
+        # Correct answer -> combo 5 -> heal
+        service.submit_answer(self.profile, "math", "h1", "2")
+        
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.hp, 2)
+        self.assertEqual(self.profile.current_combo, 5)

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import api from "@/services/api";
 import { useAuth } from "@/context/AuthContext";
 import { 
@@ -40,8 +40,8 @@ export default function InventoryOverlay({ onClose, onUseItem, refreshTrigger }:
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [usingId, setUsingId] = useState<number | null>(null);
-
-  const fetchInventory = async () => {
+  const fetchInventory = useCallback(async () => {
+    setLoading(true);
     try {
       const response = await api.get("/inventory/");
       setItems(response.data);
@@ -50,11 +50,12 @@ export default function InventoryOverlay({ onClose, onUseItem, refreshTrigger }:
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchInventory();
-  }, [refreshTrigger]);
+  }, [fetchInventory, refreshTrigger]);
+
 
   const handleUse = async (itemId: number) => {
     setUsingId(itemId);

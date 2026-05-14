@@ -21,7 +21,20 @@ interface Profile {
   max_hp: number;
   theme_color: string;
   font_size: string;
-  metadata?: any;
+  metadata?: {
+    xp_multiplier?: number;
+    equipped_item?: {
+      id: number;
+      name: string;
+      is_broken: boolean;
+      current_charges: number;
+      max_charges: number;
+      activatable: boolean;
+      effect_type: string;
+      xp_bonus: number;
+    };
+    [key: string]: any;
+  };
 }
 
 const colorMap = {
@@ -90,7 +103,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     // Force dark mode only
-    setIsDarkMode(true);
     document.documentElement.classList.add("dark");
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {

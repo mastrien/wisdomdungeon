@@ -2,6 +2,7 @@ from .kataha_blade import KatahaBladeStrategy
 from .reveal_wrong import RevealWrongAmuletStrategy
 from .basic_stats import XPMultiplierStrategy, GoldBonusStrategy
 from .consumables import RestoreComboStrategy, HealHPStrategy
+from .vampirism import VampirismStrategy
 
 ITEM_REGISTRY = {
     "kataha_effect": KatahaBladeStrategy,
@@ -10,4 +11,5 @@ ITEM_REGISTRY = {
     "gold_bonus_flat": GoldBonusStrategy,
     "restore_combo": RestoreComboStrategy,
     "heal_hp": HealHPStrategy,
+    "vampirism": VampirismStrategy,
 }

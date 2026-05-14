@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import api from "@/services/api";
 import { useAuth } from "@/context/AuthContext";
@@ -8,7 +8,6 @@ import Header from "@/components/Header";
 import MathRenderer from "@/components/MathRenderer";
 import InventoryOverlay from "@/components/InventoryOverlay";
 import { 
-  Sword, 
   ChevronLeft, 
   Loader2, 
   CheckCircle2, 
@@ -68,15 +67,14 @@ export default function DungeonPage() {
       showToast(`PARABÉNS! Você subiu para o nível ${profile.level}!`, "success");
     }
     if (profile) prevLevelRef.current = profile.level;
-  }, [profile?.level, showToast]);
+  }, [profile, showToast]);
 
   // HUD States
   const [seconds, setSeconds] = useState(0);
   const [combo, setCombo] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const fetchDungeonState = async () => {
-    setLoading(true);
+  const fetchDungeonState = useCallback(async () => {
     setSelectedOption(null);
     setResult(null);
     setSeconds(0);
@@ -88,7 +86,7 @@ export default function DungeonPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, dungeonType]);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -96,7 +94,7 @@ export default function DungeonPage() {
     } else if (user) {
       fetchDungeonState();
     }
-  }, [user, authLoading, id, dungeonType]);
+  }, [user, authLoading, fetchDungeonState, router]);
 
   // Timer Logic
   useEffect(() => {

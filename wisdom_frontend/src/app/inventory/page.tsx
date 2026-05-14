@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
-import InventoryOverlay from "@/components/InventoryOverlay";
 import { Package, Loader2 } from "lucide-react";
 
 export default function InventoryPage() {
@@ -15,7 +14,7 @@ export default function InventoryPage() {
     if (!authLoading && !user) {
       router.push("/login");
     }
-  }, [user, authLoading]);
+  }, [user, authLoading, router]);
 
   if (authLoading) {
     return (
@@ -54,13 +53,23 @@ export default function InventoryPage() {
   );
 }
 
+interface InventoryItem {
+  id: number;
+  is_equipped: boolean;
+  item: {
+    name: string;
+    description: string;
+    type: 'passive' | 'consumable';
+  }
+}
+
 function InventoryList() {
   const { showToast } = useAuth();
   // Similar to InventoryOverlay but without fixed positioning
-  const [items, setItems] = useState<any[]>([]);
+  const [items, setItems] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchInventory = async () => {
+  const fetchInventory = useCallback(async () => {
     try {
       const response = await (await import("@/services/api")).default.get("/inventory/");
       setItems(response.data);
@@ -69,13 +78,16 @@ function InventoryList() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  useEffect(() => { fetchInventory(); }, []);
+  useEffect(() => { 
+    fetchInventory(); 
+  }, [fetchInventory]);
 
   const handleEquip = async (itemId: number) => {
     try {
-      const response = await (await import("@/services/api")).default.post(`/inventory/${itemId}/equip/`);
+      const apiModule = await import("@/services/api");
+      const response = await apiModule.default.post(`/inventory/${itemId}/equip/`);
       showToast(response.data.is_equipped ? "Item equipado!" : "Item desequipado!", "info");
       fetchInventory();
     } catch (err: any) {
@@ -87,7 +99,7 @@ function InventoryList() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {items.map((invItem: any) => (
+      {items.map((invItem) => (
         <div key={invItem.id} className={`p-6 rounded-2xl border-2 transition-all ${invItem.is_equipped ? "border-brand-primary bg-brand-primary/5" : "border-border-main"}`}>
            <h3 className="font-bold text-lg mb-2">{invItem.item.name}</h3>
            <p className="text-sm text-dim mb-4">{invItem.item.description}</p>

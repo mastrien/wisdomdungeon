@@ -333,6 +333,17 @@ Implementar restrições de nível e pré-requisitos para masmorras de elite, co
 - [x] Validar que masmorras normais estão abertas por padrão.
 - [x] Validar que masmorras de elite mostram "Bloqueado" e o motivo correto.
 
+## [14/05/2026 19:30] - Adição de Novos Itens e Correções de Seeder
+### Ação
+Implementar o item "Amuleto de Vampirismo" e corrigir metadados de itens existentes no seeder.
+### Tarefas
+- [x] Backend: Criar `VampirismStrategy` (recupera vida a cada 5 acertos seguidos).
+- [x] Backend: Atualizar `ITEM_REGISTRY` com o novo item.
+- [x] Backend: Corrigir "Amuleto do Conhecimento" no seeder para `activatable=True`.
+- [x] Backend: Adicionar "Amuleto de Vampirismo" ao seeder.
+### Testes
+- [x] Validar cura ao atingir combo de 5 com o amuleto equipado. [PASSOU]
+
 
 
 

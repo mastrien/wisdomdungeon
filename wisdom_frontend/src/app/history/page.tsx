@@ -42,7 +42,7 @@ export default function HistoryPage() {
   const [hasMore, setHasMore] = useState(false);
   const [offset, setOffset] = useState(0);
 
-  const fetchHistory = async (currentOffset: number, append = false) => {
+  const fetchHistory = useCallback(async (currentOffset: number, append = false) => {
     try {
       if (append) setLoadingMore(true);
       const response = await api.get(`/history/?offset=${currentOffset}`);
@@ -58,27 +58,26 @@ export default function HistoryPage() {
       setLoading(false);
       setLoadingMore(false);
     }
-  };
+  }, []);
 
-  const fetchMastery = async () => {
+  const fetchMastery = useCallback(async () => {
     try {
       const response = await api.get("/mastery/");
       setMasteryStats(response.data);
     } catch (err) {
       console.error("Erro ao buscar maestria:", err);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (!authLoading && !user) {
       router.push("/login");
     } else if (user) {
-      setLoading(true);
-      Promise.all([fetchHistory(0), fetchMastery()]).finally(() => {
-        setLoading(false);
-      });
+      // Initialize fetching
+      fetchHistory(0);
+      fetchMastery();
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, router, fetchHistory, fetchMastery]);
 
   const handleLoadMore = () => {
     const nextOffset = offset + 20;

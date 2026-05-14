@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import api from "@/services/api";
@@ -37,15 +37,7 @@ export default function ShopPage() {
   const [loading, setLoading] = useState(true);
   const [buyingId, setBuyingId] = useState<number | null>(null);
 
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push("/login");
-    } else if (user) {
-      fetchItems();
-    }
-  }, [user, authLoading]);
-
-  const fetchItems = async () => {
+  const fetchItems = useCallback(async () => {
     try {
       const response = await api.get("/shop/");
       setItems(response.data);
@@ -54,7 +46,15 @@ export default function ShopPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/login");
+    } else if (user) {
+      fetchItems();
+    }
+  }, [user, authLoading, fetchItems, router]);
 
   const handleBuy = async (itemId: number) => {
     setBuyingId(itemId);

@@ -98,9 +98,19 @@ class Command(BaseCommand):
                 "rarity": "common",
                 "price": 50,
                 "effect_type": "reveal_wrong",
-                "activatable": False, # Passive, auto-triggers
+                "activatable": True,
                 "max_charges": 3,
                 "recovery_rate": 1,
+            },
+            {
+                "name": "Amuleto de Vampirismo",
+                "description": "Restaura 1 de vida a cada 5 acertos seguidos (Combo).",
+                "type": "passive",
+                "rarity": "rare",
+                "price": 200,
+                "effect_type": "vampirism",
+                "activatable": False,
+                "max_charges": 0,
             },
             {
                 "name": "Poção de Vida",
