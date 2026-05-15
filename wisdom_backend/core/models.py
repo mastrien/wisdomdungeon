@@ -59,6 +59,7 @@ class WeeklyDungeon(models.Model):
     ]
     title = models.CharField(max_length=100)
     type = models.CharField(max_length=10, choices=TYPE_CHOICES, default='normal')
+    week_number = models.IntegerField(default=1)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     topic = models.CharField(max_length=50)
@@ -66,7 +67,7 @@ class WeeklyDungeon(models.Model):
     is_active = models.BooleanField(default=True)
     
     def __str__(self):
-        return f"{self.title} ({self.get_type_display()})"
+        return f"Semana {self.week_number} - {self.title} ({self.get_type_display()})"
 
 class DungeonRoom(models.Model):
     dungeon = models.ForeignKey(WeeklyDungeon, on_delete=models.CASCADE, related_name='rooms')

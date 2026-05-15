@@ -9,19 +9,22 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--force',
+            '--rotate',
             action='store_true',
-            help='Deleta masmorras e questões existentes para gerar novas',
+            help='Gera uma nova semana de masmorras e desativa as anteriores',
         )
 
     def handle(self, *args, **options):
-        force = options.get('force')
-        if force:
-            self.stdout.write(self.style.WARNING('Limpando masmorras e questões existentes...'))
-            WeeklyDungeon.objects.all().delete()
-            FixedQuestion.objects.all().delete()
-            # Note: Progress of users will be deleted due to cascade or broken links
-            # UserDungeonProgress.objects.all().delete() is implied if related to WeeklyDungeon
+        rotate = options.get('rotate')
+        
+        # Determine the next week number
+        last_dungeon = WeeklyDungeon.objects.order_by('-week_number').first()
+        current_week = last_dungeon.week_number if last_dungeon else 0
+        next_week = current_week + 1 if rotate or not last_dungeon else current_week
+
+        if rotate:
+            self.stdout.write(self.style.WARNING(f'Rotacionando para a Semana {next_week}. Desativando masmorras antigas...'))
+            WeeklyDungeon.objects.filter(is_active=True).update(is_active=False)
         
         generator = MathGenerator()
         topics = [
@@ -38,12 +41,13 @@ class Command(BaseCommand):
         for topic_id, topic_name in topics:
             for d_type in ['normal', 'elite']:
                 d_title = f"{topic_name} - {'Elite' if d_type == 'elite' else 'Semanal'}"
-                level_req = 1 # Removing level 10 requirement as requested
+                level_req = 1
                 
                 dungeon, created = WeeklyDungeon.objects.get_or_create(
                     title=d_title,
                     type=d_type,
                     topic=topic_id,
+                    week_number=next_week, # Versioning
                     defaults={
                         'start_date': start_date,
                         'end_date': end_date,
