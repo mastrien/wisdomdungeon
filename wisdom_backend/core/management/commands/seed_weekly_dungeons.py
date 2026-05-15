@@ -23,7 +23,7 @@ class Command(BaseCommand):
         for topic_id, topic_name in topics:
             for d_type in ['normal', 'elite']:
                 d_title = f"{topic_name} - {'Elite' if d_type == 'elite' else 'Semanal'}"
-                level_req = 10 if d_type == 'elite' else 1
+                level_req = 1 # Removing level 10 requirement as requested
                 
                 dungeon, created = WeeklyDungeon.objects.get_or_create(
                     title=d_title,

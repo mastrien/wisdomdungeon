@@ -86,6 +86,14 @@ class UserDungeonProgress(models.Model):
     current_question_index = models.IntegerField(default=0) # 0 a 9
     is_completed = models.BooleanField(default=False)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    # Session Statistics (Phase 4 Summary Screen)
+    session_xp_gained = models.IntegerField(default=0)
+    session_gold_gained = models.IntegerField(default=0)
+    total_correct = models.IntegerField(default=0)
+    total_wrong = models.IntegerField(default=0)
+    total_time_ms = models.IntegerField(default=0)
+    max_combo = models.IntegerField(default=0)
 
     class Meta:
         unique_together = ('profile', 'dungeon')

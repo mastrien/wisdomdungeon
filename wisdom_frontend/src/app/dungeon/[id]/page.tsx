@@ -29,6 +29,15 @@ interface Question {
   resposta_correta?: string;
 }
 
+interface SummaryStats {
+  xp: number;
+  gold: number;
+  correct: number;
+  wrong: number;
+  time_ms: number;
+  max_combo: number;
+}
+
 interface DungeonState {
   current_dungeon: { id: number; title: string; topic: string } | null;
   room: { order: number };
@@ -36,6 +45,7 @@ interface DungeonState {
   question: Question;
   completed?: boolean;
   revealed_wrong?: string;
+  summary_stats?: SummaryStats;
 }
 
 export default function DungeonPage() {
@@ -167,14 +177,82 @@ export default function DungeonPage() {
   }
 
   if (state?.completed) {
+    const stats = state.summary_stats || { xp: 0, gold: 0, correct: 0, wrong: 0, time_ms: 0, max_combo: 0 };
+    const total = stats.correct + stats.wrong;
+    const accuracy = total > 0 ? Math.round((stats.correct / total) * 100) : 0;
+    
+    let rank = "D";
+    let rankColor = "text-slate-400";
+    if (accuracy >= 95) { rank = "S"; rankColor = "text-brand-primary animate-pulse"; }
+    else if (accuracy >= 85) { rank = "A"; rankColor = "text-green-500"; }
+    else if (accuracy >= 70) { rank = "B"; rankColor = "text-blue-500"; }
+    else if (accuracy >= 50) { rank = "C"; rankColor = "text-orange-500"; }
+
     return (
       <div className="min-h-screen bg-background text-foreground">
         <Header />
-        <div className="max-w-3xl mx-auto p-8 text-center mt-20">
-          <Trophy className="w-20 h-20 text-brand-primary mx-auto mb-6" />
-          <h1 className="text-4xl font-bold mb-4">Masmorra Concluída!</h1>
-          <p className="text-muted mb-8">Você superou todos os desafios desta semana. Retorne em breve para novas aventuras!</p>
-          <button onClick={() => router.push("/")} className="bg-brand-primary text-slate-950 px-8 py-3 rounded-xl font-bold">Voltar ao Mapa</button>
+        <div className="max-w-4xl mx-auto p-8 mt-10">
+          <div className="bg-card border-2 border-border-main rounded-[40px] overflow-hidden shadow-2xl relative">
+            {/* Header Visual */}
+            <div className="h-48 bg-gradient-to-br from-brand-primary/20 to-purple-500/20 flex flex-col items-center justify-center relative overflow-hidden">
+               <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
+               <Trophy className="w-16 h-16 text-brand-primary mb-2 relative z-10" />
+               <h1 className="text-3xl font-black uppercase tracking-tighter relative z-10">Masmorra Concluída!</h1>
+               <div className="text-xs font-bold bg-brand-primary text-slate-950 px-4 py-1 rounded-full relative z-10 mt-2">
+                 MISSÃO CUMPRIDA
+               </div>
+            </div>
+
+            <div className="p-8 md:p-12">
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-12 items-center">
+                  {/* Rank Area */}
+                  <div className="flex flex-col items-center justify-center md:border-r border-border-main py-4">
+                    <div className="text-[10px] font-black text-muted uppercase tracking-[0.2em] mb-2">Rank de Proficiência</div>
+                    <div className={`text-9xl font-black ${rankColor}`}>{rank}</div>
+                    <div className="text-sm font-bold text-dim mt-2">{accuracy}% de Precisão</div>
+                  </div>
+
+                  {/* Core Stats */}
+                  <div className="col-span-2 grid grid-cols-2 gap-6">
+                    <div className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-3xl border border-border-main group hover:border-brand-primary/40 transition-colors">
+                       <Trophy className="w-5 h-5 text-brand-primary mb-3" />
+                       <div className="text-xs font-bold text-muted uppercase mb-1">XP Acumulado</div>
+                       <div className="text-2xl font-black text-foreground">+{stats.xp}</div>
+                    </div>
+                    <div className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-3xl border border-border-main group hover:border-yellow-500/40 transition-colors">
+                       <Coins className="w-5 h-5 text-yellow-500 mb-3" />
+                       <div className="text-xs font-bold text-muted uppercase mb-1">Ouro Ganho</div>
+                       <div className="text-2xl font-black text-foreground">+{stats.gold}</div>
+                    </div>
+                    <div className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-3xl border border-border-main group hover:border-orange-500/40 transition-colors">
+                       <Flame className="w-5 h-5 text-orange-500 mb-3" />
+                       <div className="text-xs font-bold text-muted uppercase mb-1">Maior Combo</div>
+                       <div className="text-2xl font-black text-foreground">{stats.max_combo}</div>
+                    </div>
+                    <div className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-3xl border border-border-main group hover:border-blue-500/40 transition-colors">
+                       <Timer className="w-5 h-5 text-blue-500 mb-3" />
+                       <div className="text-xs font-bold text-muted uppercase mb-1">Tempo Total</div>
+                       <div className="text-2xl font-black text-foreground">{Math.floor(stats.time_ms / 60000)}m {Math.floor((stats.time_ms % 60000) / 1000)}s</div>
+                    </div>
+                  </div>
+               </div>
+
+               <div className="mt-12 pt-8 border-t border-border-main flex flex-col md:flex-row gap-4">
+                  <button 
+                    onClick={() => router.push("/")}
+                    className="flex-1 bg-brand-primary hover:bg-brand-hover text-slate-950 font-black py-4 rounded-2xl transition-all shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    VOLTAR AO MAPA
+                  </button>
+                  <button 
+                    onClick={() => router.push("/history")}
+                    className="flex-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-foreground font-black py-4 rounded-2xl transition-all border border-border-main"
+                  >
+                    VER MEU HISTÓRICO
+                  </button>
+               </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -325,60 +403,6 @@ export default function DungeonPage() {
               })}
             </div>
 
-            {/* Active Item Slot */}
-            <div className="mb-8 p-4 bg-slate-50 dark:bg-slate-900/50 border border-border-main rounded-2xl flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg border ${activeItem ? "bg-brand-primary/10 border-brand-primary/30" : "bg-slate-200 dark:bg-slate-800 border-slate-300 dark:border-slate-700"}`}>
-                  <ShieldAlert className={`w-5 h-5 ${activeItem ? "text-brand-primary" : "text-slate-400"}`} />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-foreground">
-                    {activeItem ? activeItem.name : "Nenhum item equipado"}
-                  </h4>
-                  <div className="flex items-center gap-2">
-                    {activeItem ? (
-                      <>
-                        <span className={`text-[10px] font-black uppercase tracking-widest ${
-                          activeItem.is_broken ? "text-red-500" : (isItemActive ? "text-green-500" : "text-brand-primary")
-                        }`}>
-                          {activeItem.is_broken ? "Quebrado" : (isItemActive ? "Efeito Ativo" : "Pronto")}
-                        </span>
-                        {activeItem.max_charges > 0 && (
-                          <span className="text-[10px] text-muted font-bold">
-                            Cargas: {activeItem.current_charges}/{activeItem.max_charges}
-                          </span>
-                        )}
-                        {activeItem.xp_bonus > 0 && (
-                           <span className="text-[10px] text-orange-500 font-bold">
-                             Bonus: +{(activeItem.xp_bonus * 100).toFixed(0)}% XP
-                           </span>
-                        )}
-                      </>
-                    ) : (
-                      <span className="text-[10px] text-dim font-bold uppercase">Visite a loja para se equipar</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-              
-              {activeItem?.activatable && !result && (
-                <button
-                  onClick={handleUseActiveItem}
-                  disabled={submitting || isItemActive || activeItem.current_charges <= 0 || activeItem.is_broken}
-                  className={`
-                    px-4 py-2 rounded-xl text-xs font-bold transition-all
-                    ${isItemActive 
-                      ? "bg-green-500 text-white cursor-default" 
-                      : (activeItem.current_charges > 0 && !activeItem.is_broken
-                          ? "bg-brand-primary text-slate-950 hover:scale-105 active:scale-95 shadow-lg" 
-                          : "bg-slate-200 dark:bg-slate-800 text-dim cursor-not-allowed")}
-                  `}
-                >
-                  {isItemActive ? "Ativado" : "Ativar"}
-                </button>
-              )}
-            </div>
-
             {!result ? (
               <button
                 onClick={handleSubmit}
@@ -443,6 +467,60 @@ export default function DungeonPage() {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Active Item Slot */}
+        <div className="mt-8 p-4 bg-card border border-border-main rounded-2xl flex items-center justify-between shadow-xl">
+          <div className="flex items-center gap-3">
+            <div className={`p-2 rounded-lg border ${activeItem ? "bg-brand-primary/10 border-brand-primary/30" : "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700"}`}>
+              <ShieldAlert className={`w-5 h-5 ${activeItem ? "text-brand-primary" : "text-slate-400"}`} />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-foreground">
+                {activeItem ? activeItem.name : "Nenhum item equipado"}
+              </h4>
+              <div className="flex items-center gap-2">
+                {activeItem ? (
+                  <>
+                    <span className={`text-[10px] font-black uppercase tracking-widest ${
+                      activeItem.is_broken ? "text-red-500" : (isItemActive ? "text-green-500" : "text-brand-primary")
+                    }`}>
+                      {activeItem.is_broken ? "Quebrado" : (isItemActive ? "Efeito Ativo" : "Pronto")}
+                    </span>
+                    {activeItem.max_charges > 0 && (
+                      <span className="text-[10px] text-muted font-bold">
+                        Cargas: {activeItem.current_charges}/{activeItem.max_charges}
+                      </span>
+                    )}
+                    {activeItem.xp_bonus > 0 && (
+                       <span className="text-[10px] text-orange-500 font-bold">
+                         Bonus: +{(activeItem.xp_bonus * 100).toFixed(0)}% XP
+                       </span>
+                    )}
+                  </>
+                ) : (
+                  <span className="text-[10px] text-dim font-bold uppercase">Visite a loja para se equipar</span>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          {activeItem?.activatable && !result && (
+            <button
+              onClick={handleUseActiveItem}
+              disabled={submitting || isItemActive || activeItem.current_charges <= 0 || activeItem.is_broken}
+              className={`
+                px-4 py-2 rounded-xl text-xs font-bold transition-all
+                ${isItemActive 
+                  ? "bg-green-500 text-white cursor-default" 
+                  : (activeItem.current_charges > 0 && !activeItem.is_broken
+                      ? "bg-brand-primary text-slate-950 hover:scale-105 active:scale-95 shadow-lg" 
+                      : "bg-slate-200 dark:bg-slate-800 text-dim cursor-not-allowed")}
+              `}
+            >
+              {isItemActive ? "Ativado" : "Ativar"}
+            </button>
+          )}
         </div>
         
         {/* Active Attributes (Phase 3 visual) */}

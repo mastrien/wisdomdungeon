@@ -79,6 +79,15 @@ class AnswerService:
         if progress:
             progress.current_question_index += 1
             
+            # Update Session Stats
+            progress.total_time_ms += time_spent_ms
+            if is_correct:
+                progress.total_correct += 1
+                if profile.current_combo > progress.max_combo:
+                    progress.max_combo = profile.current_combo
+            else:
+                progress.total_wrong += 1
+            
             # Check if room completed
             if progress.current_question_index >= 10:
                 progress.current_question_index = 0
@@ -125,6 +134,12 @@ class AnswerService:
                 
                 # Apply Item Modifiers
                 xp_gained, gold_gained = item_service.apply_modifiers(profile, xp_gained, gold_gained)
+                
+                # Register session gains
+                if progress:
+                    progress.session_xp_gained += xp_gained
+                    progress.session_gold_gained += gold_gained
+                    # No need to save progress here yet, it will be saved below
                 
                 profile.xp += xp_gained
                 profile.gold += gold_gained

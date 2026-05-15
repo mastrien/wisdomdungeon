@@ -82,18 +82,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setToast({ message, type });
   };
 
-  const fetchProfile = async () => {
+  const fetchProfile = async (retries = 3): Promise<void> => {
     try {
       const response = await api.get("/profile/");
       setProfile(response.data);
-    } catch (error) {
+    } catch (error: any) {
+      if (retries > 0 && error.response?.status === 403) {
+        console.warn(`Erro 403 ao carregar perfil, tentando novamente em 1s... (${retries} restantes)`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return fetchProfile(retries - 1);
+      }
       console.error("Erro ao carregar perfil:", error);
     }
   };
 
   const refreshProfile = async () => {
     if (user) {
-      await fetchProfile();
+      await fetchProfile(0); // For manual refresh, we don't necessarily need retries if the session is established
     }
   };
 

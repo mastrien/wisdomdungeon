@@ -35,7 +35,7 @@ export default function HomePage() {
   useEffect(() => {
     if (!authLoading && !user) {
       router.push("/login");
-    } else if (user) {
+    } else if (user && profile) { // Wait for BOTH user and profile
       const fetchData = async () => {
         try {
           const [statsRes, dungeonsRes] = await Promise.all([
@@ -59,9 +59,9 @@ export default function HomePage() {
       };
       fetchData();
     }
-  }, [user, authLoading, router]);
+  }, [user, profile, authLoading, router]);
 
-  if (authLoading || loading) {
+  if (authLoading || (user && !profile) || loading) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center text-foreground gap-4">
         <Loader2 className="w-10 h-10 animate-spin text-brand-primary" />

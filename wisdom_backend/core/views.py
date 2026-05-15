@@ -181,7 +181,17 @@ class DungeonCurrentView(APIView):
             profile.save()
         
         if progress.is_completed:
-             return Response({"current_dungeon": None, "completed": True})
+             return Response({
+                "completed": True,
+                "summary_stats": {
+                    "xp": progress.session_xp_gained,
+                    "gold": progress.session_gold_gained,
+                    "correct": progress.total_correct,
+                    "wrong": progress.total_wrong,
+                    "time_ms": progress.total_time_ms,
+                    "max_combo": progress.max_combo
+                }
+             })
 
         room = progress.current_room
         question = room.questions.all()[progress.current_question_index]
@@ -200,14 +210,23 @@ class DungeonCurrentView(APIView):
             profile.save()
             ItemService().trigger_event(profile, "on_question_start", {"question": question})
             profile.refresh_from_db()
-        
         return Response({
             "current_dungeon": WeeklyDungeonSerializer(dungeon).data,
             "room": DungeonRoomSerializer(room).data,
             "question_index": progress.current_question_index,
             "question": FixedQuestionSerializer(question).data,
-            "revealed_wrong": profile.metadata.get('revealed_wrong')
+            "revealed_wrong": profile.metadata.get('revealed_wrong'),
+            "completed": progress.is_completed,
+            "summary_stats": {
+                "xp": progress.session_xp_gained,
+                "gold": progress.session_gold_gained,
+                "correct": progress.total_correct,
+                "wrong": progress.total_wrong,
+                "time_ms": progress.total_time_ms,
+                "max_combo": progress.max_combo
+            } if progress.is_completed else None
         })
+
 
 class AnswerView(APIView):
     def post(self, request):

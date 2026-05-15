@@ -349,6 +349,16 @@ Implementar o item "Amuleto de Vampirismo" e corrigir metadados de itens existen
 - [x] Validar cura ao completar sala com Amuleto do Descanso. [PASSOU]
 - [x] Validar ressurreição com Amuleto da Fênix. [PASSOU]
 
+## [14/05/2026 21:00] - Correção de Condição de Corrida na Autenticação (Race Condition)
+### Ação
+Resolver falhas intermitentes de carregamento (Erro 403) causadas por dessincronização entre Firebase e Backend no início da sessão.
+### Tarefas
+- [x] Frontend: Implementar mecanismo de retry em `AuthContext.fetchProfile` (3 tentativas com delay de 1s).
+- [x] Frontend: Adicionar interceptor de resposta global no Axios para retry automático em erros 403/401 com refresh de token.
+- [x] Frontend: Atualizar `HomePage` para aguardar a presença do objeto `profile` antes de renderizar a UI principal ou buscar dados.
+### Resultados
+A aplicação agora é muito mais resiliente a "Clock Skew" e latência de provisionamento de conta, garantindo que o usuário só veja o mapa quando a sessão estiver 100% estabelecida no backend.
+
 
 
 
