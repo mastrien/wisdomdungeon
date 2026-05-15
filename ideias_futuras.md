@@ -2,10 +2,9 @@
 
 Este documento registra as funcionalidades planejadas para expansão do engajamento e profundidade do jogo.
 
-## 1. Ranking Global (Leaderboard)
+## 1. Ranking Global (Leaderboard) [CONCLUÍDO]
 - **Objetivo**: Incentivar a competição saudável entre aventureiros.
-- **Métricas**: Comparação de Maestria Total, Maior Combo atingido e Nível atual.
-- **Interface**: Página dedicada com filtragem por período (Geral, Semanal).
+- **Implementação**: Página de Hall da Fama com pódio visual e barra de rank individual para jogadores logados.
 
 ## 2. Sistema de Conquistas (Achievements)
 - **Objetivo**: Premiar marcos importantes na jornada do jogador, aumentando o sentimento de colecionismo e progressão a longo prazo.
@@ -17,7 +16,14 @@ Este documento registra as funcionalidades planejadas para expansão do engajame
 - **Recompensas**: Títulos exclusivos exibidos ao lado do nome no perfil e no ranking, ícones de medalhas ou bônus pontuais de Ouro.
 - **Interface**: Uma galeria de troféus no perfil do usuário, com itens bloqueados em cinza.
 
-## 3. Barra de Experiência Visual (HUD)
+## 3. Barra de Experiência Visual (HUD) [CONCLUÍDO]
 - **Objetivo**: Feedback imediato de progresso para o próximo nível.
-- **Visual**: Uma barra de progresso persistente (ex: logo abaixo do Header) que preenche em tempo real conforme XP é ganho.
-- **Interação**: Efeito de brilho e animação ao subir de nível.
+- **Implementação**: Barras de XP persistentes integradas ao Header e ao HUD da masmorra com animações de preenchimento.
+
+## 4. Histórico de Semanas Anteriores
+- **Objetivo**: Permitir que jogadores joguem ou revisem masmorras de semanas passadas.
+- **Mecânica**: Usar o campo `week_number` para listar arquivos históricos, talvez com recompensas de XP reduzidas.
+
+## 5. Novos Mundos (Ciência, História, etc.)
+- **Objetivo**: Expandir a plataforma para outras disciplinas.
+- **Mecânica**: Novos geradores procedurais e temas visuais específicos para cada disciplina.
