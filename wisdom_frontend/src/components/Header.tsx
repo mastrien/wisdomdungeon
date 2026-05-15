@@ -25,12 +25,17 @@ export default function Header() {
     }
   };
 
+  // XP Progress calculation
+  const currentLevelXP = profile ? profile.xp - profile.current_level_xp_threshold : 0;
+  const nextLevelNeededXP = profile ? profile.next_level_xp - profile.current_level_xp_threshold : 1;
+  const xpProgress = Math.min(100, Math.max(0, (currentLevelXP / (nextLevelNeededXP || 1)) * 100));
+
   return (
-    <header className="border-b border-border-main bg-background/80 backdrop-blur-md sticky top-0 z-10 text-foreground">
+    <header className="border-b border-border-main bg-background/80 backdrop-blur-md sticky top-0 z-50 text-foreground">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <Sword className="text-brand-primary" />
-          <span className="font-bold text-xl">Wisdom Dungeon</span>
+          <span className="font-bold text-xl tracking-tight">Wisdom Dungeon</span>
         </Link>
         
         <div className="flex items-center gap-4">
@@ -38,7 +43,7 @@ export default function Header() {
             <>
               <Link 
                 href="/progression"
-                className="hidden md:flex items-center gap-4 px-4 py-1.5 bg-card dark:bg-slate-800 rounded-full border border-border-main shadow-sm hover:bg-slate-200/50 dark:hover:bg-slate-700 transition-colors group cursor-pointer"
+                className="hidden md:flex items-center gap-4 px-4 py-1.5 bg-card dark:bg-slate-800 rounded-full border border-border-main shadow-sm hover:border-brand-primary/50 transition-all group cursor-pointer"
               >
                 <div className="flex items-center gap-1.5 text-sm font-bold text-foreground">
                   <Trophy className="w-4 h-4 text-brand-primary" />
@@ -128,7 +133,16 @@ export default function Header() {
           )}
         </div>
       </div>
+
+      {/* XP Progress Bar */}
+      {profile && (
+        <div className="h-1 w-full bg-slate-200 dark:bg-slate-800 absolute bottom-0 left-0">
+          <div 
+            className="h-full bg-brand-primary shadow-brand transition-all duration-1000 ease-out"
+            style={{ width: `${xpProgress}%` }}
+          />
+        </div>
+      )}
     </header>
   );
 }
-;

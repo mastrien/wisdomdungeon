@@ -523,6 +523,24 @@ export default function DungeonPage() {
           )}
         </div>
         
+        {/* Level Progress Bar (HUD) */}
+        {profile && (
+          <div className="mt-8 mb-4">
+            <div className="flex justify-between items-end mb-2">
+              <div className="text-[10px] font-black text-brand-primary uppercase tracking-widest">Progresso de Nível</div>
+              <div className="text-[10px] font-bold text-muted uppercase">
+                {profile.xp - profile.current_level_xp_threshold} / {profile.next_level_xp - profile.current_level_xp_threshold} XP
+              </div>
+            </div>
+            <div className="h-2 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden border border-border-main">
+              <div 
+                className="h-full bg-brand-primary shadow-brand transition-all duration-700 ease-out"
+                style={{ width: `${Math.min(100, Math.max(0, ((profile.xp - profile.current_level_xp_threshold) / (profile.next_level_xp - profile.current_level_xp_threshold || 1)) * 100))}%` }}
+              />
+            </div>
+          </div>
+        )}
+
         {/* Active Attributes (Phase 3 visual) */}
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 opacity-60 hover:opacity-100 transition-opacity">
            <div className="text-xs font-bold text-foreground/60 dark:text-muted uppercase border-l-2 border-brand-primary pl-3">

@@ -371,6 +371,17 @@ Implementar rastreamento detalhado de estatísticas durante a masmorra e exibir 
 ### Resultados
 O fim de uma masmorra agora proporciona um fechamento épico, dando feedback claro sobre a performance do jogador e recompensas acumuladas.
 
+## [14/05/2026 23:00] - Barra de Progresso Visual de Experiência (HUD)
+### Ação
+Implementar feedback visual constante do progresso de nível através de barras de XP no Header e no HUD da masmorra.
+### Tarefas
+- [x] Backend: Garantir que `ProfileSerializer` retorne os limiares de XP (`current_level_xp_threshold` e `next_level_xp`).
+- [x] Frontend: Adicionar barra de XP persistente (1px) na borda inferior do `Header`.
+- [x] Frontend: Adicionar barra de XP detalhada no HUD da `DungeonPage` com contagem numérica.
+- [x] Frontend: Implementar animações de transição suave no preenchimento das barras.
+### Resultados
+O jogador agora tem uma percepção clara e gratificante do seu avanço em direção ao próximo nível após cada questão respondida.
+
 
 
 

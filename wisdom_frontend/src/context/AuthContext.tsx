@@ -21,6 +21,8 @@ interface Profile {
   max_hp: number;
   theme_color: string;
   font_size: string;
+  next_level_xp: number;
+  current_level_xp_threshold: number;
   metadata?: {
     xp_multiplier?: number;
     equipped_item?: {
