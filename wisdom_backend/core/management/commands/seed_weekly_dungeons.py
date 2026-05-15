@@ -7,7 +7,22 @@ import datetime
 class Command(BaseCommand):
     help = 'Seeds the weekly dungeons and rooms'
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--force',
+            action='store_true',
+            help='Deleta masmorras e questões existentes para gerar novas',
+        )
+
     def handle(self, *args, **options):
+        force = options.get('force')
+        if force:
+            self.stdout.write(self.style.WARNING('Limpando masmorras e questões existentes...'))
+            WeeklyDungeon.objects.all().delete()
+            FixedQuestion.objects.all().delete()
+            # Note: Progress of users will be deleted due to cascade or broken links
+            # UserDungeonProgress.objects.all().delete() is implied if related to WeeklyDungeon
+        
         generator = MathGenerator()
         topics = [
             ("algebra_basica", "Álgebra Básica"),

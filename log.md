@@ -359,6 +359,18 @@ Resolver falhas intermitentes de carregamento (Erro 403) causadas por dessincron
 ### Resultados
 A aplicação agora é muito mais resiliente a "Clock Skew" e latência de provisionamento de conta, garantindo que o usuário só veja o mapa quando a sessão estiver 100% estabelecida no backend.
 
+## [14/05/2026 22:00] - Tela Épica de Resumo de Masmorra e Rastreamento de Sessão
+### Ação
+Implementar rastreamento detalhado de estatísticas durante a masmorra e exibir um resumo épico com Rank ao concluir.
+### Tarefas
+- [x] Backend: Adicionar campos de estatísticas de sessão ao modelo `UserDungeonProgress`.
+- [x] Backend: Implementar incremento em tempo real de XP, Ouro, Precisão, Combo e Tempo no `AnswerService`.
+- [x] Backend: Atualizar `DungeonCurrentView` para retornar `summary_stats` na conclusão.
+- [x] Frontend: Implementar interface de resumo com cálculo de Rank (S, A, B, C, D) na `DungeonPage`.
+- [x] Organização: Mover todos os arquivos de planejamento para `docs/planos/`.
+### Resultados
+O fim de uma masmorra agora proporciona um fechamento épico, dando feedback claro sobre a performance do jogador e recompensas acumuladas.
+
 
 
 
