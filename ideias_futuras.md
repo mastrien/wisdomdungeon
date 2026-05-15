@@ -8,12 +8,14 @@ Este documento registra as funcionalidades planejadas para expansão do engajame
 - **Interface**: Página dedicada com filtragem por período (Geral, Semanal).
 
 ## 2. Sistema de Conquistas (Achievements)
-- **Objetivo**: Premiar marcos importantes na jornada do jogador.
-- **Exemplos**:
+- **Objetivo**: Premiar marcos importantes na jornada do jogador, aumentando o sentimento de colecionismo e progressão a longo prazo.
+- **Marcos Sugeridos**:
     - "Dono de Lenda": Comprar o primeiro item Lendário.
     - "Matemático de Elite": Concluir a primeira Masmorra Elite.
     - "Imparável": Atingir um combo de 50 acertos.
-- **Recompensas**: Títulos exclusivos no perfil ou bônus de Ouro.
+    - "Veterano": Concluir masmorras de 4 semanas consecutivas.
+- **Recompensas**: Títulos exclusivos exibidos ao lado do nome no perfil e no ranking, ícones de medalhas ou bônus pontuais de Ouro.
+- **Interface**: Uma galeria de troféus no perfil do usuário, com itens bloqueados em cinza.
 
 ## 3. Barra de Experiência Visual (HUD)
 - **Objetivo**: Feedback imediato de progresso para o próximo nível.
