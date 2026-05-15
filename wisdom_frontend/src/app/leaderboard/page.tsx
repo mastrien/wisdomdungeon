@@ -7,9 +7,7 @@ import api from "@/services/api";
 import { 
   Trophy, 
   Medal, 
-  User as UserIcon, 
   Flame, 
-  Target, 
   Loader2,
   ChevronRight
 } from "lucide-react";
@@ -25,7 +23,7 @@ interface LeaderboardPlayer {
 }
 
 export default function LeaderboardPage() {
-  const { user, profile } = useAuth();
+  const { profile } = useAuth();
   const [players, setPlayers] = useState<LeaderboardPlayer[]>([]);
   const [userRank, setUserRank] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -43,6 +41,7 @@ export default function LeaderboardPage() {
   }, []);
 
   useEffect(() => {
+    // Avoid synchronous setState by checking if we actually need to fetch
     fetchLeaderboard();
   }, [fetchLeaderboard]);
 

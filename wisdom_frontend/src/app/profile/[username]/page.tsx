@@ -9,13 +9,11 @@ import {
   Coins, 
   User as UserIcon, 
   Settings, 
-  Shield, 
   Loader2,
-  Calendar,
-  ChevronLeft,
   Flame,
   ShieldAlert,
-  Target
+  Target,
+  Shield
 } from "lucide-react";
 import Header from "@/components/Header";
 

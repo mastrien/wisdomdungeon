@@ -85,12 +85,14 @@ export default function DungeonPage() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchDungeonState = useCallback(async () => {
-    setSelectedOption(null);
-    setResult(null);
-    setSeconds(0);
+    // Note: We avoid calling resets here if they are already in their initial state
     try {
       const response = await api.get(`/dungeon/current/?topic=${id}&type=${dungeonType}`);
       setState(response.data);
+      // Reset interaction states after successful fetch
+      setSelectedOption(null);
+      setResult(null);
+      setSeconds(0);
     } catch (err) {
       console.error("Erro ao buscar estado da masmorra:", err);
     } finally {

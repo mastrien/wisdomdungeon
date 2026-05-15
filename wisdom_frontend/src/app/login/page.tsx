@@ -32,7 +32,7 @@ export default function LoginPage() {
       }
       router.push("/");
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || "Erro ao autenticar");
     } finally {
       setLoading(false);
     }
@@ -44,7 +44,7 @@ export default function LoginPage() {
       await signInWithPopup(auth, provider);
       router.push("/");
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || "Erro ao autenticar com Google");
     }
   };
 

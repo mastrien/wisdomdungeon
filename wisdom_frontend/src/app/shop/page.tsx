@@ -10,10 +10,8 @@ import {
   Coins, 
   Loader2, 
   Package, 
-  ChevronRight,
   ShieldCheck,
   Zap,
-  Heart,
   Sparkles
 } from "lucide-react";
 

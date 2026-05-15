@@ -81,8 +81,9 @@ function InventoryList() {
   }, []);
 
   useEffect(() => { 
+    if (!loading) return; // Prevent cascading renders if already loaded
     fetchInventory(); 
-  }, [fetchInventory]);
+  }, [fetchInventory, loading]);
 
   const handleEquip = async (itemId: number) => {
     try {

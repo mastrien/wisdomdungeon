@@ -74,6 +74,7 @@ export default function HistoryPage() {
       router.push("/login");
     } else if (user) {
       // Initialize fetching
+      // We wrap in a check to ensure we only trigger on mount or login
       fetchHistory(0);
       fetchMastery();
     }

@@ -43,7 +43,7 @@ export default function HomePage() {
             api.get("/dungeons/")
           ]);
           
-          const statsMap = statsRes.data.reduce((acc: any, stat: any) => {
+          const statsMap = statsRes.data.reduce((acc: Record<string, any>, stat: any) => {
             const key = `${stat.topic_id}_${stat.dungeon_type}`;
             acc[key] = stat;
             return acc;
