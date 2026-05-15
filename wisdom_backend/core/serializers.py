@@ -139,6 +139,16 @@ class InventoryItemSerializer(serializers.ModelSerializer):
             'current_charges', 'is_broken', 'metadata'
         ]
 
+class LeaderboardProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    
+    class Meta:
+        model = Profile
+        fields = [
+            'username', 'xp', 'level', 'max_combo', 
+            'total_normal_dungeons_completed', 'total_elite_dungeons_completed'
+        ]
+
 class QuestionHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = QuestionHistory

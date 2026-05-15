@@ -382,6 +382,19 @@ Implementar feedback visual constante do progresso de nível através de barras 
 ### Resultados
 O jogador agora tem uma percepção clara e gratificante do seu avanço em direção ao próximo nível após cada questão respondida.
 
+## [14/05/2026 23:30] - Sistema de Ranking Global (Leaderboard)
+### Ação
+Implementar uma página de ranking para incentivar a competição entre os jogadores baseada em XP e Combo.
+### Tarefas
+- [x] Backend: Criar `LeaderboardView` para retornar o top 50 jogadores por XP.
+- [x] Backend: Implementar lógica para retornar a posição (Rank) individual do usuário logado.
+- [x] Backend: Criar `LeaderboardProfileSerializer` otimizado para o ranking.
+- [x] Frontend: Criar página `/leaderboard` com pódio destacado e lista geral.
+- [x] Frontend: Adicionar barra fixa com a posição do usuário atual.
+- [x] Interface: Adicionar link para o Ranking no menu do `Header`.
+### Resultados
+A introdução do Hall da Fama adiciona uma camada social e competitiva essencial para a retenção a longo prazo dos aventureiros.
+
 
 
 

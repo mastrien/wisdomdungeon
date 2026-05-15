@@ -87,6 +87,14 @@ export default function Header() {
                     ></div>
                     <div className="absolute right-0 mt-2 w-48 bg-background border border-border-main rounded-xl shadow-2xl py-2 z-20 overflow-hidden">
                       <Link 
+                        href="/leaderboard"
+                        className="flex items-center gap-3 px-4 py-2 hover:bg-slate-200/60 dark:hover:bg-slate-800 text-sm text-muted dark:text-slate-300 hover:text-slate-950 dark:hover:text-foreground transition-colors"
+                        onClick={() => setShowMenu(false)}
+                      >
+                        <Trophy className="w-4 h-4 text-brand-primary" />
+                        Ranking Global
+                      </Link>
+                      <Link 
                         href="/shop"
                         className="flex items-center gap-3 px-4 py-2 hover:bg-slate-200/60 dark:hover:bg-slate-800 text-sm text-muted dark:text-slate-300 hover:text-slate-950 dark:hover:text-foreground transition-colors"
                         onClick={() => setShowMenu(false)}

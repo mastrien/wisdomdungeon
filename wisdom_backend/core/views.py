@@ -349,3 +349,25 @@ class ProgressionRewardsView(APIView):
         from core.services.progression_service import ProgressionService
         rewards = ProgressionService.get_rewards()
         return Response(rewards)
+
+class LeaderboardView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        # Fetch top 50 users by XP
+        top_profiles = Profile.objects.select_related('user').order_by('-xp')[:50]
+        
+        from core.serializers import LeaderboardProfileSerializer
+        serializer = LeaderboardProfileSerializer(top_profiles, many=True)
+        
+        user_rank = None
+        if request.user.is_authenticated:
+            # Simple way to find rank (may be slow on huge datasets, but fine for now)
+            # Rank = count of profiles with more XP + 1
+            better_profiles_count = Profile.objects.filter(xp__gt=request.user.profile.xp).count()
+            user_rank = better_profiles_count + 1
+            
+        return Response({
+            "top_players": serializer.data,
+            "user_rank": user_rank
+        })

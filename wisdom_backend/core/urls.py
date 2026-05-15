@@ -21,5 +21,6 @@ urlpatterns = [
     path('shop/<int:pk>/buy/', ShopView.as_view(), name='shop_buy'),
     path('history/', HistoryView.as_view(), name='history'),
     path('mastery/', MasteryView.as_view(), name='mastery'),
+    path('leaderboard/', LeaderboardView.as_view(), name='leaderboard'),
     path('progression/rewards/', ProgressionRewardsView.as_view(), name='progression_rewards'),
 ]
