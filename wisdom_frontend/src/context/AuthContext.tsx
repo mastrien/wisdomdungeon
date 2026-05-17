@@ -86,6 +86,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const fetchProfile = async (retries = 5): Promise<void> => {
+    setLoading(true); // Start profile loading
     try {
       setError(null);
       const response = await api.get("/profile/");
@@ -101,13 +102,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.error("Erro ao carregar perfil:", err);
       setError("Não foi possível carregar seu perfil de aventureiro. Tente recarregar a página.");
     } finally {
-      setLoading(false);
+      setLoading(false); // DEFINITIVELY stop loading
     }
   };
 
   const refreshProfile = async () => {
     if (user) {
-      setLoading(true);
       await fetchProfile(0);
     }
   };
@@ -120,13 +120,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Force dark mode only
     document.documentElement.classList.add("dark");
 
-    const unsubscribe = onIdTokenChanged(auth, async (user) => {
-      setUser(user);
-      if (user) {
+    const unsubscribe = onIdTokenChanged(auth, async (firebaseUser) => {
+      setUser(firebaseUser);
+      if (firebaseUser) {
         await fetchProfile();
       } else {
         setProfile(null);
-        setLoading(false);
+        setLoading(false); // Stop loading if no user
       }
     });
     return () => unsubscribe();
