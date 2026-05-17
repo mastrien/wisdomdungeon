@@ -13,10 +13,15 @@ import {
   Flame,
   ShieldAlert,
   Target,
-  Shield
+  Shield,
+  Camera,
+  Lock
 } from "lucide-react";
 import Header from "@/components/Header";
 import NetworkModal from "@/components/NetworkModal";
+import AvatarCropper from "@/components/AvatarCropper";
+import { storage } from "@/lib/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 interface ProfileData {
   user: {
@@ -53,6 +58,10 @@ export default function ProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const [followLoading, setFollowLoading] = useState(false);
   
+  // Avatar States
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
   // Network Modal States
   const [isNetworkModalOpen, setIsNetworkModalOpen] = useState(false);
   const [networkInitialTab, setNetworkInitialTab] = useState<"followers" | "following">("followers");
@@ -92,27 +101,54 @@ export default function ProfilePage() {
   }, [username]);
 
   const handleFollow = async () => {
+// ... existing handleFollow ...
+  };
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 1024 * 1024) {
+      alert("A imagem deve ter no máximo 1MB.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setSelectedImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleCropComplete = async (croppedBlob: Blob) => {
     if (!loggedInProfile) return;
-    setFollowLoading(true);
+    setIsUploading(true);
+    setSelectedImage(null);
+
     try {
-      const response = await api.post(`/profile/${username}/follow/`);
-      setProfileData(prev => {
-        if (!prev) return null;
-        const isFollowingNow = response.data.status === 'following';
-        return {
-          ...prev,
-          is_following: isFollowingNow,
-          followers_count: isFollowingNow ? prev.followers_count + 1 : prev.followers_count - 1
-        };
-      });
+      // 1. Upload to Firebase Storage
+      // Use the user's UID as filename to automatically overwrite old avatar
+      const storageRef = ref(storage, `avatars/${loggedInProfile.firebase_uid}.jpg`);
+      await uploadBytes(storageRef, croppedBlob);
+      const downloadURL = await getDownloadURL(storageRef);
+
+      // 2. Update Backend
+      await api.patch('/profile/', { avatar_url: downloadURL });
+      
+      // 3. Sync UI
+      await refreshProfile();
+      setProfileData(prev => prev ? { ...prev, avatar_url: downloadURL } : null);
+      
     } catch (err) {
-      console.error("Erro ao seguir usuário:", err);
+      console.error("Erro ao salvar avatar:", err);
+      alert("Falha ao salvar o novo avatar. Tente novamente.");
     } finally {
-      setFollowLoading(false);
+      setIsUploading(false);
     }
   };
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
+// ...
     e.preventDefault();
     setEditLoading(true);
     setError(null); // Clear previous errors
@@ -184,11 +220,46 @@ export default function ProfilePage() {
         <div className="relative z-10 px-8">
           <div className="grid grid-cols-1 md:grid-cols-[128px_1fr_auto] items-center md:items-end gap-6">
             {/* Avatar Container */}
-            <div className="flex justify-center">
-              <div className="w-32 h-32 aspect-square rounded-full bg-card border-4 border-background flex items-center justify-center shadow-2xl overflow-hidden ring-1 ring-border-main shrink-0">
-                <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-4xl font-black text-brand-primary">
-                  {profileData.user.username[0].toUpperCase()}
-                </div>
+            <div className="flex justify-center relative">
+              <div className="w-32 h-32 aspect-square rounded-full bg-card border-4 border-background flex items-center justify-center shadow-2xl overflow-hidden ring-1 ring-border-main shrink-0 relative group/avatar">
+                {profileData.avatar_url ? (
+                  <img 
+                    src={profileData.avatar_url} 
+                    alt={profileData.user.username} 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-4xl font-black text-brand-primary">
+                    {profileData.user.username[0].toUpperCase()}
+                  </div>
+                )}
+
+                {isOwner && (
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center">
+                    {profileData.level >= 5 ? (
+                      <label className="cursor-pointer p-3 bg-brand-primary rounded-full text-slate-950 hover:scale-110 transition-transform shadow-lg" aria-label="Alterar foto">
+                        <Camera className="w-6 h-6" />
+                        <input 
+                          type="file" 
+                          className="hidden" 
+                          accept="image/*"
+                          onChange={handleImageSelect}
+                        />
+                      </label>
+                    ) : (
+                      <div className="flex flex-col items-center gap-1 text-white p-2 text-center pointer-events-none">
+                        <Lock className="w-5 h-5" />
+                        <span className="text-[10px] font-bold uppercase tracking-tighter">Nível 5</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {isUploading && (
+                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-20">
+                    <Loader2 className="w-8 h-8 animate-spin text-brand-primary" />
+                  </div>
+                )}
               </div>
             </div>
             
@@ -371,6 +442,15 @@ export default function ProfilePage() {
             username={Array.isArray(username) ? username[0] : username}
             onClose={() => setIsNetworkModalOpen(false)}
             initialTab={networkInitialTab}
+          />
+        )}
+
+        {/* Avatar Cropper Modal */}
+        {selectedImage && (
+          <AvatarCropper 
+            image={selectedImage}
+            onCropComplete={handleCropComplete}
+            onCancel={() => setSelectedImage(null)}
           />
         )}
       </main>

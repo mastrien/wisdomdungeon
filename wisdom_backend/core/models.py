@@ -29,6 +29,7 @@ class Profile(models.Model):
     max_hp = models.IntegerField(default=3)
     theme_color = models.CharField(max_length=20, default="amber")
     font_size = models.CharField(max_length=20, default="medium")
+    avatar_url = models.URLField(max_length=500, null=True, blank=True)
     
     metadata = models.JSONField(default=dict, blank=True)
 

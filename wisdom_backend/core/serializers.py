@@ -22,7 +22,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             'followers_count', 'following_count', 'is_following',
             'streak_count', 'current_combo', 'max_combo',
             'total_normal_dungeons_completed', 'total_elite_dungeons_completed',
-            'hp', 'max_hp', 'theme_color', 'font_size',
+            'hp', 'max_hp', 'theme_color', 'font_size', 'avatar_url',
             'next_level_xp', 'current_level_xp_threshold', 'metadata'
         ]
 
