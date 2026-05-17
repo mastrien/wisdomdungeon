@@ -27,15 +27,20 @@ class FirebaseAuthentication(authentication.BaseAuthentication):
         try:
             decoded_token = auth.verify_id_token(id_token)
         except Exception as e:
-            # Handle clock skew: retry once after 1 second if token used too early
-            if "Token used too early" in str(e):
+            error_str = str(e)
+            # Handle clock skew or transient network issues
+            if "Token used too early" in error_str or "Could not deserialize key data" in error_str:
                 import time
-                time.sleep(1)
-                try:
-                    decoded_token = auth.verify_id_token(id_token)
-                except Exception as retry_e:
-                    print(f"Firebase Token Verification Retry Failed: {retry_e}")
-                    raise exceptions.AuthenticationFailed(f'Invalid Firebase token (Retry): {retry_e}')
+                max_retries = 3
+                for i in range(max_retries):
+                    time.sleep(1 + i) # 1s, 2s, 3s
+                    try:
+                        decoded_token = auth.verify_id_token(id_token)
+                        break
+                    except Exception as retry_e:
+                        if i == max_retries - 1:
+                            print(f"Firebase Token Verification Failed after {max_retries} retries: {retry_e}")
+                            raise exceptions.AuthenticationFailed(f'Invalid Firebase token: {retry_e}')
             else:
                 print(f"Firebase Token Verification Failed: {e}")
                 raise exceptions.AuthenticationFailed(f'Invalid Firebase token: {e}')

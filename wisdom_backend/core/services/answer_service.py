@@ -9,6 +9,40 @@ class AnswerService:
     def submit_answer(self, profile, topic, question_hash, selected_answer, correct_answer=None, time_spent_ms=0, dungeon_type='normal'):
         item_service = ItemService()
         
+        # 0. Check Progress and Idempotency
+        progress = UserDungeonProgress.objects.filter(
+            profile=profile, 
+            dungeon__topic=topic, 
+            dungeon__type=dungeon_type,
+            dungeon__is_active=True
+        ).first()
+
+        if progress:
+            # Get current question for this progress
+            questions = list(progress.current_room.questions.all().order_by('id'))
+            
+            # If the index is out of bounds or the hash doesn't match the expected question, 
+            # it's an out-of-sync/duplicate request.
+            is_valid_hash = False
+            if progress.current_question_index < len(questions):
+                current_q = questions[progress.current_question_index]
+                if current_q.hash == question_hash:
+                    is_valid_hash = True
+            
+            if not is_valid_hash:
+                # Out of sync submission (already answered or wrong question)
+                return {
+                    "is_correct": False,
+                    "already_processed": True,
+                    "xp_gained": 0,
+                    "gold_gained": 0,
+                    "room_completed": False,
+                    "dungeon_completed": False,
+                    "next_question_index": progress.current_question_index,
+                    "combo": profile.current_combo,
+                    "hp": profile.hp
+                }
+
         # 1. Get FixedQuestion and validate
         actual_correct_answer = correct_answer
         try:
