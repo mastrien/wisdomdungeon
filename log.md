@@ -395,7 +395,23 @@ Implementar uma página de ranking para incentivar a competição entre os jogad
 ### Resultados
 A introdução do Hall da Fama adiciona uma camada social e competitiva essencial para a retenção a longo prazo dos aventureiros.
 
+## [16/05/2026 15:00] - Correção de Autenticação e Performance
+### Ação
+Resolver problemas de autenticação (Race Conditions) e performance (Loops de Requisição).
+### Procedimento (procedimento.md)
+1. **Teste:** Criado `wisdom_backend/core/tests/test_auth_robustness.py` para validar retries no backend. [CONCLUÍDO]
+2. **Implementação:**
+    - [x] Backend: Implementado retry com backoff exponencial na verificação de token Firebase.
+    - [x] Frontend: Implementado interceptor de retry no Axios e proteção contra loops no `AuthContext`.
+3. **Refatoração:** Centralizada lógica de carregamento no `AuthContext`.
+### Resultados
+Fim dos erros 403 persistentes e redução drástica no consumo de CPU/Rede no frontend.
 
-
-
-
+## [17/05/2026 00:30] - Correção de Múltiplas Respostas e Loop de Dungeon
+### Ação
+Investigar e corrigir o envio de 4 requisições por resposta e o pulo automático da tela de "Continuar Jornada".
+### Tarefas
+- [x] Backend: Criar teste unitário para validar que uma resposta não gera efeitos duplicados se chamada repetidamente com o mesmo hash. [CONCLUÍDO]
+- [x] Frontend: Investigar re-renders no `DungeonPage` que disparam `fetchDungeonState` indevidamente. [CONCLUÍDO]
+- [x] Implementação: Garantir que o estado da UI trave após o envio até a ação explícita do usuário. [CONCLUÍDO]
+- [x] Backend: Implementar verificação de `question_hash` no `AnswerService` para garantir idempotência. [CONCLUÍDO]

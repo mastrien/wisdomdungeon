@@ -101,12 +101,14 @@ export default function DungeonPage() {
   }, [id, dungeonType]);
 
   useEffect(() => {
-    if (!authLoading && !user) {
+    if (authLoading) return;
+
+    if (!user) {
       router.push("/login");
-    } else if (user) {
+    } else if (!state && !loading) {
       fetchDungeonState();
     }
-  }, [user, authLoading, fetchDungeonState, router]);
+  }, [user, authLoading, state, loading, fetchDungeonState, router]);
 
   // Timer Logic
   useEffect(() => {
