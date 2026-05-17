@@ -74,6 +74,15 @@ class ProgressionService:
                 "amount": gold_amount,
                 "description": f"{gold_amount} moedas de ouro"
             })
+
+            # Special Rewards
+            if lv == 5:
+                level_reward["rewards"].append({
+                    "type": "feature",
+                    "id": "custom_avatar",
+                    "name": "Avatar Customizado",
+                    "description": "Desbloqueia a capacidade de enviar sua própria foto de perfil"
+                })
             
             rewards.append(level_reward)
             

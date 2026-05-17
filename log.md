@@ -1,15 +1,13 @@
 # Log de Desenvolvimento - Wisdom Dungeon
 ... previous content ...
 
-## [17/05/2026 02:00] - Melhorias de Interface do Perfil e Avatar Customizado (Fase 2)
+## [17/05/2026 02:20] - Melhorias de Interface do Perfil e Avatar Customizado (Fase 3)
 ### Ação
-Implementar o modal de rede (seguidores/seguindo) para permitir visualizar quem são as conexões dos aventureiros.
+Adicionar a funcionalidade de "Avatar Customizado" na trilha de recompensas do nível 5.
 ### Procedimento (procedimento.md)
-1. **Teste:** Criar `test_network_api.py` para validar o retorno das listas de seguidores e seguindo. [PENDENTE]
+1. **Teste:** Criar `test_progression_rewards.py` para validar que o nível 5 agora inclui o bônus de avatar. [PENDENTE]
 2. **Implementação:**
-    - [ ] Backend: Criar `NetworkView` e endpoint correspondente.
-    - [ ] Frontend: Criar componente `NetworkModal`.
-    - [ ] Frontend: Integrar clique nos contadores da `ProfilePage`.
-3. **Refatoração:** Otimizar queries para evitar N+1 na listagem de rede.
+    - [ ] Backend: Atualizar `ProgressionService.get_rewards` para incluir o avatar no Nível 5.
+3. **Refatoração:** Nenhuma refatoração necessária para esta fase simples.
 ### Resultados
-Interatividade social aprimorada, permitindo navegar entre perfis através das listas de seguidores.
+Jogadores de nível 5 agora visualizam o desbloqueio do avatar customizado em sua trilha de progresso.
