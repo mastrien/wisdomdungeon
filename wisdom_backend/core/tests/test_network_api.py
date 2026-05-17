@@ -23,20 +23,40 @@ class NetworkAPITest(TestCase):
         
         self.client = Client()
 
-    def test_get_network_lists(self):
+    def test_get_network_lists_pagination(self):
         url = reverse('profile_network', kwargs={'username': 'user1'})
         response = self.client.get(url)
         
-        # Should fail initially (404/ReverseMatch)
         self.assertEqual(response.status_code, 200)
         data = response.json()
         
         # User1 followers: user2
         self.assertEqual(len(data['followers']), 1)
-        self.assertEqual(data['followers'][0]['username'], 'user2')
+        self.assertEqual(data['total_followers'], 1)
+        self.assertFalse(data['has_more_followers'])
         
         # User1 following: user2, user3
         self.assertEqual(len(data['following']), 2)
-        following_usernames = [u['username'] for u in data['following']]
-        self.assertIn('user2', following_usernames)
-        self.assertIn('user3', following_usernames)
+        self.assertEqual(data['total_following'], 2)
+        self.assertFalse(data['has_more_following'])
+
+    def test_get_network_pagination_offset(self):
+        # Create many users following p1
+        for i in range(20):
+            u = User.objects.create_user(username=f'fan{i}', email=f'f{i}@test.com')
+            p = Profile.objects.create(user=u, firebase_uid=f'uidfan{i}')
+            p.following.add(self.p1)
+        
+        url = reverse('profile_network', kwargs={'username': 'user1'})
+        # Page 1 (0 to 15)
+        response = self.client.get(url)
+        data = response.json()
+        self.assertEqual(len(data['followers']), 15)
+        self.assertTrue(data['has_more_followers'])
+        self.assertEqual(data['total_followers'], 21) # 1 original + 20 fans
+
+        # Page 2 (15 to 30)
+        response2 = self.client.get(url + "?followers_offset=15")
+        data2 = response2.json()
+        self.assertEqual(len(data2['followers']), 6) # remaining 6
+        self.assertFalse(data2['has_more_followers'])

@@ -20,25 +20,65 @@ interface NetworkModalProps {
 export default function NetworkModal({ username, onClose, initialTab = "followers" }: NetworkModalProps) {
   const [activeTab, setActiveTab] = useState(initialTab);
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<{ followers: NetworkUser[]; following: NetworkUser[] } | null>(null);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [data, setData] = useState<{ 
+    followers: NetworkUser[]; 
+    following: NetworkUser[];
+    has_more_followers: boolean;
+    has_more_following: boolean;
+    total_followers: number;
+    total_following: number;
+  } | null>(null);
+  
+  const [followersOffset, setFollowersOffset] = useState(0);
+  const [followingOffset, setFollowingOffset] = useState(0);
+  
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchNetwork = async () => {
-      setLoading(true);
-      try {
-        const response = await api.get(`/profile/${username}/network/`);
+  const fetchNetwork = async (isLoadMore = false) => {
+    if (isLoadMore) setLoadingMore(true);
+    else setLoading(true);
+
+    try {
+      const offset = activeTab === "followers" ? (isLoadMore ? followersOffset + 15 : 0) : (isLoadMore ? followingOffset + 15 : 0);
+      
+      const response = await api.get(`/profile/${username}/network/`, {
+        params: {
+          followers_offset: activeTab === "followers" ? offset : followersOffset,
+          following_offset: activeTab === "following" ? offset : followingOffset,
+        }
+      });
+
+      if (isLoadMore) {
+        setData(prev => {
+          if (!prev) return response.data;
+          return {
+            ...response.data,
+            followers: activeTab === "followers" ? [...prev.followers, ...response.data.followers] : prev.followers,
+            following: activeTab === "following" ? [...prev.following, ...response.data.following] : prev.following,
+          };
+        });
+        if (activeTab === "followers") setFollowersOffset(offset);
+        else setFollowingOffset(offset);
+      } else {
         setData(response.data);
-      } catch (err) {
-        console.error("Erro ao carregar rede:", err);
-      } finally {
-        setLoading(false);
+        if (activeTab === "followers") setFollowersOffset(0);
+        else setFollowingOffset(0);
       }
-    };
+    } catch (err) {
+      console.error("Erro ao carregar rede:", err);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
+  useEffect(() => {
     fetchNetwork();
-  }, [username]);
+  }, [username, activeTab]);
 
   const list = activeTab === "followers" ? data?.followers : data?.following;
+  const hasMore = activeTab === "followers" ? data?.has_more_followers : data?.has_more_following;
 
   const navigateToProfile = (targetUsername: string) => {
     onClose();
@@ -70,7 +110,7 @@ export default function NetworkModal({ username, onClose, initialTab = "follower
               activeTab === "followers" ? "text-brand-primary" : "text-muted hover:text-foreground"
             }`}
           >
-            Seguidores ({data?.followers.length ?? 0})
+            Seguidores ({data?.total_followers ?? 0})
             {activeTab === "followers" && <div className="absolute bottom-0 left-0 w-full h-1 bg-brand-primary rounded-t-full" />}
           </button>
           <button 
@@ -79,7 +119,7 @@ export default function NetworkModal({ username, onClose, initialTab = "follower
               activeTab === "following" ? "text-brand-primary" : "text-muted hover:text-foreground"
             }`}
           >
-            Seguindo ({data?.following.length ?? 0})
+            Seguindo ({data?.total_following ?? 0})
             {activeTab === "following" && <div className="absolute bottom-0 left-0 w-full h-1 bg-brand-primary rounded-t-full" />}
           </button>
         </div>
@@ -94,30 +134,42 @@ export default function NetworkModal({ username, onClose, initialTab = "follower
           ) : (
             <div className="space-y-2">
               {list && list.length > 0 ? (
-                list.map((user) => (
-                  <button
-                    key={user.username}
-                    onClick={() => navigateToProfile(user.username)}
-                    className="w-full flex items-center justify-between p-4 rounded-2xl bg-background border border-border-main hover:border-brand-primary/50 hover:bg-brand-primary/5 transition-all group"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-brand-primary border border-border-main">
-                        {user.username[0].toUpperCase()}
-                      </div>
-                      <div className="text-left">
-                        <div className="font-bold text-foreground group-hover:text-brand-primary transition-colors">
-                          {user.username}
+                <>
+                  {list.map((user) => (
+                    <button
+                      key={user.username}
+                      onClick={() => navigateToProfile(user.username)}
+                      className="w-full flex items-center justify-between p-4 rounded-2xl bg-background border border-border-main hover:border-brand-primary/50 hover:bg-brand-primary/5 transition-all group"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-brand-primary border border-border-main">
+                          {user.username[0].toUpperCase()}
                         </div>
-                        <div className="text-[10px] text-muted font-bold uppercase tracking-widest">
-                          Nível {user.level}
+                        <div className="text-left">
+                          <div className="font-bold text-foreground group-hover:text-brand-primary transition-colors">
+                            {user.username}
+                          </div>
+                          <div className="text-[10px] text-muted font-bold uppercase tracking-widest">
+                            Nível {user.level}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="text-brand-primary opacity-0 group-hover:opacity-100 transition-opacity font-bold text-xs uppercase tracking-tighter">
-                      Ver Perfil →
-                    </div>
-                  </button>
-                ))
+                      <div className="text-brand-primary opacity-0 group-hover:opacity-100 transition-opacity font-bold text-xs uppercase tracking-tighter">
+                        Ver Perfil →
+                      </div>
+                    </button>
+                  ))}
+                  
+                  {hasMore && (
+                    <button
+                      onClick={() => fetchNetwork(true)}
+                      disabled={loadingMore}
+                      className="w-full py-4 mt-4 text-sm font-bold text-brand-primary hover:text-brand-hover transition-colors flex items-center justify-center gap-2"
+                    >
+                      {loadingMore ? <Loader2 className="w-4 h-4 animate-spin" /> : "Ver Mais Aventureiros"}
+                    </button>
+                  )}
+                </>
               ) : (
                 <div className="h-full flex flex-col items-center justify-center py-20 text-center px-6">
                   <div className="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">

@@ -92,6 +92,14 @@ class ProfileView(APIView):
     
     def patch(self, request):
         profile = request.user.profile
+        
+        # Security: Check level for avatar_url
+        if 'avatar_url' in request.data and profile.level < 5:
+             return Response(
+                {"avatar_url": ["Você precisa atingir o Nível 5 para personalizar seu avatar."]}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
+
         serializer = ProfileSerializer(profile, data=request.data, partial=True, context={'request': request})
         
         if serializer.is_valid():
@@ -133,13 +141,28 @@ class ProfileNetworkView(APIView):
     def get(self, request, username):
         try:
             profile = Profile.objects.get(user__username=username)
-            followers = profile.followers.all().select_related('user')
-            following = profile.following.all().select_related('user')
             
+            limit = 15
+            followers_offset = int(request.query_params.get('followers_offset', 0))
+            following_offset = int(request.query_params.get('following_offset', 0))
+
+            followers_qs = profile.followers.all().select_related('user').order_by('id')
+            following_qs = profile.following.all().select_related('user').order_by('id')
+            
+            followers = followers_qs[followers_offset : followers_offset + limit]
+            following = following_qs[following_offset : following_offset + limit]
+            
+            has_more_followers = followers_qs.count() > (followers_offset + limit)
+            has_more_following = following_qs.count() > (following_offset + limit)
+
             from core.serializers import NetworkProfileSerializer
             return Response({
                 "followers": NetworkProfileSerializer(followers, many=True).data,
-                "following": NetworkProfileSerializer(following, many=True).data
+                "following": NetworkProfileSerializer(following, many=True).data,
+                "has_more_followers": has_more_followers,
+                "has_more_following": has_more_following,
+                "total_followers": followers_qs.count(),
+                "total_following": following_qs.count()
             })
         except Profile.DoesNotExist:
             return Response({"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
