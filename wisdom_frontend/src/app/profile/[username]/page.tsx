@@ -128,7 +128,6 @@ export default function ProfilePage() {
 
     try {
       // 1. Upload to Firebase Storage
-      // Use the user's UID as filename to automatically overwrite old avatar
       const storageRef = ref(storage, `avatars/${loggedInProfile.firebase_uid}.jpg`);
       await uploadBytes(storageRef, croppedBlob);
       const downloadURL = await getDownloadURL(storageRef);
@@ -136,14 +135,16 @@ export default function ProfilePage() {
       // 2. Update Backend
       await api.patch('/profile/', { avatar_url: downloadURL });
       
-      // 3. Sync UI
-      await refreshProfile();
+      // 3. Update local state immediately to end the spinner
       setProfileData(prev => prev ? { ...prev, avatar_url: downloadURL } : null);
+      setIsUploading(false); // Stop spinner early
+
+      // 4. Background sync context
+      refreshProfile().catch(err => console.error("Erro ao sincronizar contexto:", err));
       
     } catch (err) {
       console.error("Erro ao salvar avatar:", err);
       alert("Falha ao salvar o novo avatar. Tente novamente.");
-    } finally {
       setIsUploading(false);
     }
   };
