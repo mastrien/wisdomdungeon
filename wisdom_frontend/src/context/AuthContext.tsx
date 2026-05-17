@@ -1,16 +1,14 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChanged, User } from "firebase/auth";
+import { onIdTokenChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import api from "@/services/api";
 import Toast, { ToastType } from "@/components/Toast";
 
 interface Profile {
-  user: {
-    username: string;
-    email: string;
-  };
+  username: string;
+  email: string;
   xp: number;
   gold: number;
   level: number;
@@ -57,6 +55,7 @@ interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   loading: boolean;
+  error: string | null;
   refreshProfile: () => Promise<void>;
   isDarkMode: boolean;
   toggleDarkMode: () => void;
@@ -67,6 +66,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null, 
   profile: null, 
   loading: true,
+  error: null,
   refreshProfile: async () => {},
   isDarkMode: true,
   toggleDarkMode: () => {},
@@ -77,6 +77,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
 
@@ -84,23 +85,32 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setToast({ message, type });
   };
 
-  const fetchProfile = async (retries = 3): Promise<void> => {
+  const fetchProfile = async (retries = 5): Promise<void> => {
+    if (loading && profile) return; // Avoid redundant calls if already loaded
+    
     try {
+      setError(null);
       const response = await api.get("/profile/");
       setProfile(response.data);
-    } catch (error: any) {
-      if (retries > 0 && error.response?.status === 403) {
-        console.warn(`Erro 403 ao carregar perfil, tentando novamente em 1s... (${retries} restantes)`);
-        await new Promise(resolve => setTimeout(resolve, 1000));
+    } catch (err: any) {
+      const status = err.response?.status;
+      if (retries > 0 && (status === 403 || status === 401)) {
+        const delay = (6 - retries) * 1000;
+        console.warn(`Erro ${status} ao carregar perfil, tentando novamente em ${delay/1000}s... (${retries} restantes)`);
+        await new Promise(resolve => setTimeout(resolve, delay));
         return fetchProfile(retries - 1);
       }
-      console.error("Erro ao carregar perfil:", error);
+      console.error("Erro ao carregar perfil:", err);
+      setError("Não foi possível carregar seu perfil de aventureiro. Tente recarregar a página.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const refreshProfile = async () => {
     if (user) {
-      await fetchProfile(0); // For manual refresh, we don't necessarily need retries if the session is established
+      setLoading(true);
+      await fetchProfile(0);
     }
   };
 
@@ -112,14 +122,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Force dark mode only
     document.documentElement.classList.add("dark");
 
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = onIdTokenChanged(auth, async (user) => {
       setUser(user);
       if (user) {
         await fetchProfile();
       } else {
         setProfile(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
     return () => unsubscribe();
   }, []);
@@ -137,7 +147,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [profile]);
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, refreshProfile, isDarkMode, toggleDarkMode, showToast }}>
+    <AuthContext.Provider value={{ user, profile, loading, error, refreshProfile, isDarkMode, toggleDarkMode, showToast }}>
       {children}
       {toast && (
         <Toast 

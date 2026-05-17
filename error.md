@@ -1,64 +1,25 @@
-## Error Type
-Console Error
-
-## Error Message
-React has detected a change in the order of Hooks called by DungeonPage. This will lead to bugs and errors if not fixed. For more information, read the Rules of Hooks: https://react.dev/link/rules-of-hooks
-
-   Previous render            Next render
-   ------------------------------------------------------
-1. useContext                 useContext
-2. useContext                 useContext
-3. useMemo                    useMemo
-4. useContext                 useContext
-5. useContext                 useContext
-6. useState                   useState
-7. useState                   useState
-8. useState                   useState
-9. useState                   useState
-10. useState                  useState
-11. useState                  useState
-12. useState                  useState
-13. useState                  useState
-14. useState                  useState
-15. useRef                    useRef
-16. useEffect                 useEffect
-17. useEffect                 useEffect
-18. undefined                 useRef
-   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-
-
-    at DungeonPage (src/app/dungeon/[id]/page.tsx:179:30)
-
-## Code Frame
-  177 |
-  178 |   // Track previous level for level up toast
-> 179 |   const prevLevelRef = useRef<number | null>(null);
-      |                              ^
-  180 |   useEffect(() => {
-  181 |     if (profile && prevLevelRef.current !== null && profile.level > prevLevelRef.current) {
-  182 |       showToast(`PARABÉNS! Você subiu para o nível ${profile.level}!`, "success");
-
-Next.js version: 16.2.4 (Turbopack)
-
-
-
-## Error Type
-Runtime Error
-
-## Error Message
-Rendered more hooks than during the previous render.
-
-
-    at DungeonPage (src/app/dungeon/[id]/page.tsx:179:30)
-
-## Code Frame
-  177 |
-  178 |   // Track previous level for level up toast
-> 179 |   const prevLevelRef = useRef<number | null>(null);
-      |                              ^
-  180 |   useEffect(() => {
-  181 |     if (profile && prevLevelRef.current !== null && profile.level > prevLevelRef.current) {
-  182 |       showToast(`PARABÉNS! Você subiu para o nível ${profile.level}!`, "success");
-
-Next.js version: 16.2.4 (Turbopack)
+[16/May/2026 23:53:04] "OPTIONS /api/profile/ HTTP/1.1" 200 0
+Firebase Token Verification Retry Failed: Token used too early, 1778986385 < 1778986397. Check that your computer's clock is set correctly.
+Forbidden: /api/profile/
+[16/May/2026 23:53:05] "GET /api/profile/ HTTP/1.1" 403 142
+Firebase Token Verification Retry Failed: Token used too early, 1778986387 < 1778986400. Check that your computer's clock is set correctly.
+Forbidden: /api/profile/
+[16/May/2026 23:53:07] "GET /api/profile/ HTTP/1.1" 403 142
+Firebase Token Verification Retry Failed: Token used too early, 1778986389 < 1778986400. Check that your computer's clock is set correctly.
+Forbidden: /api/profile/
+[16/May/2026 23:53:09] "GET /api/profile/ HTTP/1.1" 403 142
+Firebase Token Verification Retry Failed: Token used too early, 1778986391 < 1778986404. Check that your computer's clock is set correctly.
+Forbidden: /api/profile/
+[16/May/2026 23:53:11] "GET /api/profile/ HTTP/1.1" 403 142
+Firebase Token Verification Retry Failed: Token used too early, 1778986393 < 1778986404. Check that your computer's clock is set correctly.
+Forbidden: /api/profile/
+[16/May/2026 23:53:13] "GET /api/profile/ HTTP/1.1" 403 142
+Firebase Token Verification Retry Failed: Token used too early, 1778986396 < 1778986409. Check that your computer's clock is set correctly.
+Forbidden: /api/profile/
+[16/May/2026 23:53:16] "GET /api/profile/ HTTP/1.1" 403 142
+Firebase Token Verification Retry Failed: Token used too early, 1778986398 < 1778986409. Check that your computer's clock is set correctly.
+Forbidden: /api/profile/
+[16/May/2026 23:53:18] "GET /api/profile/ HTTP/1.1" 403 142
+Firebase Token Verification Retry Failed: Token used too early, 1778986400 < 1778986413. Check that your computer's clock is set correctly.
+Forbidden: /api/profile/
+[16/May/2026 23:53:20] "GET /api/profile/ HTTP/1.1" 403 142

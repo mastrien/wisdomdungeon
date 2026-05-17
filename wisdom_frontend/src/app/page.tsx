@@ -24,19 +24,24 @@ interface Dungeon {
   unlock_reason?: string;
   level_required: number;
 }
-
 export default function HomePage() {
-  const { user, loading: authLoading, profile } = useAuth();
+  const { user, loading: authLoading, profile, error: authError, refreshProfile } = useAuth();
   const router = useRouter();
   const [dailyStats, setDailyStats] = useState<Record<string, DailyStat>>({});
   const [weeklyDungeons, setWeeklyDungeons] = useState<Dungeon[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!authLoading && !user) {
+    if (authLoading) return;
+
+    if (!user) {
       router.push("/login");
-    } else if (user && profile) { // Wait for BOTH user and profile
+      return;
+    }
+
+    if (profile) {
       const fetchData = async () => {
+        setLoading(true);
         try {
           const [statsRes, dungeonsRes] = await Promise.all([
             api.get("/mastery/?today=true"),
@@ -60,6 +65,24 @@ export default function HomePage() {
       fetchData();
     }
   }, [user, profile, authLoading, router]);
+
+  if (authError) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center text-foreground gap-6 p-4 text-center">
+        <div className="bg-red-500/10 p-6 rounded-3xl border border-red-500/20 max-w-md">
+          <ShieldAlert className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-bold mb-2">Erro na Jornada</h2>
+          <p className="text-muted mb-6">{authError}</p>
+          <button 
+            onClick={() => refreshProfile()}
+            className="w-full bg-brand-primary hover:bg-brand-hover text-slate-950 font-bold py-3 rounded-xl transition-all shadow-lg"
+          >
+            Tentar Novamente
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (authLoading || (user && !profile) || loading) {
     return (
