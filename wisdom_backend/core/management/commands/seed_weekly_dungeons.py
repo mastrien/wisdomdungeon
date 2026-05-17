@@ -71,21 +71,22 @@ class Command(BaseCommand):
                     )
                     
                     # Fill room with 10 questions if it's empty
-                    if room.questions.count() < 10:
-                        for _ in range(10 - room.questions.count()):
-                            q_data = generator.generate_question(topic_id)
-                            
-                            # Get or create fixed question
-                            fixed_q, _ = FixedQuestion.objects.get_or_create(
-                                hash=q_data['hash'],
-                                defaults={
-                                    'topic': topic_id,
-                                    'enunciado': q_data['enunciado'],
-                                    'opcoes': q_data['opcoes'],
-                                    'resposta_correta': q_data['resposta_correta']
-                                }
-                            )
-                            room.questions.add(fixed_q)
+                    attempts = 0
+                    while room.questions.count() < 10 and attempts < 20:
+                        attempts += 1
+                        q_data = generator.generate_question(topic_id)
+                        
+                        # Get or create fixed question
+                        fixed_q, _ = FixedQuestion.objects.get_or_create(
+                            hash=q_data['hash'],
+                            defaults={
+                                'topic': topic_id,
+                                'enunciado': q_data['enunciado'],
+                                'opcoes': q_data['opcoes'],
+                                'resposta_correta': q_data['resposta_correta']
+                            }
+                        )
+                        room.questions.add(fixed_q)
         
         self.stdout.write(self.style.SUCCESS('Successfully seeded weekly dungeons'))
 

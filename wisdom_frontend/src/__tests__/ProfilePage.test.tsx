@@ -164,4 +164,16 @@ describe('ProfilePage', () => {
       expect(screen.getByText(/Aventureiro não encontrado/i)).toBeInTheDocument();
     });
   });
+
+  it('has a circular avatar container with fixed aspect ratio', async () => {
+    mockUseAuth.mockReturnValue({ profile: null, loading: false });
+    render(<ProfilePage />);
+
+    await waitFor(() => {
+      // The avatar placeholder contains the first letter of the username
+      const avatarContainer = screen.getByText('T').parentElement;
+      expect(avatarContainer).toHaveClass('rounded-full');
+      expect(avatarContainer).toHaveClass('aspect-square');
+    });
+  });
 });

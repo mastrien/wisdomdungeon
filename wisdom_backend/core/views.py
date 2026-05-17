@@ -194,7 +194,33 @@ class DungeonCurrentView(APIView):
              })
 
         room = progress.current_room
-        question = room.questions.all()[progress.current_question_index]
+        questions = room.questions.all()
+        
+        # Resilience: If index is out of bounds, try to transition room or complete
+        if progress.current_question_index >= questions.count():
+            progress.current_question_index = 0
+            next_room = WeeklyDungeon.objects.get(id=dungeon.id).rooms.filter(order=room.order + 1).first()
+            if next_room:
+                progress.current_room = next_room
+                progress.save()
+                room = next_room
+                questions = room.questions.all()
+            else:
+                progress.is_completed = True
+                progress.save()
+                return Response({
+                    "completed": True,
+                    "summary_stats": {
+                        "xp": progress.session_xp_gained,
+                        "gold": progress.session_gold_gained,
+                        "correct": progress.total_correct,
+                        "wrong": progress.total_wrong,
+                        "time_ms": progress.total_time_ms,
+                        "max_combo": progress.max_combo
+                    }
+                })
+
+        question = questions[progress.current_question_index]
         
         # Trigger item event for question start (e.g., Knowledge Amulet)
         from core.services.item_service import ItemService

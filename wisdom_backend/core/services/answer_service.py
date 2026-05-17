@@ -89,7 +89,8 @@ class AnswerService:
                 progress.total_wrong += 1
             
             # Check if room completed
-            if progress.current_question_index >= 10:
+            num_questions = progress.current_room.questions.count()
+            if progress.current_question_index >= num_questions:
                 progress.current_question_index = 0
                 next_room = DungeonRoom.objects.filter(dungeon=progress.dungeon, order=progress.current_room.order + 1).first()
                 

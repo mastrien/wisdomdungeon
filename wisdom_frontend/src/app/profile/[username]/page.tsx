@@ -177,63 +177,63 @@ export default function ProfilePage() {
         </div>
 
         <div className="relative z-10 px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="flex flex-col md:flex-row items-center md:items-end gap-6">
-              {/* Avatar Placeholder */}
-              <div className="w-32 h-32 rounded-3xl bg-card border-4 border-background flex items-center justify-center shadow-2xl overflow-hidden ring-1 ring-border-main">
+          <div className="grid grid-cols-1 md:grid-cols-[128px_1fr_auto] items-center md:items-end gap-6">
+            {/* Avatar Container */}
+            <div className="flex justify-center">
+              <div className="w-32 h-32 aspect-square rounded-full bg-card border-4 border-background flex items-center justify-center shadow-2xl overflow-hidden ring-1 ring-border-main shrink-0">
                 <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-4xl font-black text-brand-primary">
                   {profileData.user.username[0].toUpperCase()}
                 </div>
               </div>
-              
-              <div className="text-center md:text-left pb-2">
-                <div className="flex flex-col md:flex-row items-center gap-4 mb-2">
-                  <h1 className="text-4xl font-extrabold text-foreground flex items-center gap-3">
-                    {profileData.user.username}
-                    <span className="text-xs uppercase tracking-[0.2em] px-2 py-1 bg-brand-primary/10 border border-brand-primary/20 text-brand-primary rounded-md">
-                      LVL {profileData.level}
-                    </span>
-                  </h1>
-                  
-                  {!isOwner && loggedInProfile && (
-                    <button 
-                      onClick={handleFollow}
-                      disabled={followLoading}
-                      className={`px-6 py-1.5 rounded-full font-bold text-sm transition-all border ${
-                        profileData.is_following 
-                        ? "bg-slate-100 dark:bg-slate-800 text-muted dark:text-slate-300 border-border-main hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/50" 
-                        : "bg-brand-primary text-slate-950 border-brand-primary/30 hover:bg-brand-hover"
-                      } disabled:opacity-50`}
-                    >
-                      {followLoading ? (
-                        <Loader2 className="w-4 h-4 animate-spin mx-auto" />
-                      ) : (
-                        profileData.is_following ? "Seguindo" : "Seguir"
-                      )}
-                    </button>
-                  )}
-                </div>
-
-                <div className="flex items-center justify-center md:justify-start gap-6 text-sm font-medium text-muted mb-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-foreground font-bold">{profileData.followers_count}</span>
-                    Seguidores
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-foreground font-bold">{profileData.following_count}</span>
-                    Seguindo
-                  </div>
-                </div>
-
-                <p className="text-muted font-medium flex items-center justify-center md:justify-start gap-2">
-                  <UserIcon className="w-4 h-4" />
-                  {profileData.bio || "Este aventureiro ainda não escreveu sua lenda."}
-                </p>
+            </div>
+            
+            <div className="text-center md:text-left pb-2 min-w-0">
+              <div className="flex flex-col md:flex-row items-center gap-4 mb-2">
+                <h1 className="text-4xl font-extrabold text-foreground flex items-center gap-3 truncate max-w-full">
+                  <span className="truncate">{profileData.user.username}</span>
+                  <span className="text-xs uppercase tracking-[0.2em] px-2 py-1 bg-brand-primary/10 border border-brand-primary/20 text-brand-primary rounded-md shrink-0">
+                    LVL {profileData.level}
+                  </span>
+                </h1>
+                
+                {!isOwner && loggedInProfile && (
+                  <button 
+                    onClick={handleFollow}
+                    disabled={followLoading}
+                    className={`px-6 py-1.5 rounded-full font-bold text-sm transition-all border shrink-0 ${
+                      profileData.is_following 
+                      ? "bg-slate-100 dark:bg-slate-800 text-muted dark:text-slate-300 border-border-main hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/50" 
+                      : "bg-brand-primary text-slate-950 border-brand-primary/30 hover:bg-brand-hover"
+                    } disabled:opacity-50`}
+                  >
+                    {followLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin mx-auto" />
+                    ) : (
+                      profileData.is_following ? "Seguindo" : "Seguir"
+                    )}
+                  </button>
+                )}
               </div>
+
+              <div className="flex items-center justify-center md:justify-start gap-6 text-sm font-medium text-muted mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-foreground font-bold">{profileData.followers_count}</span>
+                  Seguidores
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-foreground font-bold">{profileData.following_count}</span>
+                  Seguindo
+                </div>
+              </div>
+
+              <p className="text-muted font-medium flex items-center justify-center md:justify-start gap-2 truncate">
+                <UserIcon className="w-4 h-4 shrink-0" />
+                <span className="truncate">{profileData.bio || "Este aventureiro ainda não escreveu sua lenda."}</span>
+              </p>
             </div>
 
             {isOwner && (
-              <div className="flex justify-center md:justify-end pb-2">
+              <div className="flex justify-center md:justify-end pb-2 shrink-0">
                 <button 
                   onClick={() => setIsEditModalOpen(true)}
                   className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-foreground dark:text-white px-6 py-2.5 rounded-xl font-bold transition-all border border-border-main shadow-lg"
