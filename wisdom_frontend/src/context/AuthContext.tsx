@@ -86,8 +86,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const fetchProfile = async (retries = 5): Promise<void> => {
-    if (loading && profile) return; // Avoid redundant calls if already loaded
-    
     try {
       setError(null);
       const response = await api.get("/profile/");
