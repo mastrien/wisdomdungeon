@@ -149,6 +149,13 @@ class LeaderboardProfileSerializer(serializers.ModelSerializer):
             'total_normal_dungeons_completed', 'total_elite_dungeons_completed'
         ]
 
+class NetworkProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    
+    class Meta:
+        model = Profile
+        fields = ['username', 'level']
+
 class QuestionHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = QuestionHistory

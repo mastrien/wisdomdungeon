@@ -106,7 +106,10 @@ describe('ProfilePage', () => {
     render(<ProfilePage />);
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /Seguindo/i })).toBeInTheDocument();
+      // The following action button has extra classes and is NOT the count button
+      const followButtons = screen.getAllByRole('button', { name: /Seguindo/i });
+      const actionButton = followButtons.find(btn => btn.className.includes('rounded-full'));
+      expect(actionButton).toBeInTheDocument();
     });
   });
 

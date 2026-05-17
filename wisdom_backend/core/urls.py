@@ -3,12 +3,13 @@ from core.views import (
     ProfileView, PublicProfileView, FollowView, QuestionView, 
     HistoryView, TopicsView, MasteryView, DungeonCurrentView, AnswerView, 
     InventoryView, ShopView, WeeklyDungeonListView, ProgressionRewardsView,
-    LeaderboardView
+    LeaderboardView, ProfileNetworkView
 )
 
 urlpatterns = [
     path('profile/', ProfileView.as_view(), name='profile'),
     path('profile/<str:username>/', PublicProfileView.as_view(), name='public_profile'),
+    path('profile/<str:username>/network/', ProfileNetworkView.as_view(), name='profile_network'),
     path('profile/<str:username>/follow/', FollowView.as_view(), name='follow_user'),
     path('topics/', TopicsView.as_view(), name='topics'),
     path('question/', QuestionView.as_view(), name='question'),

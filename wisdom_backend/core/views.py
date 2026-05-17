@@ -127,6 +127,23 @@ class PublicProfileView(APIView):
         except Profile.DoesNotExist:
             return Response({"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
 
+class ProfileNetworkView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, username):
+        try:
+            profile = Profile.objects.get(user__username=username)
+            followers = profile.followers.all().select_related('user')
+            following = profile.following.all().select_related('user')
+            
+            from core.serializers import NetworkProfileSerializer
+            return Response({
+                "followers": NetworkProfileSerializer(followers, many=True).data,
+                "following": NetworkProfileSerializer(following, many=True).data
+            })
+        except Profile.DoesNotExist:
+            return Response({"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
+
 class FollowView(APIView):
     def post(self, request, username):
         if request.user.username == username:

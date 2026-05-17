@@ -1,14 +1,15 @@
 # Log de Desenvolvimento - Wisdom Dungeon
 ... previous content ...
 
-## [17/05/2026 01:40] - Melhorias de Interface do Perfil e Avatar Customizado (Fase 1)
+## [17/05/2026 02:00] - Melhorias de Interface do Perfil e Avatar Customizado (Fase 2)
 ### Ação
-Implementar consistência visual no cabeçalho do perfil e garantir que o avatar seja sempre perfeitamente redondo.
+Implementar o modal de rede (seguidores/seguindo) para permitir visualizar quem são as conexões dos aventureiros.
 ### Procedimento (procedimento.md)
-1. **Teste:** Atualizar `ProfilePage.test.tsx` para validar a presença das novas classes de layout e forma circular. [PENDENTE]
+1. **Teste:** Criar `test_network_api.py` para validar o retorno das listas de seguidores e seguindo. [PENDENTE]
 2. **Implementação:**
-    - [x] Frontend: Refatorar div do avatar para `rounded-full` e `aspect-square`.
-    - [x] Frontend: Estabilizar o layout do cabeçalho do perfil usando `grid` ou `flex` com tamanhos previsíveis.
-3. **Refatoração:** Limpeza de classes CSS redundantes.
+    - [ ] Backend: Criar `NetworkView` e endpoint correspondente.
+    - [ ] Frontend: Criar componente `NetworkModal`.
+    - [ ] Frontend: Integrar clique nos contadores da `ProfilePage`.
+3. **Refatoração:** Otimizar queries para evitar N+1 na listagem de rede.
 ### Resultados
-Perfil visualmente estável e consistente em diferentes tamanhos de conteúdo.
+Interatividade social aprimorada, permitindo navegar entre perfis através das listas de seguidores.

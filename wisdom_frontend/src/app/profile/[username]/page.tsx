@@ -16,6 +16,7 @@ import {
   Shield
 } from "lucide-react";
 import Header from "@/components/Header";
+import NetworkModal from "@/components/NetworkModal";
 
 interface ProfileData {
   user: {
@@ -52,6 +53,10 @@ export default function ProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const [followLoading, setFollowLoading] = useState(false);
   
+  // Network Modal States
+  const [isNetworkModalOpen, setIsNetworkModalOpen] = useState(false);
+  const [networkInitialTab, setNetworkInitialTab] = useState<"followers" | "following">("followers");
+
   // Edit Profile States
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editBio, setEditBio] = useState("");
@@ -216,14 +221,20 @@ export default function ProfilePage() {
               </div>
 
               <div className="flex items-center justify-center md:justify-start gap-6 text-sm font-medium text-muted mb-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-foreground font-bold">{profileData.followers_count}</span>
+                <button 
+                  onClick={() => { setNetworkInitialTab("followers"); setIsNetworkModalOpen(true); }}
+                  className="flex items-center gap-2 hover:text-brand-primary transition-colors group"
+                >
+                  <span className="text-foreground font-bold group-hover:text-brand-primary transition-colors">{profileData.followers_count}</span>
                   Seguidores
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-foreground font-bold">{profileData.following_count}</span>
+                </button>
+                <button 
+                  onClick={() => { setNetworkInitialTab("following"); setIsNetworkModalOpen(true); }}
+                  className="flex items-center gap-2 hover:text-brand-primary transition-colors group"
+                >
+                  <span className="text-foreground font-bold group-hover:text-brand-primary transition-colors">{profileData.following_count}</span>
                   Seguindo
-                </div>
+                </button>
               </div>
 
               <p className="text-muted font-medium flex items-center justify-center md:justify-start gap-2 truncate">
@@ -353,6 +364,15 @@ export default function ProfilePage() {
             )}
           </div>
         </div>
+
+        {/* Network Modal */}
+        {isNetworkModalOpen && (
+          <NetworkModal 
+            username={Array.isArray(username) ? username[0] : username}
+            onClose={() => setIsNetworkModalOpen(false)}
+            initialTab={networkInitialTab}
+          />
+        )}
       </main>
     </div>
   );
