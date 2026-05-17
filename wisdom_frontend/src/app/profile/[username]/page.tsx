@@ -32,6 +32,7 @@ interface ProfileData {
   gold: number;
   level: number;
   bio: string;
+  avatar_url: string | null;
   followers_count: number;
   following_count: number;
   is_following: boolean;

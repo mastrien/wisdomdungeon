@@ -11,6 +11,20 @@ jest.mock('./src/lib/firebase', () => ({
   },
 }))
 
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    prefetch: jest.fn(),
+    back: jest.fn(),
+  })),
+  useParams: jest.fn(() => ({})),
+  useSearchParams: jest.fn(() => ({
+    get: jest.fn().mockReturnValue(null),
+  })),
+  usePathname: jest.fn(() => '/'),
+}))
+
 jest.mock('firebase/auth', () => ({
   getAuth: jest.fn(),
   onAuthStateChanged: jest.fn(),

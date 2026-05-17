@@ -7,8 +7,10 @@ import api from "@/services/api";
 import Toast, { ToastType } from "@/components/Toast";
 
 interface Profile {
-  username: string;
-  email: string;
+  user: {
+    username: string;
+    email: string;
+  };
   xp: number;
   gold: number;
   level: number;
@@ -19,6 +21,7 @@ interface Profile {
   max_hp: number;
   theme_color: string;
   font_size: string;
+  avatar_url?: string;
   next_level_xp: number;
   current_level_xp_threshold: number;
   metadata?: {

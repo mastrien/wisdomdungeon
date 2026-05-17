@@ -5,7 +5,7 @@
 ### Status Atual
 - Arquitetura técnica definida em `ideia.md` e `novas_considerações.md`.
 - Escopo do MVP definido em `mvp.md` (Mundo da Matemática, questões geradas automaticamente).
-- Procedimento de desenvolvimento (Test-First) estabelecido em `procedimento.md`.
+- Procedimento de desenvolvimento (Test-First) established em `procedimento.md`.
 
 ### Próximos Passos (Imediatos)
 1. **Página Inicial Dinâmica:** Atualizar a `HomePage` para listar masmorras da `WeeklyDungeon` via API.
@@ -63,7 +63,7 @@
 
 **Ciclo [30/04/2026 04:10]:**
 - **Ação:** Implementação da interface de Login e Dashboard.
-- **Implementação:** `layout.tsx` atualizado com `AuthProvider`. `login/page.tsx` criado.
+- **Implementação:** `layout.tsx` atualizado with `AuthProvider`. `login/page.tsx` criado.
 
 **Ciclo [30/04/2026 04:30]:**
 - **Ação:** Implementação da página da Dungeon e mecânica de resolução.
@@ -231,7 +231,7 @@
 **Ciclo [04/05/2026 12:00]:**
 - **Fase 2, 3, 4 e 5 (Frontend):** Implementação completa da UI de Engajamento.
 - **Tematização:** 
-    - [x] Refatorado `globals.css` com variáveis CSS.
+    - [x] Refatorado `globals.css` with variáveis CSS.
     - [x] Substituídas cores fixas `amber-` por `brand-primary` em todo o projeto.
     - [x] Injeção de tema dinâmica implementada no `AuthContext`.
 - **Interface:**
@@ -503,3 +503,16 @@ Corrigir o estado de carregamento infinito que ocorria após finalizar o recorte
 3. **Refatoração:** Estabilização dos estados de loading durante o ciclo de vida da autenticação.
 ### Resultados
 Upload de avatar agora sincroniza instantaneamente com o perfil e o cabeçalho, sem travar a interface.
+
+## [17/05/2026 03:40] - Estabilização Crítica: Fim dos Deadlocks e Sincronização de Dados
+### Ação
+Resolver regressões de carregamento infinito e erros de acesso a dados após integração de funcionalidades.
+### Procedimento (procedimento.md)
+1. **Investigação:** Identificado deadlock no `DungeonPage` causado por condição de `loading` circular e erro de tempo de execução no `Header` devido a mudança na estrutura do objeto `Profile`.
+2. **Implementação:**
+    - [x] Frontend: Refatorada interface `Profile` para `{ user: { username, email }, ... }` em todo o projeto.
+    - [x] Frontend: Corrigida lógica de `useEffect` no `DungeonPage` para garantir o disparo do fetch inicial.
+    - [x] Testes: Atualizada infraestrutura global de mocks (`jest.setup.js`) para incluir `usePathname`.
+3. **Validação:** Executada suíte completa de testes (`npm test`) com 100% de aprovação. [CONCLUÍDO]
+### Resultados
+Aplicação 100% funcional, sem travamentos de carregamento e com dados sincronizados entre frontend e backend.

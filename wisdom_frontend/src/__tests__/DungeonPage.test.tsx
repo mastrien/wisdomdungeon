@@ -7,11 +7,6 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 // Mock dependencies
 jest.mock("@/context/AuthContext");
 jest.mock("@/services/api");
-jest.mock("next/navigation", () => ({
-  useParams: jest.fn(),
-  useRouter: jest.fn(),
-  useSearchParams: jest.fn(),
-}));
 jest.mock("@/components/MathRenderer", () => ({
   __esModule: true,
   default: ({ tex }: { tex: string }) => <div data-testid="math">{tex}</div>,

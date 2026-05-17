@@ -7,7 +7,6 @@ import { useParams } from 'next/navigation';
 // Mocks
 jest.mock('@/services/api');
 jest.mock('@/context/AuthContext');
-jest.mock('next/navigation');
 
 const mockApi = api as jest.Mocked<typeof api>;
 const mockUseAuth = useAuth as jest.Mock;

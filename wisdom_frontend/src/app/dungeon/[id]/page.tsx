@@ -57,6 +57,7 @@ export default function DungeonPage() {
   
   const [state, setState] = useState<DungeonState | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [result, setResult] = useState<{ 
     is_correct: boolean; 
@@ -69,6 +70,8 @@ export default function DungeonPage() {
   const [submitting, setSubmitting] = useState(false);
   const [showInventory, setShowInventory] = useState(false);
   const [inventoryMessage, setInventoryMessage] = useState<string | null>(null);
+
+  const [retryCount, setRetryCount] = useState(0);
 
   // Track previous level for level up toast
   const prevLevelRef = useRef<number | null>(null);
@@ -85,16 +88,18 @@ export default function DungeonPage() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchDungeonState = useCallback(async () => {
-    // Note: We avoid calling resets here if they are already in their initial state
+    setLoading(true);
+    setError(null);
     try {
       const response = await api.get(`/dungeon/current/?topic=${id}&type=${dungeonType}`);
       setState(response.data);
-      // Reset interaction states after successful fetch
       setSelectedOption(null);
       setResult(null);
       setSeconds(0);
+      setRetryCount(0); // Reset retries on success
     } catch (err) {
       console.error("Erro ao buscar estado da masmorra:", err);
+      setError("Não foi possível carregar o desafio. Verifique sua conexão.");
     } finally {
       setLoading(false);
     }
@@ -105,10 +110,12 @@ export default function DungeonPage() {
 
     if (!user) {
       router.push("/login");
-    } else if (!state && !loading) {
+    } else if (!state && !error && retryCount < 3) {
+      // If we haven't loaded the state yet, and there's no error, and we haven't exhausted retries
+      setRetryCount(prev => prev + 1);
       fetchDungeonState();
     }
-  }, [user, authLoading, state, loading, fetchDungeonState, router]);
+  }, [user, authLoading, state, error, retryCount, fetchDungeonState, router]);
 
   // Timer Logic
   useEffect(() => {
