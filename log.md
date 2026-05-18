@@ -174,7 +174,7 @@
     - [x] Remover barras de scroll horizontal e permitir que o navegador faça quebra de linha natural do texto.
     - [x] Ajustar CSS para esconder scrollbars em blocos `katex-display` e favorecer fluidez.
 - **Testes:**
-    - [x] Atualizar `test_math_generator.py` para validar o novo formato de string com `$`.
+    - [x] Atualizar `test_math_generator.py` para validar le novo formato de string com `$`.
 
 **Ciclo [03/05/2026 20:00]:**
 - **Ação:** Implementação de estatísticas diárias na Página Inicial.
@@ -209,7 +209,7 @@
 **Ciclo [03/05/2026 23:00]:**
 - **Ação:** Fase 4 - HUD v2.
 - **Teste:** Atualizar `DungeonPage.test.tsx`. [CONCLUÍDO]
-- **Implementação:** Refatorar `DungeonPage` com Timer, Combo e Progresso. [CONCLUÍDO]
+- **Implementação:** Refatorar `DungeonPage` with Timer, Combo e Progresso. [CONCLUÍDO]
 
 **Ciclo [04/05/2026 10:00]:**
 - **Ação:** Planejamento das novas mecânicas de engajamento e customização.
@@ -339,7 +339,7 @@ Implementar restrições de nível e pré-requisitos para masmorras de elite, co
 Implementar o item "Amuleto de Vampirismo" e corrigir metadados de itens existentes no seeder.
 ### Tarefas
 - [x] Backend: Criar `VampirismStrategy` (recupera vida a cada 5 acertos seguidos).
-- [x] Backend: Atualizar `ITEM_REGISTRY` com the novo item.
+- [x] Backend: Atualizar `ITEM_REGISTRY` com o novo item.
 - [x] Backend: Corrigir "Amuleto do Conhecimento" no seeder para `activatable=True`.
 - [x] Backend: Adicionar "Amuleto de Vampirismo" ao seeder.
 - [x] Backend: Criar `RestfulAmuletStrategy` (cura ao completar sala) e `PhoenixAmuletStrategy` (vida extra).
@@ -516,3 +516,24 @@ Resolver regressões de carregamento infinito e erros de acesso a dados após in
 3. **Validação:** Executada suíte completa de testes (`npm test`) com 100% de aprovação. [CONCLUÍDO]
 ### Resultados
 Aplicação 100% funcional, sem travamentos de carregamento e com dados sincronizados entre frontend e backend.
+
+## [18/05/2026 10:00] - Correção de Loop de Login e Flickering de Carregamento
+### Ação
+Investigar e corrigir o loop infinito de requisições após o login e o flickering entre a tela inicial e o carregamento.
+### Investigação
+- Identificado que o `onIdTokenChanged` dispara `fetchProfile` em cada atualização de token.
+- Se uma requisição (ex: `/api/dungeons/`) falha com 403, o interceptor do Axios força um refresh de token.
+- Esse refresh dispara `onIdTokenChanged`, que chama `fetchProfile`.
+- `fetchProfile` atualiza o estado `profile`, que faz a `HomePage` disparar suas requisições novamente.
+- Se o erro 403 persistir (ex: Clock Skew), entra-se em loop infinito.
+- Além disso, o estado de `loading` é resetado para `true` em cada fetch, causando o flickering visual.
+
+### Tarefas
+- [x] Criar teste para validar que `fetchProfile` não é chamado repetidamente para o mesmo usuário.
+- [ ] Backend: (Opcional) Revisar tempo de retentativa em `FirebaseAuthentication`.
+- [x] Frontend: Modificar `AuthContext` para ignorar refreshes de token do mesmo usuário.
+- [x] Frontend: Otimizar estados de `loading` para evitar flickering quando os dados já existem.
+- [x] Frontend: Implementar trava de concorrência no `fetchProfile`.
+
+### Resultados
+Loop infinito de requisições resolvido ao trocar `onIdTokenChanged` por `onAuthStateChanged` e implementar trava de concorrência com `useRef`. Flickering visual mitigado com carregamento condicional de estados.

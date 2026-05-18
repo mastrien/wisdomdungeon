@@ -28,6 +28,7 @@ jest.mock('next/navigation', () => ({
 jest.mock('firebase/auth', () => ({
   getAuth: jest.fn(),
   onAuthStateChanged: jest.fn(),
+  onIdTokenChanged: jest.fn(),
   signInWithEmailAndPassword: jest.fn(),
   createUserWithEmailAndPassword: jest.fn(),
   signOut: jest.fn(),

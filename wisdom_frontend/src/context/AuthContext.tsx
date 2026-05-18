@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { onIdTokenChanged, User } from "firebase/auth";
+import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import api from "@/services/api";
 import Toast, { ToastType } from "@/components/Toast";
@@ -84,12 +84,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
 
+  const [profileLoading, setProfileLoading] = useState(false);
+  const isFetchingRef = React.useRef(false);
+
   const showToast = (message: string, type: ToastType = "info") => {
     setToast({ message, type });
   };
 
-  const fetchProfile = async (retries = 5): Promise<void> => {
-    setLoading(true); // Start profile loading
+  const fetchProfile = async (retries = 5, showGlobalLoading = true): Promise<void> => {
+    if (isFetchingRef.current) return;
+    
+    isFetchingRef.current = true;
+    setProfileLoading(true);
+    if (showGlobalLoading) setLoading(true); 
+    
     try {
       setError(null);
       const response = await api.get("/profile/");
@@ -100,18 +108,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const delay = (6 - retries) * 1000;
         console.warn(`Erro ${status} ao carregar perfil, tentando novamente em ${delay/1000}s... (${retries} restantes)`);
         await new Promise(resolve => setTimeout(resolve, delay));
-        return fetchProfile(retries - 1);
+        isFetchingRef.current = false; // Allow retry
+        setProfileLoading(false); 
+        return fetchProfile(retries - 1, showGlobalLoading);
       }
       console.error("Erro ao carregar perfil:", err);
       setError("Não foi possível carregar seu perfil de aventureiro. Tente recarregar a página.");
     } finally {
-      setLoading(false); // DEFINITIVELY stop loading
+      isFetchingRef.current = false;
+      setProfileLoading(false);
+      setLoading(false);
     }
   };
 
   const refreshProfile = async () => {
     if (user) {
-      await fetchProfile(0);
+      await fetchProfile(0, false);
     }
   };
 
@@ -123,13 +135,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Force dark mode only
     document.documentElement.classList.add("dark");
 
-    const unsubscribe = onIdTokenChanged(auth, async (firebaseUser) => {
+    let lastUid: string | null = null;
+
+    // Use onAuthStateChanged for stability, it doesn't fire on token refresh loops
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      const isNewUser = firebaseUser?.uid !== lastUid;
+      lastUid = firebaseUser?.uid || null;
+
       setUser(firebaseUser);
+      
       if (firebaseUser) {
-        await fetchProfile();
+        if (isNewUser || !profile) {
+          await fetchProfile();
+        }
       } else {
         setProfile(null);
-        setLoading(false); // Stop loading if no user
+        setLoading(false);
       }
     });
     return () => unsubscribe();

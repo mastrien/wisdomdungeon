@@ -41,7 +41,7 @@ export default function HomePage() {
 
     if (profile) {
       const fetchData = async () => {
-        setLoading(true);
+        if (weeklyDungeons.length === 0) setLoading(true);
         try {
           const [statsRes, dungeonsRes] = await Promise.all([
             api.get("/mastery/?today=true"),
